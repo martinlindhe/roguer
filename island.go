@@ -17,23 +17,6 @@ type Island struct {
 	HeightMap [][]byte
 }
 
-func (i *Island) WriteHeightMapAsImage(outFileName string) {
-
-	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{i.Width, i.Height}})
-
-	for x := 0; x < i.Width; x++ {
-		for y := 0; y < i.Height; y++ {
-			b := i.HeightMap[x][y]
-			c := color.RGBA{b, b, b, 255}
-			img.Set(x, y, c)
-		}
-	}
-
-	myfile, _ := os.Create(outFileName)
-
-	png.Encode(myfile, img)
-}
-
 func GenerateIsland(seed int64, width int, height int) Island {
 
 	var island Island
@@ -57,13 +40,15 @@ func GenerateIsland(seed int64, width int, height int) Island {
 
 			f := noise.Eval2(noiseX, noiseY)
 
-			floatId := (f + 1.0) / 2.0
+			// scale from -1.0-1.0 to 0.0-1.0
+			f = (f + 1.0) / 2.0
 
+			// scale from 0.0-1.0 to 0-255
 			b := byte(0)
 			if f == 1.0 {
 				b = 255
 			} else {
-				b = byte(math.Floor(floatId * 256.0))
+				b = byte(math.Floor(f * 256.0))
 			}
 
 			m[x][y] = b
@@ -81,4 +66,21 @@ func make2DByteSlice(width int, height int) [][]byte {
 		m[i] = make([]byte, height)
 	}
 	return m
+}
+
+func (i *Island) WriteHeightMapAsImage(outFileName string) {
+
+	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{i.Width, i.Height}})
+
+	for x := 0; x < i.Width; x++ {
+		for y := 0; y < i.Height; y++ {
+			b := i.HeightMap[x][y]
+			c := color.RGBA{b, b, b, 255}
+			img.Set(x, y, c)
+		}
+	}
+
+	myfile, _ := os.Create(outFileName)
+
+	png.Encode(myfile, img)
 }

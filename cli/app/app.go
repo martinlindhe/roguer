@@ -6,8 +6,8 @@ func main() {
 
 	seed := int64(123456)
 
-	isl := rogue.GenerateIsland(seed, 120, 60)
+	island := rogue.GenerateIsland(seed, 120, 60)
 
-	isl.WriteHeightMapAsImage("test.png")
+	island.WriteHeightMapAsImage("test.png")
 
 }
