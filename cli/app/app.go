@@ -16,7 +16,7 @@ func main() {
 	var dwarf rogue.Dwarf
 	dwarf.Name = "Gimli"
 
-	island.Add(dwarf)
+	//	island.Add(dwarf)
 
 	//fmt.Println(island.Spawns)
 

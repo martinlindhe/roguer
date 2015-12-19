@@ -29,7 +29,7 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	island.Height = height
 	island.Seed = seed
 
-	particleLength := 30
+	particleLength := 6
 	outerBlur := 0.95
 	innerBlur := 0.70
 	roller := rollingparticle.New(seed, island.Width, island.Height, particleLength, innerBlur, outerBlur)
@@ -90,16 +90,16 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 
 			var col color.RGBA
 			switch {
-			case b < 40:
+			case b < 80:
 				col = color.RGBA{0x26, 0x2f, 0x71, 0xff} // deep water
 
 			case b < 90:
 				col = color.RGBA{0x46, 0x4D, 0x85, 0xff} // shallow water
 
-			case b < 105:
+			case b < 100:
 				col = color.RGBA{0xD4, 0xBC, 0x6A, 0xff} // beach
 
-			case b < 140:
+			case b < 150:
 				col = color.RGBA{0x2D, 0x88, 0x2D, 0xff} // grass (green)
 
 			case b < 230:
