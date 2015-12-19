@@ -54,9 +54,24 @@ func (n *Npc) hungerCap() int {
 	return n.Level * 10
 }
 
+func (n *Npc) thirstCap() int {
+	// XXX
+	return n.Level * 10
+}
+
 func (n *Npc) tirednessCap() int {
 	// XXX
 	return n.Level * 10
+}
+
+// check if npc already has planned to do a
+func (n *Npc) hasPlanned(a Action) bool {
+	for _, v := range n.PlannedActions {
+		if v == a {
+			return true
+		}
+	}
+	return false
 }
 
 func (n *Npc) Tick() {
@@ -64,18 +79,22 @@ func (n *Npc) Tick() {
 
 	n.Hunger++
 	n.Tiredness++
+	n.Thirst++
 
 	fmt.Println("[tick]", n.Name, n.Age)
 
-	if n.Tiredness > n.tirednessCap() { // XXX make sure we dont have one such thing planned
+	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(Sleep{}) {
 		fmt.Println(n.Name, "is feeling tired")
 		n.PlannedActions = append(n.PlannedActions, Sleep{})
 	}
 
-	if n.Hunger > n.hungerCap() {
-		// fmt.Println("HUNGRY!", n.Hunger, n.hungerCap())
-
-		// XXX enqueue action
+	if n.Hunger > n.hungerCap() && !n.hasPlanned(LookForFood{}) {
+		fmt.Println(n.Name, "is feeling hungry")
+		n.PlannedActions = append(n.PlannedActions, LookForFood{})
+	}
+	if n.Thirst > n.thirstCap() && !n.hasPlanned(LookForWater{}) {
+		fmt.Println(n.Name, "is feeling thirsty")
+		n.PlannedActions = append(n.PlannedActions, LookForWater{})
 	}
 
 	if n.CurrentlyDoing == DoingNothing {
