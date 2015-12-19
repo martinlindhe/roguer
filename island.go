@@ -17,9 +17,10 @@ type Island struct {
 	Height    int
 	Seed      int64
 	HeightMap [][]byte
-	Spawns    []WorldObject
+	Spawns    []worldObject
 }
 
+// Tick ...
 func (i *Island) Tick() {
 	for _, o := range i.Spawns {
 		o.Tick()
@@ -34,6 +35,13 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	island.Width = width
 	island.Height = height
 	island.Seed = seed
+
+	var dwarf dwarf
+	dwarf.Defaults()
+	dwarf.Name = "Gimli"
+	dwarf.Position = Point{5, 5}
+
+	island.Add(&dwarf)
 
 	particleLength := 6
 	outerBlur := 0.95
@@ -82,10 +90,12 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	return island
 }
 
-func (i *Island) Add(o WorldObject) {
+// Add ...
+func (i *Island) Add(o worldObject) {
 	i.Spawns = append(i.Spawns, o)
 }
 
+// ColoredHeightMapAsImage ...
 func (i *Island) ColoredHeightMapAsImage() image.Image {
 
 	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{i.Width, i.Height}})

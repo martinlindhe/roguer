@@ -13,13 +13,6 @@ func main() {
 
 	island := rogue.GenerateIsland(seed, 220, 160)
 
-	var dwarf rogue.Dwarf
-	dwarf.Defaults()
-	dwarf.Name = "Gimli"
-	dwarf.Position = rogue.Point{5, 5}
-
-	island.Add(&dwarf)
-
 	for i := 0; i < 20; i++ {
 		island.Tick()
 	}

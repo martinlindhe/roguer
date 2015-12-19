@@ -1,33 +1,38 @@
 package rogue
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+	"reflect"
+)
 
 type Point struct {
 	X uint16
 	Y uint16
 }
 
-type WorldObject interface {
+type worldObject interface {
 	Tick()
 	Defaults()
 }
 
+// Doing states
 const (
-	DoingNothing = 0
-	DoingSleeping
-	DoingEating
-	DoingDrinking
-	DoingMoving
-	DoingForaging
+	doingNothing = 0
+	doingSleeping
+	doingEating
+	doingDrinking
+	doingMoving
+	doingForaging
 )
 
-type Npc struct {
+type npc struct {
 	Level          int
 	XP             int
 	Age            int
 	Name           string
 	Position       Point
-	CurrentlyDoing int
+	CurrentAction  Action
 	PlannedActions []Action
 
 	// the lower value, the less hungry npc is
@@ -36,36 +41,41 @@ type Npc struct {
 	Tiredness int
 }
 
-type Dwarf struct {
-	Npc
+type dwarf struct {
+	npc
 }
 
-type Rabbit struct {
-	Npc
+type rabbit struct {
+	npc
 }
 
-func (n *Npc) Defaults() {
+func (n *npc) Defaults() {
 	// init non-zero values
 	n.Level = 1
 }
 
-func (n *Npc) hungerCap() int {
+func (n *npc) hungerCap() int {
 	// XXX
 	return n.Level * 10
 }
 
-func (n *Npc) thirstCap() int {
+func (n *npc) thirstCap() int {
 	// XXX
 	return n.Level * 10
 }
 
-func (n *Npc) tirednessCap() int {
+func (n *npc) tirednessCap() int {
 	// XXX
 	return n.Level * 10
 }
 
 // check if npc already has planned to do a
-func (n *Npc) hasPlanned(a Action) bool {
+func (n *npc) hasPlanned(a Action) bool {
+
+	if n.CurrentAction == a {
+		return true
+	}
+
 	for _, v := range n.PlannedActions {
 		if v == a {
 			return true
@@ -74,7 +84,7 @@ func (n *Npc) hasPlanned(a Action) bool {
 	return false
 }
 
-func (n *Npc) Tick() {
+func (n *npc) Tick() {
 	n.Age++
 
 	n.Hunger++
@@ -83,24 +93,40 @@ func (n *Npc) Tick() {
 
 	fmt.Println("[tick]", n.Name, n.Age)
 
-	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(Sleep{}) {
+	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(sleep{}) {
 		fmt.Println(n.Name, "is feeling tired")
-		n.PlannedActions = append(n.PlannedActions, Sleep{})
+		n.PlannedActions = append(n.PlannedActions, sleep{})
 	}
 
-	if n.Hunger > n.hungerCap() && !n.hasPlanned(LookForFood{}) {
+	if n.Hunger > n.hungerCap() && !n.hasPlanned(lookForFood{}) {
 		fmt.Println(n.Name, "is feeling hungry")
-		n.PlannedActions = append(n.PlannedActions, LookForFood{})
+		n.PlannedActions = append(n.PlannedActions, lookForFood{})
 	}
-	if n.Thirst > n.thirstCap() && !n.hasPlanned(LookForWater{}) {
+	if n.Thirst > n.thirstCap() && !n.hasPlanned(lookForWater{}) {
 		fmt.Println(n.Name, "is feeling thirsty")
-		n.PlannedActions = append(n.PlannedActions, LookForWater{})
+		n.PlannedActions = append(n.PlannedActions, lookForWater{})
 	}
 
-	if n.CurrentlyDoing == DoingNothing {
-		// XXX shuffle action list, so behaviour is more random
-		// XXX if action in queue, make it "currently doing"
-	}
+	// select one action to be doing next
+	if n.CurrentAction == nil && len(n.PlannedActions) > 0 {
+		// shuffle action list, so behaviour is more random
+		if len(n.PlannedActions) > 1 {
+			shuffleActionSlice(n.PlannedActions)
+		}
 
-	fmt.Println(n.PlannedActions)
+		// pick something
+		n.CurrentAction = n.PlannedActions[0]
+		n.PlannedActions = n.PlannedActions[1:]
+
+		fmt.Println(n.Name, "decided to", reflect.TypeOf(n.CurrentAction))
+	}
+}
+
+// shuffle slice, without allocations
+func shuffleActionSlice(p []Action) {
+
+	for i := range p {
+		j := rand.Intn(i + 1)
+		p[i], p[j] = p[j], p[i]
+	}
 }
