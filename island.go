@@ -3,7 +3,9 @@ package rogue
 import (
 	"image"
 	"image/color"
+	"image/png"
 	"math"
+	"os"
 
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
@@ -31,11 +33,9 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	innerBlur := 0.70
 	roller := rollingparticle.New(seed, island.Width, island.Height, particleLength, innerBlur, outerBlur)
 
-	/*
-		rollerImage := Slice2DAsImage(&roller, island.Width, island.Height)
-		rollerImgFile, _ := os.Create("roller.png")
-		png.Encode(rollerImgFile, rollerImage)
-	*/
+	rollerImage := Slice2DAsImage(&roller, island.Width, island.Height)
+	rollerImgFile, _ := os.Create("roller.png")
+	png.Encode(rollerImgFile, rollerImage)
 
 	m := make2DByteSlice(width, height)
 
