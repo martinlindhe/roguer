@@ -1,28 +1,17 @@
-package rogue
+package rollingparticle
 
-import (
-	"fmt"
-	"math/rand"
-)
+import "math/rand"
 
-/**
- * based on https://dance-of-death-worldgen.googlecode.com/svn/trunk/src/com/nolithius/dodworldgen/maps/RollingParticleMap.as
- * http://www.nolithius.com/game-development/world-generation-breakdown
- */
-
-const (
-	PARTICLE_LENGTH = 50
-
-	OUTER_BLUR = 0.65
-	INNER_BLUR = 0.90
-)
+// based on https://dance-of-death-worldgen.googlecode.com/svn/trunk/src/com/nolithius/dodworldgen/maps/RollingParticleMap.as
+// http://www.nolithius.com/game-development/world-generation-breakdown
 
 type point struct {
 	X int
 	Y int
 }
 
-func New(width int, height int) [][]byte {
+// New returns a rolling particle covered area
+func New(width int, height int, particleLength int, innerBlur float64, outerBlur float64) [][]byte {
 
 	edgeBiasWidth := width / 8
 	edgeBiasHeight := height / 8
@@ -33,16 +22,17 @@ func New(width int, height int) [][]byte {
 	tiles := make2DByteSlice(width, height)
 
 	iterations := width * height * 2
-	// TODO: if roll results in all zero array, do a re roll, mark random seed as "bad" using redis!
 
 	for i := 0; i < iterations; i++ {
 
-		// Start nearer the center
+		// start near the center
 		sourceX := rand.Intn(width-edgeBiasWidth) + edgeBiasHeight
 		sourceY := rand.Intn(height-edgeBiasHeight) + edgeBiasHeight
 
-		for length := 0; length < PARTICLE_LENGTH; length++ {
-			sourceX += rand.Intn(2) - 1 // between -1 and 1
+		for length := 0; length < particleLength; length++ {
+
+			// between -1 and 1
+			sourceX += rand.Intn(2) - 1
 			sourceY += rand.Intn(2) - 1
 
 			if sourceX < 1 || sourceX > width-2 || sourceY < 1 || sourceY > height-2 {
@@ -50,27 +40,27 @@ func New(width int, height int) [][]byte {
 			}
 
 			for _, hood := range getNeighborhood(sourceX, sourceY, width, height) {
-				if tiles[hood.X][hood.Y] < tiles[sourceX][sourceY] {
+				if tiles[hood.Y][hood.X] < tiles[sourceY][sourceX] {
 					sourceX = hood.X
 					sourceY = hood.Y
 					break
 				}
 			}
 
-			tiles[sourceX][sourceY] += 3
+			tiles[sourceY][sourceX] += 3
 		}
 	}
 
-	blurEdges(tiles, width, height)
+	blurEdges(tiles, width, height, innerBlur, outerBlur)
 
 	return tiles
 }
 
 /**
  * Get the Moore neighborhood (3x3, 8 surrounding tiles, minus the center tile).
- * @param int $x The x position of the center of the neighborhood.
- * @param int $y The y position of the center of the neighborhood.
- * @return Point[] An array of neighbor Points, shuffled.
+ * @param int x The x position of the center of the neighborhood.
+ * @param int y The y position of the center of the neighborhood.
+ * @return []point An array of neighbor Points, shuffled.
  */
 func getNeighborhood(x int, y int, width int, height int) []point {
 	var res []point
@@ -85,36 +75,42 @@ func getNeighborhood(x int, y int, width int, height int) []point {
 		}
 	}
 
-	// Return the neighborhood in no particular order
-	fmt.Println(res)
+	// return the neighborhood in no particular order
 	shufflePointSlice(res)
-	fmt.Println(res)
 
 	return res
 }
 
 // shuffle slice, without allocations
-func shufflePointSlice(src []point) {
-	for i := range src {
+func shufflePointSlice(p []point) {
+
+	for i := range p {
 		j := rand.Intn(i + 1)
-		src[i], src[j] = src[j], src[i]
+		p[i], p[j] = p[j], p[i]
 	}
-	//	return src
 }
 
-/**
- * "Blur" the edges of the tile array to ensure no hard edges.
- */
-func blurEdges(tiles [][]byte, width int, height int) {
+// "Blur" the edges of the tile array to ensure no hard edges.
+func blurEdges(tiles [][]byte, width int, height int, innerBlur float64, outerBlur float64) {
 	for iy := 0; iy < height; iy++ {
 		for ix := 0; ix < width; ix++ {
 			// Multiply the outer edge and the second outer edge by some
 			// constants to ensure the world does not touch the edges.
 			if ix == 0 || ix == width-1 || iy == 0 || iy == height-1 {
-				tiles[iy][ix] = byte(float64(tiles[iy][ix]) * OUTER_BLUR)
+				tiles[iy][ix] = byte(float64(tiles[iy][ix]) * outerBlur)
 			} else if ix == 1 || ix == width-2 || iy == 1 || iy == height-2 {
-				tiles[iy][ix] = byte(float64(tiles[iy][ix]) * INNER_BLUR)
+				tiles[iy][ix] = byte(float64(tiles[iy][ix]) * innerBlur)
 			}
 		}
 	}
+}
+
+// returns a 2d slice in [height][width]
+func make2DByteSlice(width int, height int) [][]byte {
+	// allocate 2d slice
+	m := make([][]byte, height)
+	for i := range m {
+		m[i] = make([]byte, width)
+	}
+	return m
 }

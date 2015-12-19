@@ -2,7 +2,6 @@ package rogue
 
 import (
 	"image"
-	"image/color"
 	"math"
 
 	"github.com/ojrac/opensimplex-go"
@@ -62,15 +61,5 @@ func GenerateIsland(seed int64, width int, height int) Island {
 // HeightMapAsImage renders height map to an Image
 func (i *Island) HeightMapAsImage() image.Image {
 
-	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{i.Width, i.Height}})
-
-	for x := 0; x < i.Width; x++ {
-		for y := 0; y < i.Height; y++ {
-			b := i.HeightMap[x][y]
-			c := color.RGBA{b, b, b, 255}
-			img.Set(x, y, c)
-		}
-	}
-
-	return img
+	return Slice2DAsImage(&i.HeightMap, i.Width, i.Height)
 }
