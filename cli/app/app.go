@@ -13,8 +13,15 @@ func main() {
 
 	island := rogue.GenerateIsland(seed, 220, 160)
 
-	islandImage := island.HeightMapAsImage()
+	var dwarf rogue.Dwarf
+	dwarf.Name = "Gimli"
 
+	island.Add(dwarf)
+
+	//fmt.Println(island.Spawns)
+
+	// debug output:
+	islandImage := island.HeightMapAsImage()
 	islandColImage := island.ColoredHeightMapAsImage()
 
 	islandImgFile, _ := os.Create("island.png")
