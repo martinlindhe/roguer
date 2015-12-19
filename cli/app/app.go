@@ -22,7 +22,6 @@ func appMain(driver gxui.Driver) {
 
 	island := rogue.GenerateIsland(seed, 220, 100)
 
-	//	islandColImage := island.ColoredHeightMapAsImage()
 	/*
 		islandColImgFile, _ := os.Create("island_col.png")
 		png.Encode(islandColImgFile, islandColImage)
@@ -46,10 +45,6 @@ func appMain(driver gxui.Driver) {
 	window.SetScale(flags.DefaultScaleFactor)
 
 	/*
-		img := theme.CreateImage()
-		texture := driver.CreateTexture(islandColImage, 1)
-		img.SetTexture(texture)
-		window.AddChild(img)
 
 		// XXX position!?
 		label := theme.CreateLabel()
@@ -60,7 +55,7 @@ func appMain(driver gxui.Driver) {
 
 	splitterAB := theme.CreateSplitterLayout()
 	splitterAB.SetOrientation(gxui.Horizontal)
-	splitterAB.AddChild(panelHolder("A", theme))
+	splitterAB.AddChild(topLeftPanelHolder(&theme, &driver, &window, &island))
 	splitterAB.AddChild(panelHolder("B", theme))
 
 	splitterCD := theme.CreateSplitterLayout()
@@ -86,6 +81,28 @@ func createMonospaceFont(size int, driver *gxui.Driver) gxui.Font {
 		panic(err)
 	}
 	return font
+}
+
+// Create a PanelHolder with a 3 panels
+func topLeftPanelHolder(theme *gxui.Theme, driver *gxui.Driver, window *gxui.Window, island *rogue.Island) gxui.PanelHolder {
+
+	name := "top left"
+	label := func(text string) gxui.Label {
+		label := (*theme).CreateLabel()
+		label.SetText(text)
+		return label
+	}
+
+	islandColImage := island.ColoredHeightMapAsImage()
+	img := (*theme).CreateImage()
+	texture := (*driver).CreateTexture(islandColImage, 1)
+	img.SetTexture(texture)
+	(*window).AddChild(img)
+
+	holder := (*theme).CreatePanelHolder()
+	holder.AddPanel(label(name+" 0 content"), name+" 0 panel")
+	holder.AddPanel(label(name+" 1 content"), name+" 1 panel")
+	return holder
 }
 
 // Create a PanelHolder with a 3 panels
