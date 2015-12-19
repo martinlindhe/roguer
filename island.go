@@ -27,9 +27,9 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	island.Height = height
 	island.Seed = seed
 
-	particleLength := 50
-	outerBlur := 0.65
-	innerBlur := 0.90
+	particleLength := 30
+	outerBlur := 0.95
+	innerBlur := 0.70
 	roller := rollingparticle.New(seed, island.Width, island.Height, particleLength, innerBlur, outerBlur)
 
 	rollerImage := Slice2DAsImage(&roller, island.Width, island.Height)
@@ -42,6 +42,8 @@ func GenerateIsland(seed int64, width int, height int) Island {
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
+
+			// Xxx get multi-octave noise
 
 			noiseX := float64(x) * 0.04
 			noiseY := float64(y) * 0.04
@@ -59,10 +61,9 @@ func GenerateIsland(seed int64, width int, height int) Island {
 				b = byte(math.Floor(f * 256.0))
 			}
 
-			// XXX combine with rolling particle
-			opacity := 0.5
-
-			b = byte((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
+			// combine with rolling particle
+			//opacity := 0.8
+			//b = byte((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
 
 			// 566883 ns/op benchmark with [x][y]
 			m[y][x] = b
