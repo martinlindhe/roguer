@@ -43,12 +43,13 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
 
-			// Xxx get multi-octave noise
+			// combine some sizes of noise
+			fBig := noise.Eval2(float64(x)*0.005, float64(y)*0.005)
+			fMid := noise.Eval2(float64(x)*0.01, float64(y)*0.01)
+			fSmall := noise.Eval2(float64(x)*0.02, float64(y)*0.02)
+			fMini := noise.Eval2(float64(x)*0.04, float64(y)*0.04)
 
-			noiseX := float64(x) * 0.04
-			noiseY := float64(y) * 0.04
-
-			f := noise.Eval2(noiseX, noiseY)
+			f := (fBig + fMid + fSmall + fMini) / 4
 
 			// scale from -1.0-1.0 to 0.0-1.0
 			f = (f + 1.0) / 2.0
@@ -62,8 +63,8 @@ func GenerateIsland(seed int64, width int, height int) Island {
 			}
 
 			// combine with rolling particle
-			//opacity := 0.8
-			//b = byte((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
+			opacity := 0.5
+			b = byte((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
 
 			// 566883 ns/op benchmark with [x][y]
 			m[y][x] = b
