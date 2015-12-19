@@ -15,6 +15,11 @@ func main() {
 
 	islandImage := island.HeightMapAsImage()
 
+	islandColImage := island.ColoredHeightMapAsImage()
+
 	islandImgFile, _ := os.Create("island.png")
 	png.Encode(islandImgFile, islandImage)
+
+	islandColImgFile, _ := os.Create("island_col.png")
+	png.Encode(islandColImgFile, islandColImage)
 }
