@@ -6,6 +6,7 @@ import (
 	"reflect"
 )
 
+// Point ...
 type Point struct {
 	X uint16
 	Y uint16
@@ -34,11 +35,22 @@ type npc struct {
 	Position       Point
 	CurrentAction  Action
 	PlannedActions []Action
+	Inventory      []worldObject
 
 	// the lower value, the less hungry npc is
 	Hunger    int
 	Thirst    int
 	Tiredness int
+}
+
+type plant struct {
+	Name     string
+	Position Point
+	Age      int
+}
+
+type sweetPotato struct {
+	plant
 }
 
 type dwarf struct {
@@ -54,30 +66,41 @@ func (n *npc) Defaults() {
 	n.Level = 1
 }
 
+func (n *plant) Defaults() {
+	// init non-zero values
+	n.Name = "sdsdfgsdfg"
+}
+
+func (n *plant) Tick() {
+	n.Age++
+}
+
 func (n *npc) hungerCap() int {
 	// XXX
-	return n.Level * 10
+	return n.Level * 100
 }
 
 func (n *npc) thirstCap() int {
 	// XXX
-	return n.Level * 10
+	return n.Level * 100
 }
 
 func (n *npc) tirednessCap() int {
 	// XXX
-	return n.Level * 10
+	return n.Level * 100
 }
 
 // check if npc already has planned to do a
 func (n *npc) hasPlanned(a Action) bool {
 
-	if n.CurrentAction == a {
+	t := reflect.TypeOf(a)
+
+	if reflect.TypeOf(n.CurrentAction) == t {
 		return true
 	}
 
 	for _, v := range n.PlannedActions {
-		if v == a {
+		if reflect.TypeOf(v) == t {
 			return true
 		}
 	}
@@ -85,13 +108,13 @@ func (n *npc) hasPlanned(a Action) bool {
 }
 
 func (n *npc) Tick() {
-	n.Age++
 
+	n.Age++
 	n.Hunger++
 	n.Tiredness++
 	n.Thirst++
 
-	fmt.Println("[tick]", n.Name, n.Age)
+	//fmt.Println("[tick]", n.Name, n.Age)
 
 	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(&sleep{}) {
 		fmt.Println(n.Name, "is feeling tired")
@@ -122,7 +145,10 @@ func (n *npc) Tick() {
 	}
 
 	if n.CurrentAction != nil {
-		n.CurrentAction.Perform(n)
+		if n.CurrentAction.Perform(n) == true {
+			fmt.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
+			n.CurrentAction = nil
+		}
 	}
 }
 

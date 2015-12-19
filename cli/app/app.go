@@ -13,7 +13,7 @@ func main() {
 
 	island := rogue.GenerateIsland(seed, 220, 160)
 
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 1000; i++ {
 		island.Tick()
 	}
 
