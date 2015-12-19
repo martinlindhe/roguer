@@ -2,8 +2,11 @@ package rogue
 
 import (
 	"image"
+	"image/png"
 	"math"
+	"os"
 
+	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
 )
 
@@ -24,12 +27,18 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	island.Height = height
 	island.Seed = seed
 
+	particleLength := 50
+	outerBlur := 0.65
+	innerBlur := 0.90
+	roller := rollingparticle.New(seed, island.Width, island.Height, particleLength, innerBlur, outerBlur)
+
+	rollerImage := Slice2DAsImage(&roller, island.Width, island.Height)
+	rollerImgFile, _ := os.Create("roller.png")
+	png.Encode(rollerImgFile, rollerImage)
+
 	m := make2DByteSlice(width, height)
 
 	noise := opensimplex.NewWithSeed(seed)
-
-	//$roller = new RollingParticle($world->width, $world->height, $world->seed);
-	//$rolls = $roller->roll();
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
@@ -49,6 +58,12 @@ func GenerateIsland(seed int64, width int, height int) Island {
 			} else {
 				b = byte(math.Floor(f * 256.0))
 			}
+
+			// XXX combine with rolling particle
+			opacity := 0.5
+
+			b = byte((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
+
 			// 566883 ns/op benchmark with [x][y]
 			m[y][x] = b
 		}

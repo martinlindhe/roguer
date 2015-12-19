@@ -11,12 +11,11 @@ type point struct {
 }
 
 // New returns a rolling particle covered area
-func New(width int, height int, particleLength int, innerBlur float64, outerBlur float64) [][]byte {
+func New(seed int64, width int, height int, particleLength int, innerBlur float64, outerBlur float64) [][]byte {
 
 	edgeBiasWidth := width / 8
 	edgeBiasHeight := height / 8
 
-	seed := int64(123456)
 	rand.Seed(seed)
 
 	tiles := make2DByteSlice(width, height)
