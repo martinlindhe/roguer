@@ -115,7 +115,7 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 			case b < 90:
 				col = color.RGBA{0x46, 0x4D, 0x85, 0xff} // shallow water
 
-			case b < 100:
+			case b < 95:
 				col = color.RGBA{0xD4, 0xBC, 0x6A, 0xff} // beach
 
 			case b < 150:
