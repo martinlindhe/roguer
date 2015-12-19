@@ -3,13 +3,12 @@ package rogue
 import (
 	"image"
 	"image/color"
-	"image/png"
 	"math"
-	"os"
 
 	"github.com/ojrac/opensimplex-go"
 )
 
+// Island ...
 type Island struct {
 	Width     int
 	Height    int
@@ -17,6 +16,7 @@ type Island struct {
 	HeightMap [][]byte
 }
 
+// GenerateIsland returns a new island
 func GenerateIsland(seed int64, width int, height int) Island {
 
 	var island Island
@@ -50,8 +50,8 @@ func GenerateIsland(seed int64, width int, height int) Island {
 			} else {
 				b = byte(math.Floor(f * 256.0))
 			}
-
-			m[x][y] = b
+			// 566883 ns/op benchmark with [x][y]
+			m[y][x] = b
 		}
 	}
 
@@ -59,16 +59,8 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	return island
 }
 
-func make2DByteSlice(width int, height int) [][]byte {
-	// allocate 2d slice
-	m := make([][]byte, width)
-	for i := range m {
-		m[i] = make([]byte, height)
-	}
-	return m
-}
-
-func (i *Island) WriteHeightMapAsImage(outFileName string) {
+// HeightMapAsImage renders height map to an Image
+func (i *Island) HeightMapAsImage() image.Image {
 
 	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{i.Width, i.Height}})
 
@@ -80,7 +72,5 @@ func (i *Island) WriteHeightMapAsImage(outFileName string) {
 		}
 	}
 
-	myfile, _ := os.Create(outFileName)
-
-	png.Encode(myfile, img)
+	return img
 }

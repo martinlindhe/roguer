@@ -1,6 +1,11 @@
 package main
 
-import "github.com/martinlindhe/rogue"
+import (
+	"image/png"
+	"os"
+
+	"github.com/martinlindhe/rogue"
+)
 
 func main() {
 
@@ -8,6 +13,8 @@ func main() {
 
 	island := rogue.GenerateIsland(seed, 120, 60)
 
-	island.WriteHeightMapAsImage("test.png")
+	img := island.HeightMapAsImage()
 
+	myfile, _ := os.Create("test.png")
+	png.Encode(myfile, img)
 }
