@@ -21,7 +21,7 @@ func appMain(driver gxui.Driver) {
 	fmt.Printf("Using seed %d\n", seed)
 
 	island := rogue.GenerateIsland(seed, 220, 140)
-
+	island.FillWithCritters()
 	/*
 		islandColImgFile, _ := os.Create("island_col.png")
 		png.Encode(islandColImgFile, islandColImage)
@@ -30,32 +30,22 @@ func appMain(driver gxui.Driver) {
 		islandImgFile, _ := os.Create("island.png")
 		png.Encode(islandImgFile, islandImage)
 	*/
-
-	island.FillWithCritters()
-	for i := 0; i < 10; i++ {
-		island.Tick()
-	}
-
+	/*
+		for i := 0; i < 10; i++ {
+			island.Tick()
+		}
+	*/
 	theme := flags.CreateTheme(driver)
 
 	window := theme.CreateWindow(800, 600, "rogue")
 	window.SetBackgroundBrush(gxui.CreateBrush(gxui.Gray50))
 	window.SetScale(flags.DefaultScaleFactor)
 
-	/*
-
-		// XXX position!?
-		label := theme.CreateLabel()
-		label.SetFont(font)
-		label.SetText("Hello world")
-		window.AddChild(label)
-	*/
-
 	font, _ := driver.CreateFont(gxfont.Monospace, 25)
 
 	splitterAB := theme.CreateSplitterLayout()
 	splitterAB.SetOrientation(gxui.Horizontal)
-	splitterAB.AddChild(topLeftPanelHolder(&theme, &driver, &window, &island))
+	splitterAB.AddChild(topLeftPanelHolder(&theme, &driver, &island))
 	splitterAB.AddChild(panelHolder("B", &theme, &font))
 
 	splitterCD := theme.CreateSplitterLayout()
@@ -73,7 +63,7 @@ func appMain(driver gxui.Driver) {
 }
 
 // Create a PanelHolder with a 3 panels
-func topLeftPanelHolder(theme *gxui.Theme, driver *gxui.Driver, window *gxui.Window, island *rogue.Island) gxui.PanelHolder {
+func topLeftPanelHolder(theme *gxui.Theme, driver *gxui.Driver, island *rogue.Island) gxui.PanelHolder {
 
 	name := "top left"
 	label := func(text string) gxui.Label {
@@ -84,11 +74,13 @@ func topLeftPanelHolder(theme *gxui.Theme, driver *gxui.Driver, window *gxui.Win
 		return label
 	}
 
+	// tab 1: map
 	islandColImage := island.ColoredHeightMapAsImage()
 	img := (*theme).CreateImage()
 	texture := (*driver).CreateTexture(islandColImage, 1)
 	img.SetTexture(texture)
-	//(*window).AddChild(img)
+
+	// tab 2: spawn list XXXXX
 
 	holder := (*theme).CreatePanelHolder()
 	holder.AddPanel(img, "map")
