@@ -28,13 +28,12 @@ type Npc struct {
 	Name           string
 	Position       Point
 	CurrentlyDoing int
+	PlannedActions []Action
 
 	// the lower value, the less hungry npc is
-	Hunger int
-	Thirst int
-
-	// the higher value, the faster npc get hungry
-	HungerMod int
+	Hunger    int
+	Thirst    int
+	Tiredness int
 }
 
 type Dwarf struct {
@@ -55,15 +54,26 @@ func (n *Npc) hungerCap() int {
 	return n.Level * 10
 }
 
+func (n *Npc) tirednessCap() int {
+	// XXX
+	return n.Level * 10
+}
+
 func (n *Npc) Tick() {
 	n.Age++
 
 	n.Hunger++
+	n.Tiredness++
 
 	fmt.Println("[tick]", n.Name, n.Age)
 
+	if n.Tiredness > n.tirednessCap() { // XXX make sure we dont have one such thing planned
+		fmt.Println(n.Name, "is feeling tired")
+		n.PlannedActions = append(n.PlannedActions, Sleep{})
+	}
+
 	if n.Hunger > n.hungerCap() {
-		fmt.Println("HUNGRY!", n.Hunger, n.hungerCap())
+		// fmt.Println("HUNGRY!", n.Hunger, n.hungerCap())
 
 		// XXX enqueue action
 	}
@@ -72,4 +82,6 @@ func (n *Npc) Tick() {
 		// XXX shuffle action list, so behaviour is more random
 		// XXX if action in queue, make it "currently doing"
 	}
+
+	fmt.Println(n.PlannedActions)
 }
