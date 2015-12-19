@@ -3,17 +3,19 @@ package main
 import (
 	"image/png"
 	"os"
+	"time"
 
 	"github.com/martinlindhe/rogue"
 )
 
 func main() {
 
-	seed := int64(12345610)
+	seed := time.Now().Unix() // int64(12345610)
 
 	island := rogue.GenerateIsland(seed, 220, 160)
 
-	for i := 0; i < 1000; i++ {
+	island.FillWithCritters()
+	for i := 0; i < 10; i++ {
 		island.Tick()
 	}
 

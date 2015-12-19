@@ -27,6 +27,16 @@ func (i *Island) Tick() {
 	}
 }
 
+// FillWithCritters ...
+func (i *Island) FillWithCritters() {
+	var dwarf dwarf
+	dwarf.Defaults()
+	dwarf.Name = "Gimli"
+	dwarf.Position = Point{5, 5}
+
+	i.Add(&dwarf)
+}
+
 // GenerateIsland returns a new island
 func GenerateIsland(seed int64, width int, height int) Island {
 
@@ -36,16 +46,9 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	island.Height = height
 	island.Seed = seed
 
-	var dwarf dwarf
-	dwarf.Defaults()
-	dwarf.Name = "Gimli"
-	dwarf.Position = Point{5, 5}
-
-	island.Add(&dwarf)
-
-	particleLength := 6
-	outerBlur := 0.95
-	innerBlur := 0.70
+	particleLength := 8
+	innerBlur := 0.85
+	outerBlur := 0.60
 	roller := rollingparticle.New(seed, island.Width, island.Height, particleLength, innerBlur, outerBlur)
 
 	rollerImage := Slice2DAsImage(&roller, island.Width, island.Height)

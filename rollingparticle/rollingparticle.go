@@ -96,9 +96,11 @@ func blurEdges(tiles [][]byte, width int, height int, innerBlur float64, outerBl
 			// Multiply the outer edge and the second outer edge by some
 			// constants to ensure the world does not touch the edges.
 			if ix == 0 || ix == width-1 || iy == 0 || iy == height-1 {
-				tiles[iy][ix] = byte(float64(tiles[iy][ix]) * innerBlur)
-			} else if ix == 1 || ix == width-2 || iy == 1 || iy == height-2 {
 				tiles[iy][ix] = byte(float64(tiles[iy][ix]) * outerBlur)
+			} else if ix == 1 || ix == width-2 || iy == 1 || iy == height-2 {
+				tiles[iy][ix] = byte(float64(tiles[iy][ix]) * innerBlur)
+			} else if ix == 2 || ix == width-3 || iy == 2 || iy == height-3 {
+				tiles[iy][ix] = byte(float64(tiles[iy][ix]) * innerBlur)
 			}
 		}
 	}
