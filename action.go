@@ -11,7 +11,7 @@ type Action interface {
 type sleep struct {
 }
 
-func (a sleep) Perform(n *npc) bool {
+func (a *sleep) Perform(n *npc) bool {
 	fmt.Println(n.Name, "is sleeping XXX")
 	n.Tiredness -= 10
 	if n.Tiredness < 0 {
@@ -22,17 +22,20 @@ func (a sleep) Perform(n *npc) bool {
 }
 
 type lookForFood struct {
+	timeSpentLooking int
 }
 
-func (a lookForFood) Perform(n *npc) bool {
-	fmt.Println(n.Name, "is looking for food XXX")
+func (a *lookForFood) Perform(n *npc) bool {
+	fmt.Println(n.Name, "is looking for food", a.timeSpentLooking)
+
+	a.timeSpentLooking++
 	return false
 }
 
 type lookForWater struct {
 }
 
-func (a lookForWater) Perform(n *npc) bool {
+func (a *lookForWater) Perform(n *npc) bool {
 	fmt.Println(n.Name, "is looking for water XXX")
 	return false
 }

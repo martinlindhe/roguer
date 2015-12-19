@@ -93,18 +93,18 @@ func (n *npc) Tick() {
 
 	fmt.Println("[tick]", n.Name, n.Age)
 
-	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(sleep{}) {
+	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(&sleep{}) {
 		fmt.Println(n.Name, "is feeling tired")
-		n.PlannedActions = append(n.PlannedActions, sleep{})
+		n.PlannedActions = append(n.PlannedActions, &sleep{})
 	}
 
-	if n.Hunger > n.hungerCap() && !n.hasPlanned(lookForFood{}) {
+	if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {
 		fmt.Println(n.Name, "is feeling hungry")
-		n.PlannedActions = append(n.PlannedActions, lookForFood{})
+		n.PlannedActions = append(n.PlannedActions, &lookForFood{})
 	}
-	if n.Thirst > n.thirstCap() && !n.hasPlanned(lookForWater{}) {
+	if n.Thirst > n.thirstCap() && !n.hasPlanned(&lookForWater{}) {
 		fmt.Println(n.Name, "is feeling thirsty")
-		n.PlannedActions = append(n.PlannedActions, lookForWater{})
+		n.PlannedActions = append(n.PlannedActions, &lookForWater{})
 	}
 
 	// select one action to be doing next
@@ -119,6 +119,10 @@ func (n *npc) Tick() {
 		n.PlannedActions = n.PlannedActions[1:]
 
 		fmt.Println(n.Name, "decided to", reflect.TypeOf(n.CurrentAction))
+	}
+
+	if n.CurrentAction != nil {
+		n.CurrentAction.Perform(n)
 	}
 }
 
