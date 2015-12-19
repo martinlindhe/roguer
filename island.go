@@ -17,7 +17,13 @@ type Island struct {
 	Height    int
 	Seed      int64
 	HeightMap [][]byte
-	Spawns    []Npc
+	Spawns    []WorldObject
+}
+
+func (i *Island) Tick() {
+	for _, o := range i.Spawns {
+		o.Tick()
+	}
 }
 
 // GenerateIsland returns a new island
@@ -76,8 +82,8 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	return island
 }
 
-func (i *Island) Add(npc Npc) {
-	i.Spawns = append(i.Spawns, npc)
+func (i *Island) Add(o WorldObject) {
+	i.Spawns = append(i.Spawns, o)
 }
 
 func (i *Island) ColoredHeightMapAsImage() image.Image {

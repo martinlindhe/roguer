@@ -9,16 +9,18 @@ import (
 
 func main() {
 
-	seed := int64(123456)
+	seed := int64(12345610)
 
 	island := rogue.GenerateIsland(seed, 220, 160)
 
 	var dwarf rogue.Dwarf
 	dwarf.Name = "Gimli"
 
-	//	island.Add(dwarf)
+	island.Add(&dwarf)
 
-	//fmt.Println(island.Spawns)
+	for i := 0; i < 10; i++ {
+		island.Tick()
+	}
 
 	// debug output:
 	islandImage := island.HeightMapAsImage()
