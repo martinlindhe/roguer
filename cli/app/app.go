@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
@@ -68,23 +69,28 @@ func newIslandController(c *ace.C) {
 
 	newIsland := struct {
 		Name string `json:"name"`
-		Seed int64  `json:"seed"`
+		Seed string `json:"seed"` // XXX ace failed to decode int64 ... investigate more
 	}{}
 
 	c.ParseJSON(&newIsland)
 
-	fmt.Printf("Creating new island %s with seed %d\n", newIsland.Name, newIsland.Seed)
+	seedInt, err := strconv.ParseInt(newIsland.Seed, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Creating new island %s with seed %s\n", newIsland.Name, newIsland.Seed)
 
 	//seed := time.Now().Unix()
 
-	log.Printf("Generating island with seed %d ...\n", newIsland.Seed)
-	island := rogue.GenerateIsland(newIsland.Seed, 220, 140)
+	log.Printf("Generating island with seed %d ...\n", seedInt)
+	island := rogue.GenerateIsland(seedInt, 220, 140)
 	island.FillWithCritters()
 	log.Println("Done generating island")
 
 	islandColImage := island.ColoredHeightMapAsImage()
 
-	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", newIsland.Seed)
+	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", seedInt)
 	islandColImgFile, _ := os.Create(islandColImageName)
 	png.Encode(islandColImgFile, islandColImage)
 	/*

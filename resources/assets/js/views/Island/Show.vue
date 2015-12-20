@@ -52,8 +52,7 @@ export default {
     methods: {
         postCreate: function() {
 
-            this.$http.post('/island/new',{name: this.Name, seed: this.Seed}, {emulateJSON:true}).then(function (response) {
-                var data = response.data
+            this.$resource('/island/new').save({name: this.Name, seed: this.Seed}, function (data, status, request) {
                 console.log("island create ok");
                 console.log(data);
 
