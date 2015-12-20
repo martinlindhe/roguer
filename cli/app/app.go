@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/google/gxui"
 	"github.com/google/gxui/drivers/gl"
@@ -19,8 +20,10 @@ func appMain(driver gxui.Driver) {
 	//seed := time.Now().Unix()
 	seed := int64(1450549167)
 
+	log.Printf("Generating island with seed %d ...\n", seed)
 	island := rogue.GenerateIsland(seed, 220, 140)
 	island.FillWithCritters()
+	log.Println("Done generating island")
 	/*
 		islandColImgFile, _ := os.Create("island_col.png")
 		png.Encode(islandColImgFile, islandColImage)
@@ -74,6 +77,7 @@ func topLeftPanelHolder(theme *gxui.Theme, driver *gxui.Driver, island *rogue.Is
 
 	// tab 1: map
 	islandColImage := island.ColoredHeightMapAsImage()
+
 	img := (*theme).CreateImage()
 	texture := (*driver).CreateTexture(islandColImage, 1)
 	img.SetTexture(texture)
