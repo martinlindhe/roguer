@@ -6,11 +6,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
+	"github.com/plimble/ace"
 )
 
 func main() {
@@ -24,8 +23,8 @@ func main() {
 	r := getRouter()
 
 	// r.GET("/", views.Index())
-	r.GET("/", func(c *gin.Context) {
-		c.Header("Content-Type", "text/html; charset=utf-8")
+	r.GET("/", func(c *ace.C) {
+		//c.Header("Content-Type", "text/html; charset=utf-8")
 		c.String(200, views.Index())
 	})
 
@@ -40,13 +39,10 @@ func main() {
 	r.Run(listenAt)
 }
 
-func getRouter() *gin.Engine {
+func getRouter() *ace.Ace {
 
-	// Creates a router without any middleware by default
-	r := gin.New()
-
-	// Global middleware
-	r.Use(gin.Logger())
+	// ace with Logger, Recovery
+	r := ace.Default()
 
 	//	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
@@ -64,41 +60,31 @@ func getRouter() *gin.Engine {
 }
 
 // curl -v "http://localhost:8080/ping"
-func pingController(c *gin.Context) {
-	c.JSON(200, gin.H{"pong": "now"})
+func pingController(c *ace.C) {
+	c.JSON(200, map[string]string{"pong": "now"})
 }
 
-// Binding from JSON
-type NewIsland struct {
-	Name string `json:"name" binding:"required"`
-	Seed string `json:"seed" binding:"required"`
-}
+func newIslandController(c *ace.C) {
 
-func newIslandController(c *gin.Context) {
+	newIsland := struct {
+		Name string `json:"name"`
+		Seed int64  `json:"seed"`
+	}{}
 
-	var jsonFormat NewIsland
-	if c.BindJSON(&jsonFormat) != nil {
-		fmt.Println("error decoding json")
-		return
-	}
+	c.ParseJSON(&newIsland)
 
-	seed, err := strconv.ParseInt(jsonFormat.Seed, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("Creating new island %s with seed %s\n", jsonFormat.Name, jsonFormat.Seed)
+	fmt.Printf("Creating new island %s with seed %d\n", newIsland.Name, newIsland.Seed)
 
 	//seed := time.Now().Unix()
 
-	log.Printf("Generating island with seed %d ...\n", seed)
-	island := rogue.GenerateIsland(seed, 220, 140)
+	log.Printf("Generating island with seed %d ...\n", newIsland.Seed)
+	island := rogue.GenerateIsland(newIsland.Seed, 220, 140)
 	island.FillWithCritters()
 	log.Println("Done generating island")
 
 	islandColImage := island.ColoredHeightMapAsImage()
 
-	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", seed)
+	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", newIsland.Seed)
 	islandColImgFile, _ := os.Create(islandColImageName)
 	png.Encode(islandColImgFile, islandColImage)
 	/*

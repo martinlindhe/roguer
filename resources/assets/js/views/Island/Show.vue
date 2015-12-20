@@ -40,7 +40,7 @@ export default {
     data: function() {
 
         return {
-            Seed: null,
+            Seed: 666,
             Name: "Untitled Island",
             HeightMap: {},
             Width: 0,
@@ -52,7 +52,8 @@ export default {
     methods: {
         postCreate: function() {
 
-            this.$resource('/island/new').save({name: this.Name, seed: this.Seed}, function (data, status, request) {
+            this.$http.post('/island/new',{name: this.Name, seed: this.Seed}, {emulateJSON:true}).then(function (response) {
+                var data = response.data
                 console.log("island create ok");
                 console.log(data);
 
@@ -65,6 +66,10 @@ export default {
                 this.$set('HeightMap', data.HeightMap);
                 this.$set('islandMapSrc', '/img/islands/' + data.Seed + '.png')
                 this.$set('Created', true);
+            }, function (response) {
+                // handle error
+                console.log("island create error")
+                console.log(response)
             });
 
         }

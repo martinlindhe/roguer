@@ -11,7 +11,6 @@ import VueValidator from 'vue-validator';
 
 Vue.config.debug = true;
 
-
 // XXX move to function file
 Array.prototype.contains = function(obj) {
     var i = this.length;
@@ -38,7 +37,9 @@ Vue.use(VueInternationalization, {
 });
 
 Vue.use(VueAsyncData);
+
 Vue.use(VueResource);
+
 Vue.use(VueRouter);
 Vue.use(VueValidator);
 

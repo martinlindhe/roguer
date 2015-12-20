@@ -17808,7 +17808,9 @@ _vue2['default'].use(_vueI18n2['default'], {
 });
 
 _vue2['default'].use(_vueAsyncData2['default']);
+
 _vue2['default'].use(_vueResource2['default']);
+
 _vue2['default'].use(_vueRouter2['default']);
 _vue2['default'].use(_vueValidator2['default']);
 
@@ -18486,7 +18488,7 @@ exports["default"] = {
     data: function data() {
 
         return {
-            Seed: null,
+            Seed: 666,
             Name: "Untitled Island",
             HeightMap: {},
             Width: 0,
@@ -18498,7 +18500,8 @@ exports["default"] = {
     methods: {
         postCreate: function postCreate() {
 
-            this.$resource('/island/new').save({ name: this.Name, seed: this.Seed }, function (data, status, request) {
+            this.$http.post('/island/new', { name: this.Name, seed: this.Seed }, { emulateJSON: true }).then(function (response) {
+                var data = response.data;
                 console.log("island create ok");
                 console.log(data);
 
@@ -18511,6 +18514,10 @@ exports["default"] = {
                 this.$set('HeightMap', data.HeightMap);
                 this.$set('islandMapSrc', '/img/islands/' + data.Seed + '.png');
                 this.$set('Created', true);
+            }, function (response) {
+                // handle error
+                console.log("island create error");
+                console.log(response);
             });
         }
     }
