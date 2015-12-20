@@ -24,11 +24,6 @@ export default {
             locale: '', // "sv_SE"
             token: '', // jwt-auth
             _refreshTokenTimer: null,
-            // all accessible shops
-            shops: [],
-
-            // currently selected shop
-            shop: {},
 
             locales: [
                 {
@@ -53,8 +48,6 @@ export default {
         this.email = window.localStorage.getItem('_email');
         this.locale = window.localStorage.getItem('_locale');
         this.token = window.sessionStorage.getItem('_token');
-        this.shops = JSON.parse(window.localStorage.getItem('_shops'));
-        this.shop = JSON.parse(window.localStorage.getItem('_shop'));
 
         if (!Boolean(this.locale)) {
             this.locale = this.defaultLocale();

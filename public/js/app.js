@@ -17534,11 +17534,6 @@ exports['default'] = {
             locale: '', // "sv_SE"
             token: '', // jwt-auth
             _refreshTokenTimer: null,
-            // all accessible shops
-            shops: [],
-
-            // currently selected shop
-            shop: {},
 
             locales: [{
                 code: 'sv_SE',
@@ -17560,8 +17555,6 @@ exports['default'] = {
         this.email = window.localStorage.getItem('_email');
         this.locale = window.localStorage.getItem('_locale');
         this.token = window.sessionStorage.getItem('_token');
-        this.shops = JSON.parse(window.localStorage.getItem('_shops'));
-        this.shop = JSON.parse(window.localStorage.getItem('_shop'));
 
         if (!Boolean(this.locale)) {
             this.locale = this.defaultLocale();
@@ -17787,9 +17780,9 @@ var _viewsShopProductsVue = require('./views/Shop/Products.vue');
 
 var _viewsShopProductsVue2 = _interopRequireDefault(_viewsShopProductsVue);
 
-var _viewsIslandNewVue = require('./views/Island/New.vue');
+var _viewsIslandShowVue = require('./views/Island/Show.vue');
 
-var _viewsIslandNewVue2 = _interopRequireDefault(_viewsIslandNewVue);
+var _viewsIslandShowVue2 = _interopRequireDefault(_viewsIslandShowVue);
 
 _vue2['default'].config.debug = true;
 
@@ -17835,7 +17828,7 @@ router.map({
     '/contact': { component: _viewsCorporateContactVue2['default'] },
     '/shop/show/:id': { component: _viewsShopShowVue2['default'] },
     '/shop/products': { component: _viewsShopProductsVue2['default'] },
-    '/island/new': { component: _viewsIslandNewVue2['default'] }
+    '/island': { component: _viewsIslandShowVue2['default'] }
 });
 
 // Redirect to the home route if any routes are unmatched
@@ -17845,7 +17838,7 @@ router.redirect({
 
 router.start(_AppVue2['default'], '#app');
 
-},{"./App.vue":19,"./moment-locales.js":32,"./views/Auth/Login.vue":33,"./views/Auth/Register.vue":34,"./views/Corporate/Contact.vue":35,"./views/Island/New.vue":36,"./views/Main.vue":37,"./views/Shop/Products.vue":38,"./views/Shop/Show.vue":39,"./vue-i18n-locales.generated.js":40,"moment":2,"vue":17,"vue-async-data":4,"vue-i18n":6,"vue-resource":8,"vue-router":15,"vue-validator":16}],22:[function(require,module,exports){
+},{"./App.vue":19,"./moment-locales.js":32,"./views/Auth/Login.vue":33,"./views/Auth/Register.vue":34,"./views/Corporate/Contact.vue":35,"./views/Island/Show.vue":36,"./views/Main.vue":37,"./views/Shop/Products.vue":38,"./views/Shop/Show.vue":39,"./vue-i18n-locales.generated.js":40,"moment":2,"vue":17,"vue-async-data":4,"vue-i18n":6,"vue-resource":8,"vue-router":15,"vue-validator":16}],22:[function(require,module,exports){
 var __vueify_style__ = require("vueify-insert-css").insert("\n.fade-transition {\n    -webkit-transition: opacity 0.3s ease;\n    transition: opacity 0.3s ease;\n}\n.fade-enter, .fade-leave {\n    height: 0;\n    opacity: 0;\n}\n.alert.top {\n    position: fixed;\n    top: 30px;\n    margin: 0 auto;\n    left: 0;\n    right: 0;\n    z-index: 2;\n}\n.alert.top-right {\n    position: fixed;\n    top: 30px;\n    right: 50px;\n    z-index: 2;\n}\n")
 "use strict";
 
@@ -18209,7 +18202,7 @@ exports['default'] = {
     }
 };
 module.exports = exports['default'];
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n    <nav class=\"navbar navbar-custom navbar-fixed-top\">\n        <div class=\"container-fluid\">\n\n            <bootstrap-dropdown-collapse>\n                <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse-top\">\n                    <span class=\"sr-only\">Toggle navigation</span>\n                    <span class=\"icon-bar\"></span>\n                    <span class=\"icon-bar\"></span>\n                    <span class=\"icon-bar\"></span>\n                </button>\n                <a class=\"navbar-brand\" v-link=\"{ path: '/' }\">brand name</a>\n            </bootstrap-dropdown-collapse>\n\n            <div class=\"collapse navbar-collapse\" id=\"navbar-collapse-top\">\n                <ul class=\"nav navbar-nav navbar-right\">\n\n                    <bootstrap-dropdown-toggle v-if=\"$root.token &amp;&amp; $root.shop\">\n                        <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n                            <i class=\"fa fa-home\"></i> {{ $root.shop.name }}\n                            <span class=\"caret\"></span>\n                        </a>\n\n                        <ul class=\"dropdown-menu\" role=\"menu\">\n                            <li><a v-link=\"{ path: '/shop/show/' + $root.shop.id }\">{{ $t('nav.overview') }}</a></li>\n                            <li class=\"divider\"></li>\n                            <li><h4>{{ $t('nav.settings') }}</h4></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/overview\">{{ $t('nav.overview') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/name/overview\">{{ $t('nav.name') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/order/overview\">{{ $t('nav.orders') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/company/overview\">{{ $t('nav.company') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/bank/overview\">{{ $t('nav.bank_accounts') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/contact/overview\">{{ $t('nav.contact') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/theme/overview\">{{ $t('nav.theme') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/text/overview\">{{ $t('nav.text') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/language/overview\">{{ $t('nav.language') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/product/overview\">{{ $t('nav.product') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/plugin/overview\">{{ $t('nav.plugins') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/logo/overview\">{{ $t('nav.logo') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/background/overview\">{{ $t('nav.backgrounds') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/campaign/overview\">{{ $t('nav.campaigns') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/extra/overview\">{{ $t('nav.extras') }}</a></li>\n\n                            <!--if (shop.hasExtra('message') -->\n                            <li role=\"presentation\"><a href=\"/shop/setting/extra/message/overview\">{{ $t('nav.messages') }}</a></li>\n\n                            <!-- if (shop.hasExtra('faq')) -->\n                            <li role=\"presentation\"><a href=\"/shop/setting/extra/faq/overview\">{{ $t('nav.faq') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/user/overview\">{{ $t('nav.users') }} <span class=\"badge\">X</span></a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/host/overview\">{{ $t('nav.hosts') }}</a></li>\n                        </ul>\n                    </bootstrap-dropdown-toggle>\n\n\n                    <bootstrap-dropdown-toggle v-show=\"$root.token\">\n                        <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n                            <i class=\"fa fa-shopping-cart\"></i> {{ $t('nav.shops') }} <span class=\"caret\"></span>\n                        </a>\n\n                        <ul class=\"dropdown-menu\" role=\"menu\">\n\n                            <li v-for=\"shop in $root.shops\">\n                                <a v-link=\"{ path: '/shop/show/' + shop.id }\">\n                                    <i class=\"fa fa-arrow-right fa-fw\"></i>&nbsp; {{ shop.name }}\n                                </a>\n                            </li>\n\n                            <li class=\"divider\"></li>\n                            <li><a href=\"/shop/create\"><i class=\"fa fa-plus fa-fw\"></i>&nbsp; {{ $t('nav.new_shop') }}</a></li>\n                        </ul>\n                    </bootstrap-dropdown-toggle>\n\n                    <bootstrap-dropdown-toggle v-show=\"$root.token\">\n                        <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n                            {{ $root.username }} <span class=\"caret\"></span>\n                        </a>\n\n                        <ul class=\"dropdown-menu\" role=\"menu\">\n                            <li><a href=\"/user/setting/overview\"><i class=\"fa fa-cogs fa-fw\"></i>&nbsp; {{ $t('nav.settings') }}</a></li>\n                            <li><a href=\"/user/account/overview\"><i class=\"fa fa-user fa-fw\"></i>&nbsp; {{ $t('nav.account') }}</a></li>\n                            <li><a href=\"/user/subscription/overview\"><i class=\"fa fa-money fa-fw\"></i>&nbsp; {{ $t('nav.subscription') }}</a></li>\n                            <li class=\"divider\"></li>\n                            <li><a href=\"/server/setting/overview\"><i class=\"fa fa-server fa-fw\"></i>&nbsp; {{ $t('nav.server') }}</a></li>\n                            <li class=\"divider\"></li>\n                            <li><a href=\"#\" @click=\"$root.logout\"><i class=\"fa fa-sign-out fa-fw\"></i>&nbsp; {{ $t('nav.sign_out') }}</a></li>\n                        </ul>\n                    </bootstrap-dropdown-toggle>\n\n                    <li>\n                        <a v-link=\"{ path: '/island/new' }\"><i class=\"fa fa-plus fa-fw\"></i>{{ $t('island.new') }}</a>\n                    </li>\n\n                    <li v-show=\"!$root.token\">\n                        <a v-link=\"{ path: '/auth/register' }\"><i class=\"fa fa-plus fa-fw\"></i>{{ $t('user.new') }}</a>\n                    </li>\n\n                    <li v-show=\"!$root.token\">\n                        <a v-link=\"{ path: '/auth/login' }\"><i class=\"fa fa-sign-in fa-fw\"></i>{{ $t('nav.sign_in') }}</a>\n                    </li>\n\n                </ul>\n            </div>\n        </div>\n    </nav>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n    <nav class=\"navbar navbar-custom navbar-fixed-top\">\n        <div class=\"container-fluid\">\n\n            <bootstrap-dropdown-collapse>\n                <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#navbar-collapse-top\">\n                    <span class=\"sr-only\">Toggle navigation</span>\n                    <span class=\"icon-bar\"></span>\n                    <span class=\"icon-bar\"></span>\n                    <span class=\"icon-bar\"></span>\n                </button>\n                <a class=\"navbar-brand\" v-link=\"{ path: '/' }\">brand name</a>\n            </bootstrap-dropdown-collapse>\n\n            <div class=\"collapse navbar-collapse\" id=\"navbar-collapse-top\">\n                <ul class=\"nav navbar-nav navbar-right\">\n\n                    <bootstrap-dropdown-toggle v-if=\"$root.token &amp;&amp; $root.shop\">\n                        <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n                            <i class=\"fa fa-home\"></i> {{ $root.shop.name }}\n                            <span class=\"caret\"></span>\n                        </a>\n\n                        <ul class=\"dropdown-menu\" role=\"menu\">\n                            <li><a v-link=\"{ path: '/shop/show/' + $root.shop.id }\">{{ $t('nav.overview') }}</a></li>\n                            <li class=\"divider\"></li>\n                            <li><h4>{{ $t('nav.settings') }}</h4></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/overview\">{{ $t('nav.overview') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/name/overview\">{{ $t('nav.name') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/order/overview\">{{ $t('nav.orders') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/company/overview\">{{ $t('nav.company') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/bank/overview\">{{ $t('nav.bank_accounts') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/contact/overview\">{{ $t('nav.contact') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/theme/overview\">{{ $t('nav.theme') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/text/overview\">{{ $t('nav.text') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/language/overview\">{{ $t('nav.language') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/product/overview\">{{ $t('nav.product') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/plugin/overview\">{{ $t('nav.plugins') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/logo/overview\">{{ $t('nav.logo') }}</a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/background/overview\">{{ $t('nav.backgrounds') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/campaign/overview\">{{ $t('nav.campaigns') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/extra/overview\">{{ $t('nav.extras') }}</a></li>\n\n                            <!--if (shop.hasExtra('message') -->\n                            <li role=\"presentation\"><a href=\"/shop/setting/extra/message/overview\">{{ $t('nav.messages') }}</a></li>\n\n                            <!-- if (shop.hasExtra('faq')) -->\n                            <li role=\"presentation\"><a href=\"/shop/setting/extra/faq/overview\">{{ $t('nav.faq') }}</a></li>\n\n                            <li role=\"presentation\"><a href=\"/shop/setting/user/overview\">{{ $t('nav.users') }} <span class=\"badge\">X</span></a></li>\n                            <li role=\"presentation\"><a href=\"/shop/setting/host/overview\">{{ $t('nav.hosts') }}</a></li>\n                        </ul>\n                    </bootstrap-dropdown-toggle>\n\n\n                    <bootstrap-dropdown-toggle v-show=\"$root.token\">\n                        <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n                            <i class=\"fa fa-shopping-cart\"></i> {{ $t('nav.shops') }} <span class=\"caret\"></span>\n                        </a>\n\n                        <ul class=\"dropdown-menu\" role=\"menu\">\n\n                            <li v-for=\"shop in $root.shops\">\n                                <a v-link=\"{ path: '/shop/show/' + shop.id }\">\n                                    <i class=\"fa fa-arrow-right fa-fw\"></i>&nbsp; {{ shop.name }}\n                                </a>\n                            </li>\n\n                            <li class=\"divider\"></li>\n                            <li><a href=\"/shop/create\"><i class=\"fa fa-plus fa-fw\"></i>&nbsp; {{ $t('nav.new_shop') }}</a></li>\n                        </ul>\n                    </bootstrap-dropdown-toggle>\n\n                    <bootstrap-dropdown-toggle v-show=\"$root.token\">\n                        <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n                            {{ $root.username }} <span class=\"caret\"></span>\n                        </a>\n\n                        <ul class=\"dropdown-menu\" role=\"menu\">\n                            <li><a href=\"/user/setting/overview\"><i class=\"fa fa-cogs fa-fw\"></i>&nbsp; {{ $t('nav.settings') }}</a></li>\n                            <li><a href=\"/user/account/overview\"><i class=\"fa fa-user fa-fw\"></i>&nbsp; {{ $t('nav.account') }}</a></li>\n                            <li><a href=\"/user/subscription/overview\"><i class=\"fa fa-money fa-fw\"></i>&nbsp; {{ $t('nav.subscription') }}</a></li>\n                            <li class=\"divider\"></li>\n                            <li><a href=\"/server/setting/overview\"><i class=\"fa fa-server fa-fw\"></i>&nbsp; {{ $t('nav.server') }}</a></li>\n                            <li class=\"divider\"></li>\n                            <li><a href=\"#\" @click=\"$root.logout\"><i class=\"fa fa-sign-out fa-fw\"></i>&nbsp; {{ $t('nav.sign_out') }}</a></li>\n                        </ul>\n                    </bootstrap-dropdown-toggle>\n\n                    <li>\n                        <a v-link=\"{ path: '/island' }\"><i class=\"fa fa-plus fa-fw\"></i>{{ $t('island.new') }}</a>\n                    </li>\n\n                    <li v-show=\"!$root.token\">\n                        <a v-link=\"{ path: '/auth/register' }\"><i class=\"fa fa-plus fa-fw\"></i>{{ $t('user.new') }}</a>\n                    </li>\n\n                    <li v-show=\"!$root.token\">\n                        <a v-link=\"{ path: '/auth/login' }\"><i class=\"fa fa-sign-in fa-fw\"></i>{{ $t('nav.sign_in') }}</a>\n                    </li>\n\n                </ul>\n            </div>\n        </div>\n    </nav>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -18479,9 +18472,9 @@ if (module.hot) {(function () {  module.hot.accept()
   }
 })()}
 },{"vue":17,"vue-hot-reload-api":5}],36:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+var _interopRequireDefault = require("babel-runtime/helpers/interop-require-default")["default"];
 
 exports.__esModule = true;
 
@@ -18489,34 +18482,46 @@ var _vue = require('vue');
 
 var _vue2 = _interopRequireDefault(_vue);
 
-exports['default'] = {
+exports["default"] = {
     data: function data() {
+
         return {
-            name: 'Untitled Island',
-            seed: "12345"
+            Seed: null,
+            Name: "Untitled Island",
+            HeightMap: {},
+            Width: 0,
+            Height: 0,
+            Created: false,
+            islandMapSrc: ""
         };
     },
     methods: {
         postCreate: function postCreate() {
-            // XXX submit, show ajax. display island when done
 
-            this.$http.post('/island/new', { name: this.name, seed: this.seed }).then(function (response) {
+            this.$resource('/island/new').save({ name: this.Name, seed: this.Seed }, function (data, status, request) {
                 console.log("island create ok");
-            }, function (response) {
-                // handle error
-                console.log("error: " + data.status);
-                console.log(request);
+                console.log(data);
+
+                window.localStorage.setItem('_island', JSON.stringify(data));
+
+                this.$set('Seed', data.Seed);
+                this.$set('Name', data.Name);
+                this.$set('Width', data.Width);
+                this.$set('Height', data.Height);
+                this.$set('HeightMap', data.HeightMap);
+                this.$set('islandMapSrc', '/img/islands/' + data.Seed + '.png');
+                this.$set('Created', true);
             });
         }
     }
 };
-module.exports = exports['default'];
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\n    <form @submit.prevent=\"postCreate\" class=\"form-horizontal\">\n\n        <div class=\"form-group\">\n            <div class=\"col-md-5 col-md-offset-4\">\n                <input v-model=\"name\" class=\"form-control\" placeholder=\"{{ $t('island.name') }}\">\n            </div>\n        </div>\n\n        <div class=\"form-group\">\n            <div class=\"col-md-5 col-md-offset-4\">\n                <input v-model=\"seed\" class=\"form-control\" placeholder=\"{{ $t('island.seed') }}\">\n            </div>\n        </div>\n\n        <div class=\"form-group\">\n            <div class=\"col-md-5 col-md-offset-4\">\n                <button v-show=\"name &amp;&amp; seed\" class=\"btn btn-primary form-control\">{{ $t('nav.create') }}</button>\n            </div>\n        </div>\n\n    </form>\n\n"
+module.exports = exports["default"];
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n\n    <div v-if=\"!Created\">\n        <form @submit.prevent=\"postCreate\" class=\"form-horizontal\">\n\n            <div class=\"form-group\">\n                <div class=\"col-md-5 col-md-offset-4\">\n                    <input v-model=\"Name\" class=\"form-control\" placeholder=\"{{ $t('island.name') }}\">\n                </div>\n            </div>\n\n            <div class=\"form-group\">\n                <div class=\"col-md-5 col-md-offset-4\">\n                    <input v-model=\"Seed\" class=\"form-control\" placeholder=\"{{ $t('island.seed') }}\">\n                </div>\n            </div>\n\n            <div class=\"form-group\">\n                <div class=\"col-md-5 col-md-offset-4\">\n                    <button v-show=\"Name &amp;&amp; Seed\" class=\"btn btn-primary form-control\">{{ $t('nav.create') }}</button>\n                </div>\n            </div>\n        </form>\n    </div>\n\n    <div v-if=\"Created\">\n\n        <div>\n            <img :src=\"islandMapSrc\">\n        </div>\n\n    </div>\n\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
-  var id = "/Users/m/dev/go/src/github.com/martinlindhe/rogue/resources/assets/js/views/Island/New.vue"
+  var id = "/Users/m/dev/go/src/github.com/martinlindhe/rogue/resources/assets/js/views/Island/Show.vue"
   if (!module.hot.data) {
     hotAPI.createRecord(id, module.exports)
   } else {

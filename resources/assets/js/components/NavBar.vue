@@ -93,7 +93,7 @@
                     </bootstrap-dropdown-toggle>
 
                     <li>
-                        <a v-link="{ path: '/island/new' }"><i class="fa fa-plus fa-fw"></i>{{ $t('island.new') }}</a>
+                        <a v-link="{ path: '/island' }"><i class="fa fa-plus fa-fw"></i>{{ $t('island.new') }}</a>
                     </li>
 
                     <li v-show="!$root.token">

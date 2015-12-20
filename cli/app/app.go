@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"image/png"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -13,16 +15,6 @@ import (
 
 func main() {
 
-	//	islandColImage := island.ColoredHeightMapAsImage()
-
-	/*
-		islandColImgFile, _ := os.Create("island_col.png")
-		png.Encode(islandColImgFile, islandColImage)
-
-		islandImage := island.HeightMapAsImage()
-		islandImgFile, _ := os.Create("island.png")
-		png.Encode(islandImgFile, islandImage)
-	*/
 	/*
 		for i := 0; i < 10; i++ {
 			island.Tick()
@@ -65,7 +57,7 @@ func getRouter() *gin.Engine {
 	r.Static("/js", "./public/js")
 	r.Static("/css", "./public/css")
 	r.Static("/fonts", "./public/fonts")
-	//r.Static("/img", "./public/img")
+	r.Static("/img", "./public/img")
 	//r.Static("/flags", "./public/flags")
 	//r.LoadHTMLFiles("./public/index.html")
 	return r
@@ -104,7 +96,16 @@ func newIslandController(c *gin.Context) {
 	island.FillWithCritters()
 	log.Println("Done generating island")
 
-	// XXX return as json
+	islandColImage := island.ColoredHeightMapAsImage()
 
+	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", seed)
+	islandColImgFile, _ := os.Create(islandColImageName)
+	png.Encode(islandColImgFile, islandColImage)
+	/*
+		islandImage := island.HeightMapAsImage()
+		islandImgFile, _ := os.Create("island.png")
+		png.Encode(islandImgFile, islandImage)
+	*/
+	// XXX return as json
 	c.JSON(http.StatusOK, island)
 }

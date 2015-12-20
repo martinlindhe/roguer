@@ -63,7 +63,8 @@ import AuthRegisterView from './views/Auth/Register.vue';
 import ContactView from './views/Corporate/Contact.vue';
 import ShopShowView from './views/Shop/Show.vue';
 import ShopProductsView from './views/Shop/Products.vue';
-import NewIslandView from './views/Island/New.vue';
+import IslandView from './views/Island/Show.vue';
+
 
 router.map({
     '/': { component: MainView },
@@ -72,7 +73,7 @@ router.map({
     '/contact': { component: ContactView },
     '/shop/show/:id': { component: ShopShowView },
     '/shop/products': { component: ShopProductsView },
-    '/island/new': { component: NewIslandView },
+    '/island': { component: IslandView },
 });
 
 // Redirect to the home route if any routes are unmatched
