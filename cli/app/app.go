@@ -3,17 +3,34 @@ package main
 import (
 	"fmt"
 	"image/png"
-	"log"
 	"net/http"
 	"os"
-	"strconv"
 
+	log "github.com/cihub/seelog"
 	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
 	"github.com/plimble/ace"
 )
 
 func main() {
+
+	logConfig := `
+<seelog type="sync">
+	<outputs>
+		<console formatid="colored"/>
+	</outputs>
+	<formats>
+		<format id="colored" format="%Time %RelFile:%Func %EscM(40)%Level%EscM(49) %Msg%n"/>
+	</formats>
+</seelog>`
+
+	logger, _ := log.LoggerFromConfigAsBytes([]byte(logConfig))
+	log.ReplaceLogger(logger)
+	defer log.Flush()
+
+	log.Info("rogue started")
+
+	log.Debug("debug msg")
 
 	/*
 		for i := 0; i < 10; i++ {
@@ -35,7 +52,7 @@ func main() {
 	appPort := 3322
 	listenAt := fmt.Sprintf(":%d", appPort)
 
-	log.Printf("Starting http server on %s\n", listenAt)
+	log.Infof("Starting http server on %s\n", listenAt)
 
 	r.Run(listenAt)
 }
@@ -69,28 +86,19 @@ func newIslandController(c *ace.C) {
 
 	newIsland := struct {
 		Name string `json:"name"`
-		Seed string `json:"seed"` // XXX ace failed to decode int64 ... investigate more
+		Seed int64  `json:"seed"`
 	}{}
 
 	c.ParseJSON(&newIsland)
 
-	seedInt, err := strconv.ParseInt(newIsland.Seed, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("Creating new island %s with seed %s\n", newIsland.Name, newIsland.Seed)
-
-	//seed := time.Now().Unix()
-
-	log.Printf("Generating island with seed %d ...\n", seedInt)
-	island := rogue.GenerateIsland(seedInt, 220, 140)
+	log.Infof("Generating island %s with seed %d ...\n", newIsland.Name, newIsland.Seed)
+	island := rogue.GenerateIsland(newIsland.Seed, 220, 140)
 	island.FillWithCritters()
-	log.Println("Done generating island")
+	log.Info("Done generating island")
 
+	// store island to disk as png
 	islandColImage := island.ColoredHeightMapAsImage()
-
-	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", seedInt)
+	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", newIsland.Seed)
 	islandColImgFile, _ := os.Create(islandColImageName)
 	png.Encode(islandColImgFile, islandColImage)
 	/*

@@ -18500,7 +18500,7 @@ exports["default"] = {
     methods: {
         postCreate: function postCreate() {
 
-            this.$resource('/island/new').save({ name: this.Name, seed: this.Seed }, function (data, status, request) {
+            this.$resource('/island/new').save({ name: this.Name, seed: parseInt(this.Seed, 10) }, function (data, status, request) {
                 console.log("island create ok");
                 console.log(data);
 
