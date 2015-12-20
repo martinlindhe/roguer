@@ -15,6 +15,16 @@ func make2DByteSlice(width int, height int) [][]byte {
 	return m
 }
 
+// returns a 2d slice in [height][width]
+func make2DUintSlice(width int, height int) [][]uint {
+	// allocate 2d slice
+	m := make([][]uint, height)
+	for i := range m {
+		m[i] = make([]uint, width)
+	}
+	return m
+}
+
 func Slice2DAsImage(data *[][]byte, width int, height int) image.Image {
 	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
 

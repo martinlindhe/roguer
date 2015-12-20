@@ -2,8 +2,6 @@
     <div>
         <nav-bar></nav-bar>
 
-        <cookie-info></cookie-info>
-
         <router-view></router-view>
 
         <corporate-footer></corporate-footer>
@@ -39,7 +37,7 @@ export default {
                 },
                 {
                     code: 'en_US',
-                    name: 'American English'
+                    name: 'English'
                 }
             ]
         }

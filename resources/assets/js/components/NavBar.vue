@@ -92,6 +92,10 @@
                         </ul>
                     </bootstrap-dropdown-toggle>
 
+                    <li>
+                        <a v-link="{ path: '/island/new' }"><i class="fa fa-plus fa-fw"></i>{{ $t('island.new') }}</a>
+                    </li>
+
                     <li v-show="!$root.token">
                         <a v-link="{ path: '/auth/register' }"><i class="fa fa-plus fa-fw"></i>{{ $t('user.new') }}</a>
                     </li>

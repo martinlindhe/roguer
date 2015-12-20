@@ -3,21 +3,15 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/martinlindhe/ravel/views"
 	"github.com/martinlindhe/rogue"
+	"github.com/martinlindhe/rogue/views"
 )
 
 func main() {
-
-	//seed := time.Now().Unix()
-	seed := int64(1450549167)
-
-	log.Printf("Generating island with seed %d ...\n", seed)
-	island := rogue.GenerateIsland(seed, 220, 140)
-	island.FillWithCritters()
-	log.Println("Done generating island")
 
 	//	islandColImage := island.ColoredHeightMapAsImage()
 
@@ -37,7 +31,7 @@ func main() {
 
 	r := getRouter()
 
-	// r.GET("/", views.Index()) // XXX: cant get this form to work with gorazor views
+	// r.GET("/", views.Index())
 	r.GET("/", func(c *gin.Context) {
 		c.Header("Content-Type", "text/html; charset=utf-8")
 		c.String(200, views.Index())
@@ -66,28 +60,51 @@ func getRouter() *gin.Engine {
 
 	r.GET("/ping", pingController)
 
+	r.POST("/island/new", newIslandController)
+
 	r.Static("/js", "./public/js")
 	r.Static("/css", "./public/css")
-	r.Static("/img", "./public/img")
 	r.Static("/fonts", "./public/fonts")
-	r.Static("/flags", "./public/flags")
+	//r.Static("/img", "./public/img")
+	//r.Static("/flags", "./public/flags")
 	//r.LoadHTMLFiles("./public/index.html")
-	/*
-		// non authenticated api endpoints:
-		r.POST("/api/auth/register", apiAuthRegister)
-		r.POST("/api/auth/login", apiAuthLogin)
-		//Route::post('auth/register', 'Api\Auth\AuthController@postRegister');
-		//Route::post('auth/login', 'Api\Auth\AuthController@postLogin');
-
-		// authenticated api endpoints: XXX check jwt token
-		r.GET("/api/auth/logout", apiAuthLogout)
-		//Route::get('auth/refresh-token', ['middleware' => 'jwt.refresh', 'uses' => 'Api\Auth\AuthController@refreshToken']);
-		//Route::get('auth/logout', 'Api\Auth\AuthController@getLogout');
-	*/
 	return r
 }
 
 // curl -v "http://localhost:8080/ping"
 func pingController(c *gin.Context) {
 	c.JSON(200, gin.H{"pong": "now"})
+}
+
+// Binding from JSON
+type NewIsland struct {
+	Name string `json:"name" binding:"required"`
+	Seed string `json:"seed" binding:"required"`
+}
+
+func newIslandController(c *gin.Context) {
+
+	var jsonFormat NewIsland
+	if c.BindJSON(&jsonFormat) != nil {
+		fmt.Println("error decoding json")
+		return
+	}
+
+	seed, err := strconv.ParseInt(jsonFormat.Seed, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Creating new island %s with seed %s\n", jsonFormat.Name, jsonFormat.Seed)
+
+	//seed := time.Now().Unix()
+
+	log.Printf("Generating island with seed %d ...\n", seed)
+	island := rogue.GenerateIsland(seed, 220, 140)
+	island.FillWithCritters()
+	log.Println("Done generating island")
+
+	// XXX return as json
+
+	c.JSON(http.StatusOK, island)
 }

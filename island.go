@@ -3,9 +3,7 @@ package rogue
 import (
 	"image"
 	"image/color"
-	"image/png"
 	"math"
-	"os"
 
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
@@ -16,7 +14,7 @@ type Island struct {
 	Width     int
 	Height    int
 	Seed      int64
-	HeightMap [][]byte
+	HeightMap [][]uint
 	Spawns    []worldObject
 }
 
@@ -40,22 +38,18 @@ func (i *Island) FillWithCritters() {
 // GenerateIsland returns a new island
 func GenerateIsland(seed int64, width int, height int) Island {
 
-	var island Island
-
-	island.Width = width
-	island.Height = height
-	island.Seed = seed
-
 	particleLength := 8
 	innerBlur := 0.85
 	outerBlur := 0.60
-	roller := rollingparticle.New(seed, island.Width, island.Height, particleLength, innerBlur, outerBlur)
+	roller := rollingparticle.New(seed, width, height, particleLength, innerBlur, outerBlur)
 
-	rollerImage := Slice2DAsImage(&roller, island.Width, island.Height)
-	rollerImgFile, _ := os.Create("roller.png")
-	png.Encode(rollerImgFile, rollerImage)
+	/*
+		rollerImage := Slice2DAsImage(&roller, width, height)
+		rollerImgFile, _ := os.Create("roller.png")
+		png.Encode(rollerImgFile, rollerImage)
+	*/
 
-	m := make2DByteSlice(width, height)
+	m := make2DUintSlice(width, height)
 
 	noise := opensimplex.NewWithSeed(seed)
 
@@ -74,22 +68,27 @@ func GenerateIsland(seed int64, width int, height int) Island {
 			f = (f + 1.0) / 2.0
 
 			// scale from 0.0-1.0 to 0-255
-			b := byte(0)
+			b := uint(0)
 			if f == 1.0 {
 				b = 255
 			} else {
-				b = byte(math.Floor(f * 256.0))
+				b = uint(math.Floor(f * 256.0))
 			}
 
 			// combine with rolling particle
 			opacity := 0.5
-			b = byte((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
+			b = uint((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
 
 			m[y][x] = b
 		}
 	}
 
-	island.HeightMap = m
+	island := Island{
+		Width:     width,
+		Height:    height,
+		Seed:      seed,
+		HeightMap: m}
+
 	return island
 }
 
@@ -136,11 +135,4 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 	}
 
 	return img
-
-}
-
-// HeightMapAsImage renders height map to an Image
-func (i *Island) HeightMapAsImage() image.Image {
-
-	return Slice2DAsImage(&i.HeightMap, i.Width, i.Height)
 }
