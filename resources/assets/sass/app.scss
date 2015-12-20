@@ -1,0 +1,52 @@
+// bootstrap 3
+$icon-font-path: "/fonts/bootstrap/";
+@import "./../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+// font awesome
+$fa-font-path: "/fonts/font-awesome";
+@import "./../../../node_modules/font-awesome/scss/font-awesome";
+@import "_fonts";
+
+// flag icons
+$flag-icon-css-path: "/flags";
+$flag-icon-rect-path: "/4x3";
+$flag-icon-square-path: "/1x1";
+@import "./../../../node_modules/flag-icon-css/sass/flag-icon-base.scss";
+@import "./../../../node_modules/flag-icon-css/sass/flag-icon-list.scss";
+
+// misc
+@import "_nav";
+@import "_navbar";
+@import "_switch";
+@import "_colors";
+@import "_footer";
+@import "_cart";
+@import "_image_upload";
+
+
+.stock_green {
+  color: $greenSuccessColor;
+}
+
+.stock_orange {
+  color: $orangeWarningColor;
+}
+
+.stock_red {
+  color: #ff5a6e;
+}
+
+body {
+  background-color: $backgroundColor;
+  font-family: $baseFont;
+
+  color: $textColor;
+
+  // NOTE: required for bootstrap 3 with navbar fixed-top, see https://stackoverflow.com/a/11124805
+  padding-top: 70px;
+}
+
+// will make vue invisible until component has loaded, thus hiding moustaches, http://vuejs.org/api/#v-cloak
+[v-cloak] {
+  display: none;
+}

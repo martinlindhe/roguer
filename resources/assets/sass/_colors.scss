@@ -1,0 +1,11 @@
+$backgroundColor: #ffffff;
+$textColor: #67747b;
+
+$greenSuccessColor: #57ff19;
+$orangeWarningColor: #ffa634;
+$redErrorColor: #ff5a6e;
+
+// required for bootstrap 3:
+.form-control::placeholder {
+  color: lighten($textColor, 35%);
+}

@@ -1,0 +1,76 @@
+$navBackgroundColor: #3f4008;
+$navBackgroundColorHighlight: #9f37ff;
+$navTextColor: #f6fafb;
+$navTextColorHover: #ffbbbc;
+$navTextColorHighlight: #9fa2a3;
+
+.navbar-custom {
+  background-color: $navBackgroundColor;
+  .navbar-brand {
+    color: $navTextColor;
+    &:hover, &:focus {
+      color: $navTextColorHighlight;
+    }
+  }
+  .navbar-text {
+    color: $navTextColor;
+  }
+  .navbar-nav {
+    > li {
+      > a {
+        color: $navTextColor;
+        &:hover, &:focus {
+          color: $navTextColorHighlight;
+        }
+      }
+    }
+    > .active {
+      > a, > a:hover, > a:focus {
+        color: $navTextColorHighlight;
+        background-color: $navBackgroundColorHighlight;
+      }
+    }
+    > .open {
+      > a, > a:hover, > a:focus {
+        color: $navTextColorHighlight;
+        background-color: $navBackgroundColorHighlight;
+      }
+    }
+  }
+  .navbar-toggle {
+    border-color: $navBackgroundColorHighlight;
+    &:hover, &:focus {
+      background-color: $navBackgroundColorHighlight;
+    }
+    .icon-bar {
+      background-color: $navTextColor;
+    }
+  }
+  .navbar-collapse,
+  .navbar-form {
+    border-color: $navTextColor;
+  }
+  .navbar-link {
+    color: $navTextColor;
+    &:hover {
+      color: $navTextColorHighlight;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar-custom .navbar-nav .open .dropdown-menu {
+    > li > a {
+      color: $navTextColor;
+      &:hover, &:focus {
+        color: $navTextColorHighlight;
+      }
+    }
+    > .active {
+      > a, > a:hover, > a:focus {
+        color: $navTextColorHighlight;
+        background-color: $navBackgroundColorHighlight;
+      }
+    }
+  }
+}

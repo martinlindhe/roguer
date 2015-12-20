@@ -4,18 +4,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/google/gxui"
-	"github.com/google/gxui/drivers/gl"
-	"github.com/google/gxui/gxfont"
-	"github.com/google/gxui/samples/flags"
+	"github.com/gin-gonic/gin"
+	"github.com/martinlindhe/ravel/views"
 	"github.com/martinlindhe/rogue"
 )
 
 func main() {
-	gl.StartDriver(appMain)
-}
-
-func appMain(driver gxui.Driver) {
 
 	//seed := time.Now().Unix()
 	seed := int64(1450549167)
@@ -24,6 +18,9 @@ func appMain(driver gxui.Driver) {
 	island := rogue.GenerateIsland(seed, 220, 140)
 	island.FillWithCritters()
 	log.Println("Done generating island")
+
+	//	islandColImage := island.ColoredHeightMapAsImage()
+
 	/*
 		islandColImgFile, _ := os.Create("island_col.png")
 		png.Encode(islandColImgFile, islandColImage)
@@ -37,72 +34,60 @@ func appMain(driver gxui.Driver) {
 			island.Tick()
 		}
 	*/
-	theme := flags.CreateTheme(driver)
 
-	window := theme.CreateWindow(800, 600, "rogue")
-	window.SetBackgroundBrush(gxui.CreateBrush(gxui.Gray50))
-	window.SetScale(flags.DefaultScaleFactor)
+	r := getRouter()
 
-	font, _ := driver.CreateFont(gxfont.Monospace, 25)
+	// r.GET("/", views.Index()) // XXX: cant get this form to work with gorazor views
+	r.GET("/", func(c *gin.Context) {
+		c.Header("Content-Type", "text/html; charset=utf-8")
+		c.String(200, views.Index())
+	})
 
-	splitterAB := theme.CreateSplitterLayout()
-	splitterAB.SetOrientation(gxui.Horizontal)
-	splitterAB.AddChild(topLeftPanelHolder(&theme, &driver, &island))
-	splitterAB.AddChild(panelHolder("B", &theme, &font))
+	// XXX run http server in separate process?
 
-	splitterCD := theme.CreateSplitterLayout()
-	splitterCD.SetOrientation(gxui.Horizontal)
-	splitterCD.AddChild(panelHolder("C", &theme, &font))
-	splitterCD.AddChild(panelHolder("D", &theme, &font))
+	// listen and serve on 0.0.0.0:8080
+	appPort := 3322
+	listenAt := fmt.Sprintf(":%d", appPort)
 
-	vSplitter := theme.CreateSplitterLayout()
-	vSplitter.SetOrientation(gxui.Vertical)
-	vSplitter.AddChild(splitterAB)
-	vSplitter.AddChild(splitterCD)
-	window.AddChild(vSplitter)
+	log.Printf("Starting http server on %s\n", listenAt)
 
-	window.OnClose(driver.Terminate)
+	r.Run(listenAt)
 }
 
-// Create a PanelHolder with a 3 panels
-func topLeftPanelHolder(theme *gxui.Theme, driver *gxui.Driver, island *rogue.Island) gxui.PanelHolder {
+func getRouter() *gin.Engine {
 
-	label := func(text string) gxui.Label {
-		label := (*theme).CreateLabel()
-		font, _ := (*driver).CreateFont(gxfont.Monospace, 25)
-		label.SetFont(font)
-		label.SetText(text)
-		return label
-	}
+	// Creates a router without any middleware by default
+	r := gin.New()
 
-	// tab 1: map
-	islandColImage := island.ColoredHeightMapAsImage()
+	// Global middleware
+	r.Use(gin.Logger())
 
-	img := (*theme).CreateImage()
-	texture := (*driver).CreateTexture(islandColImage, 1)
-	img.SetTexture(texture)
+	//	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	// tab 2: spawn list XXXXX
-	mapSettings := fmt.Sprintf("seed: %d", island.Seed)
+	r.GET("/ping", pingController)
 
-	holder := (*theme).CreatePanelHolder()
-	holder.AddPanel(img, "map")
-	holder.AddPanel(label(mapSettings), "map settings")
-	return holder
+	r.Static("/js", "./public/js")
+	r.Static("/css", "./public/css")
+	r.Static("/img", "./public/img")
+	r.Static("/fonts", "./public/fonts")
+	r.Static("/flags", "./public/flags")
+	//r.LoadHTMLFiles("./public/index.html")
+	/*
+		// non authenticated api endpoints:
+		r.POST("/api/auth/register", apiAuthRegister)
+		r.POST("/api/auth/login", apiAuthLogin)
+		//Route::post('auth/register', 'Api\Auth\AuthController@postRegister');
+		//Route::post('auth/login', 'Api\Auth\AuthController@postLogin');
+
+		// authenticated api endpoints: XXX check jwt token
+		r.GET("/api/auth/logout", apiAuthLogout)
+		//Route::get('auth/refresh-token', ['middleware' => 'jwt.refresh', 'uses' => 'Api\Auth\AuthController@refreshToken']);
+		//Route::get('auth/logout', 'Api\Auth\AuthController@getLogout');
+	*/
+	return r
 }
 
-// Create a PanelHolder with a 3 panels
-func panelHolder(name string, theme *gxui.Theme, font *gxui.Font) gxui.PanelHolder {
-	label := func(text string) gxui.Label {
-		label := (*theme).CreateLabel()
-		label.SetFont(*font)
-		label.SetText(text)
-		return label
-	}
-
-	holder := (*theme).CreatePanelHolder()
-	holder.AddPanel(label(name+" 0 content"), name+" 0 panel")
-	holder.AddPanel(label(name+" 1 content"), name+" 1 panel")
-	holder.AddPanel(label(name+" 2 content"), name+" 2 panel")
-	return holder
+// curl -v "http://localhost:8080/ping"
+func pingController(c *gin.Context) {
+	c.JSON(200, gin.H{"pong": "now"})
 }
