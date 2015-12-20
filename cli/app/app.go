@@ -18,7 +18,6 @@ func appMain(driver gxui.Driver) {
 
 	//seed := time.Now().Unix()
 	seed := int64(1450549167)
-	fmt.Printf("Using seed %d\n", seed)
 
 	island := rogue.GenerateIsland(seed, 220, 140)
 	island.FillWithCritters()
@@ -65,7 +64,6 @@ func appMain(driver gxui.Driver) {
 // Create a PanelHolder with a 3 panels
 func topLeftPanelHolder(theme *gxui.Theme, driver *gxui.Driver, island *rogue.Island) gxui.PanelHolder {
 
-	name := "top left"
 	label := func(text string) gxui.Label {
 		label := (*theme).CreateLabel()
 		font, _ := (*driver).CreateFont(gxfont.Monospace, 25)
@@ -81,10 +79,11 @@ func topLeftPanelHolder(theme *gxui.Theme, driver *gxui.Driver, island *rogue.Is
 	img.SetTexture(texture)
 
 	// tab 2: spawn list XXXXX
+	mapSettings := fmt.Sprintf("seed: %d", island.Seed)
 
 	holder := (*theme).CreatePanelHolder()
 	holder.AddPanel(img, "map")
-	holder.AddPanel(label(name+" 1 content"), name+" 1 panel")
+	holder.AddPanel(label(mapSettings), "map settings")
 	return holder
 }
 
