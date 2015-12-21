@@ -1,3 +1,5 @@
+var filelog = require('gulp-filelog');
+
 var elixir = require('laravel-elixir');
 
 elixir.config.sourcemaps = false;
@@ -10,7 +12,10 @@ elixir(function(mix) {
         .sass('app.scss')
 
         .browserify(
-            './resources/assets/js/bootstrap.js',
+            [
+                './node_modules/phaser/build/phaser.js',
+                './resources/assets/js/bootstrap.js',
+            ],
             'public/js/app.js'
         )
 /*

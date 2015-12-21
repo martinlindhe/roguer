@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"strings"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // Point ...
@@ -27,7 +30,7 @@ const (
 	doingForaging
 )
 
-type npc struct {
+type Npc struct {
 	Level          int
 	XP             int
 	Age            int
@@ -54,44 +57,62 @@ type sweetPotato struct {
 }
 
 type dwarf struct {
-	npc
+	Npc
 }
 
 type rabbit struct {
-	npc
+	Npc
 }
 
-func (n *npc) Defaults() {
+func (n *Npc) Defaults() {
 	// init non-zero values
 	n.Level = 1
+	//log.Debug("npc defaults")
 }
 
 func (n *plant) Defaults() {
-	// init non-zero values
+	//n.npc.Defaults()  // NOTE: plant is currently base class
 	n.Name = "sdsdfgsdfg"
+	log.Printf("plant defaults")
+}
+
+func (n *dwarf) Defaults() {
+	n.Npc.Defaults()
+	n.Name = n.generateName()
+	//log.Printf("dwarf defaults")
+}
+
+func (n *dwarf) generateName() string {
+	// generate a dwarfish name
+	a := []string{"ga", "gi", "go"}
+	b := []string{"m", "n", "r", "in"}
+	c := []string{"li", "dil", "la", "di"}
+
+	res := a[rand.Intn(len(a))] + b[rand.Intn(len(b))] + c[rand.Intn(len(c))]
+	return strings.Title(res)
 }
 
 func (n *plant) Tick() {
 	n.Age++
 }
 
-func (n *npc) hungerCap() int {
+func (n *Npc) hungerCap() int {
 	// XXX
 	return n.Level * 100
 }
 
-func (n *npc) thirstCap() int {
+func (n *Npc) thirstCap() int {
 	// XXX
 	return n.Level * 100
 }
 
-func (n *npc) tirednessCap() int {
+func (n *Npc) tirednessCap() int {
 	// XXX
 	return n.Level * 100
 }
 
 // check if npc already has planned to do a
-func (n *npc) hasPlanned(a Action) bool {
+func (n *Npc) hasPlanned(a Action) bool {
 
 	t := reflect.TypeOf(a)
 
@@ -107,7 +128,7 @@ func (n *npc) hasPlanned(a Action) bool {
 	return false
 }
 
-func (n *npc) Tick() {
+func (n *Npc) Tick() {
 
 	n.Age++
 	n.Hunger++

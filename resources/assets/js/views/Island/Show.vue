@@ -30,6 +30,8 @@
 
         <div>
             <img class="img-responsive" :src="islandMapSrc">
+
+            <div id="phaser-example"></div>
         </div>
 
     </div>
@@ -39,8 +41,12 @@
 <script>
 import Vue from 'vue';
 
+import Game from './game.js';
+
 export default {
     data: function() {
+
+        Game.Boot();
 
         return {
             Seed: 666,
@@ -68,10 +74,6 @@ export default {
                 this.$set('HeightMap', data.HeightMap);
                 this.$set('islandMapSrc', '/img/islands/' + data.Seed + '.png')
                 this.$set('Created', true);
-            }, function (response) {
-                // handle error
-                console.log("island create error")
-                console.log(response)
             });
 
         }

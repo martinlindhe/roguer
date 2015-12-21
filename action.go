@@ -5,13 +5,13 @@ import "fmt"
 // Action ...
 type Action interface {
 	// returns true when finished performing action
-	Perform(npc *npc) bool
+	Perform(npc *Npc) bool
 }
 
 type sleep struct {
 }
 
-func (a *sleep) Perform(n *npc) bool {
+func (a *sleep) Perform(n *Npc) bool {
 	fmt.Println(n.Name, "is sleeping", n.Tiredness)
 	n.Tiredness -= 10
 	if n.Tiredness < 0 {
@@ -25,7 +25,7 @@ type lookForFood struct {
 	timeSpentLooking int
 }
 
-func (a *lookForFood) Perform(n *npc) bool {
+func (a *lookForFood) Perform(n *Npc) bool {
 
 	// XXX auto eat some food in inventory
 
@@ -48,7 +48,7 @@ type lookForWater struct {
 	timeSpentLooking int
 }
 
-func (a *lookForWater) Perform(n *npc) bool {
+func (a *lookForWater) Perform(n *Npc) bool {
 	fmt.Println(n.Name, "is looking for water", a.timeSpentLooking)
 	// TODO something more advanced for looking for food
 	a.timeSpentLooking++

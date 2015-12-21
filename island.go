@@ -4,7 +4,10 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"math/rand"
+	"reflect"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
 )
@@ -25,14 +28,41 @@ func (i *Island) Tick() {
 	}
 }
 
+func (i *Island) PrintSpawns() {
+
+	log.Printf("showing %d spawns:", len(i.Spawns))
+
+	for _, sp := range i.Spawns {
+		// XXX need to cast to  instance of the object to call .Name, .Pos
+		spawn := reflect.ValueOf(sp)
+		log.Println(spawn)
+		//log.Printf("%s at %s", spawn.Name, spawn.Position)
+	}
+}
+
 // FillWithCritters ...
 func (i *Island) FillWithCritters() {
-	var dwarf dwarf
-	dwarf.Defaults()
-	dwarf.Name = "Gimli"
-	dwarf.Position = Point{5, 5}
 
-	i.Add(&dwarf)
+	dwarfs := 10
+	log.Infof("Adding %d dwarfs", dwarfs)
+	for n := 0; n < dwarfs; n++ {
+		var dwarf dwarf
+		dwarf.Defaults()
+		dwarf.Position = i.randomPointAboveWater()
+		i.Add(&dwarf)
+	}
+}
+
+func (i *Island) randomPointAboveWater() Point {
+
+	p := Point{uint16(rand.Intn(i.Width)), uint16(rand.Intn(i.Height))}
+
+	// above ground
+	if i.HeightMap[p.Y][p.X] > ShallowWater {
+		return p
+	}
+
+	return i.randomPointAboveWater()
 }
 
 // GenerateIsland returns a new island
@@ -97,6 +127,13 @@ func (i *Island) Add(o worldObject) {
 	i.Spawns = append(i.Spawns, o)
 }
 
+// ...
+const (
+	DeepWater    = 80
+	ShallowWater = 90
+	Beach        = 95
+)
+
 // ColoredHeightMapAsImage ...
 func (i *Island) ColoredHeightMapAsImage() image.Image {
 
@@ -108,22 +145,22 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 
 			var col color.RGBA
 			switch {
-			case b < 80:
+			case b <= DeepWater:
 				col = color.RGBA{0x26, 0x2f, 0x71, 0xff} // deep water
 
-			case b < 90:
+			case b <= ShallowWater:
 				col = color.RGBA{0x46, 0x4D, 0x85, 0xff} // shallow water
 
-			case b < 95:
+			case b <= Beach:
 				col = color.RGBA{0xD4, 0xBC, 0x6A, 0xff} // beach
 
-			case b < 150:
+			case b <= 150:
 				col = color.RGBA{0x2D, 0x88, 0x2D, 0xff} // grass (green)
 
-			case b < 230:
+			case b <= 230:
 				col = color.RGBA{0x00, 0x4E, 0x00, 0xff} // forest (dark green)
 
-			case b < 240:
+			case b <= 240:
 				col = color.RGBA{0x4B, 0x2D, 0x12, 0xff} // hills (brown)
 
 			default:

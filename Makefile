@@ -1,3 +1,5 @@
+.PHONY: views
+
 bench:
 	go test -bench=.
 

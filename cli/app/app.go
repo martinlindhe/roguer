@@ -41,7 +41,7 @@ func main() {
 	appPort := 3322
 	listenAt := fmt.Sprintf(":%d", appPort)
 
-	log.Infof("Starting http server on %s\n", listenAt)
+	log.Infof("Starting http server on %s", listenAt)
 
 	r.Run(listenAt)
 }
@@ -80,7 +80,7 @@ func newIslandController(c *ace.C) {
 
 	c.ParseJSON(&newIsland)
 
-	log.Infof("Generating island %s with seed %d ...\n", newIsland.Name, newIsland.Seed)
+	log.Infof("Generating island %s with seed %d ...", newIsland.Name, newIsland.Seed)
 	island := rogue.GenerateIsland(newIsland.Seed, 220, 140)
 	island.FillWithCritters()
 	log.Info("Done generating island")
