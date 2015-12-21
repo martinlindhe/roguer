@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	log "github.com/cihub/seelog"
+	log "github.com/Sirupsen/logrus"
 	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
 	"github.com/plimble/ace"
@@ -14,19 +14,8 @@ import (
 
 func main() {
 
-	logConfig := `
-<seelog type="sync">
-	<outputs>
-		<console formatid="colored"/>
-	</outputs>
-	<formats>
-		<format id="colored" format="%Time %RelFile:%Func %EscM(40)%Level%EscM(49) %Msg%n"/>
-	</formats>
-</seelog>`
-
-	logger, _ := log.LoggerFromConfigAsBytes([]byte(logConfig))
-	log.ReplaceLogger(logger)
-	defer log.Flush()
+	// Only log the warning severity or above.
+	log.SetLevel(log.DebugLevel)
 
 	log.Info("rogue started")
 

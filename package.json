@@ -8,6 +8,7 @@
         "font-awesome": "^4.4",
         "laravel-elixir": "^3.0",
         "moment": "^2.10",
+        "phaser": "^2.4",
         "vue": "^1.0",
         "vue-async-data": "^1.0",
         "vue-hot-reload-api": "^1.2",

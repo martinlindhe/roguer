@@ -24,9 +24,12 @@
     </div>
 
     <div v-if="Created">
+        <div>
+            seed {{ Seed }}
+        </div>
 
         <div>
-            <img :src="islandMapSrc">
+            <img class="img-responsive" :src="islandMapSrc">
         </div>
 
     </div>

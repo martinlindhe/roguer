@@ -9,6 +9,8 @@ import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import VueValidator from 'vue-validator';
 
+import Phaser from 'phaser';
+
 Vue.config.debug = true;
 
 // XXX move to function file
