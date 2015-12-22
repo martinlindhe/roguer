@@ -1,11 +1,8 @@
 package rogue
 
 import (
-	"fmt"
 	"math/rand"
 	"reflect"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 // Point ...
@@ -71,15 +68,13 @@ func (n *WorldObjectInstance) Defaults() {
 }
 
 func (n *plant) Defaults() {
-	//n.npc.Defaults()  // NOTE: plant is currently base class
-	n.Name = "sdsdfgsdfg"
-	log.Printf("plant defaults")
+	n.WorldObjectInstance.Defaults()
 }
 
 func (n *sweetPotato) Defaults() {
 	n.plant.Defaults()
 	n.Name = "sweet potato"
-	fmt.Println("potato def: ", n.Name)
+	n.Energy = 5
 }
 
 func (n *rabbit) Defaults() {
@@ -98,18 +93,24 @@ func (n *plant) Tick() {
 }
 
 func (n *Npc) hungerCap() int {
-	// XXX
 	return n.Level * 5
 }
 
 func (n *Npc) thirstCap() int {
-	// XXX
 	return n.Level * 100
 }
 
 func (n *Npc) tirednessCap() int {
-	// XXX
 	return n.Level * 5
+}
+
+func (n *Npc) pickSomethingToEat() WorldObject {
+	// XXX find something edible in inventory, or nil
+	if len(n.Inventory) == 0 {
+		return nil
+	}
+
+	return n.Inventory[0]
 }
 
 // check if npc already has planned to do a

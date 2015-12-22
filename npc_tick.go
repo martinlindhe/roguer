@@ -1,18 +1,19 @@
 package rogue
 
 import (
-	"log"
 	"reflect"
+
+	log "github.com/Sirupsen/logrus"
 )
 
-// Tick ...
+// Tick base class
 func (n *WorldObjectInstance) Tick() {
 	n.Age++
 }
 
 // Tick ...
 func (n *Npc) Tick() {
-	n.WorldObjectInstance.Tick() // call base
+	n.WorldObjectInstance.Tick()
 
 	n.Hunger++
 	n.Tiredness++
@@ -25,10 +26,31 @@ func (n *Npc) Tick() {
 		n.PlannedActions = append(n.PlannedActions, &sleep{})
 	}
 
-	if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {
-		log.Println(n.Name, "is feeling hungry")
-		n.PlannedActions = append(n.PlannedActions, &lookForFood{})
+	if n.Hunger > n.hungerCap() {
+
+		// auto eat some food in inventory instead of looking for food, if possible
+		item := n.pickSomethingToEat()
+		if item != nil {
+
+			// XXX unpack interface
+			food := item.(WorldObject)
+
+			log.Printf("%s picked something to eat from inventory: %s with energy %d", n.Name, food.Name, food.Energy)
+			// reduce hunger by some amount from the food eaten
+
+			n.Hunger -= food.Energy
+			if n.Hunger < 0 {
+				n.Hunger = 0
+			}
+
+		}
+
+		if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {
+			log.Println(n.Name, "is feeling hungry")
+			n.PlannedActions = append(n.PlannedActions, &lookForFood{})
+		}
 	}
+
 	if n.Thirst > n.thirstCap() && !n.hasPlanned(&lookForWater{}) {
 		log.Println(n.Name, "is feeling thirsty")
 		n.PlannedActions = append(n.PlannedActions, &lookForWater{})

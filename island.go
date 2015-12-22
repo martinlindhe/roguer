@@ -25,7 +25,7 @@ type Island struct {
 // Tick executes one tick on each spawn in the zone
 func (i *Island) Tick() {
 
-	log.Printf("World tick %d", i.Age)
+	//log.Printf("World tick %d", i.Age)
 	for _, o := range i.Spawns {
 		o.Tick()
 	}
