@@ -13,8 +13,7 @@ elixir(function(mix) {
 
         .browserify(
             [
-                './node_modules/phaser/build/phaser.js',
-                './resources/assets/js/bootstrap.js',
+                './resources/assets/js/game.js',
             ],
             'public/js/app.js'
         )

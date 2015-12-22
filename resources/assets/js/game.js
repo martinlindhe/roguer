@@ -1,47 +1,26 @@
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render : render });
 
-//import P2 from './../../phaser-2.4.4/p2.js';
-//import PIXI from './../../phaser-2.4.4/pixi.js';
-//import Phaser from './../../phaser-2.4.4/phaser.js';
+function preload() {
 
-export function BootGame()
-{
-    console.log("Booting my phaser game: phaser " + Phaser.VERSION + ", pixi " + PIXI.VERSION);
-
-    var game = new Phaser.Game(
-        800,
-        600,
-        Phaser.CANVAS,
-        'phaser-example',
-        {
-            preload: PreloadGame,
-            create: CreateGame,
-            update: UpdateGame,
-            render : RenderGame
-        }
-    );
-
-    return game
-}
-
-export function PreloadGame()
-{
     game.stage.backgroundColor = '#007236';
 
-    game.load.image('mushroom', 'assets/sprites/mushroom2.png');
-    game.load.image('sonic', 'assets/sprites/sonic_havok_sanity.png');
-    game.load.image('phaser', 'assets/sprites/phaser1.png');
+    game.load.image('mushroom', 'img/sprites/mushroom.png');
+    game.load.image('sonic', 'img/sprites/wabbit.png');
+    game.load.image('phaser', 'img/sprites/phaser-dude.png');
+
 }
 
-export var cursors;
-export var logo1;
-export var logo2;
+var cursors;
+var logo1;
+var logo2;
 
-export function CreateGame()
-{
+function create() {
+
     //  Modify the world and camera bounds
     game.world.setBounds(-1000, -1000, 2000, 2000);
 
-    for (var i = 0; i < 200; i++) {
+    for (var i = 0; i < 200; i++)
+    {
         game.add.sprite(game.world.randomX, game.world.randomY, 'mushroom');
     }
 
@@ -63,24 +42,33 @@ export function CreateGame()
     game.add.tween(logo2.cameraOffset).to( { y: 400 }, 2000, Phaser.Easing.Back.InOut, true, 0, 2000, true);
 
     cursors = game.input.keyboard.createCursorKeys();
+
 }
 
-export function UpdateGame()
-{
-    if (cursors.up.isDown) {
+function update() {
+
+    if (cursors.up.isDown)
+    {
         game.camera.y -= 4;
-    } else if (cursors.down.isDown) {
+    }
+    else if (cursors.down.isDown)
+    {
         game.camera.y += 4;
     }
 
-    if (cursors.left.isDown) {
+    if (cursors.left.isDown)
+    {
         game.camera.x -= 4;
-    } else if (cursors.right.isDown) {
+    }
+    else if (cursors.right.isDown)
+    {
         game.camera.x += 4;
     }
+
 }
 
-export function RenderGame()
-{
+function render() {
+
     game.debug.cameraInfo(game.camera, 32, 32);
+
 }
