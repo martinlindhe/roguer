@@ -19,13 +19,17 @@ type Island struct {
 	Seed      int64
 	HeightMap [][]uint
 	Spawns    []worldObject
+	Age       int64
 }
 
 // Tick executes one tick on each spawn in the zone
 func (i *Island) Tick() {
+
+	log.Printf("World tick %d", i.Age)
 	for _, o := range i.Spawns {
 		o.Tick()
 	}
+	i.Age++
 }
 
 // PrintSpawns ...
@@ -44,7 +48,7 @@ func (i *Island) PrintSpawns() {
 // FillWithCritters ...
 func (i *Island) FillWithCritters() {
 
-	dwarfs := 10
+	dwarfs := 1
 	//log.Infof("Adding %d dwarfs", dwarfs)
 	for n := 0; n < dwarfs; n++ {
 		var dwarf dwarf
@@ -53,8 +57,8 @@ func (i *Island) FillWithCritters() {
 		i.Add(&dwarf)
 	}
 
-	rabbits := 10
-	log.Infof("Adding %d rabbits", rabbits)
+	rabbits := 1
+	//log.Infof("Adding %d rabbits", rabbits)
 	for n := 0; n < rabbits; n++ {
 		var rabbit rabbit
 		rabbit.Defaults()

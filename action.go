@@ -1,6 +1,10 @@
 package rogue
 
-import "fmt"
+import (
+	"fmt"
+
+	log "github.com/Sirupsen/logrus"
+)
 
 // Action ...
 type Action interface {
@@ -12,9 +16,12 @@ type sleep struct {
 }
 
 func (a *sleep) Perform(n *Npc) bool {
-	fmt.Println(n.Name, "is sleeping", n.Tiredness)
-	n.Tiredness -= 10
+	energyGain := 4
+
+	log.Printf("%s is sleeping. tiredness = %d", n.Name, n.Tiredness)
+	n.Tiredness -= energyGain
 	if n.Tiredness < 0 {
+		//log.Printf("%s woke up. tiredness = %d", n.Name, n.Tiredness)
 		n.Tiredness = 0
 		return true
 	}

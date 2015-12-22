@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"fmt"
 	"math/rand"
 	"reflect"
 	"strings"
@@ -79,6 +78,7 @@ func (n *plant) Defaults() {
 }
 
 func (n *rabbit) Defaults() {
+	n.Npc.Defaults()
 	n.Name = "a rabbit"
 }
 
@@ -114,7 +114,7 @@ func (n *Npc) thirstCap() int {
 
 func (n *Npc) tirednessCap() int {
 	// XXX
-	return n.Level * 100
+	return n.Level * 5
 }
 
 // check if npc already has planned to do a
@@ -145,16 +145,16 @@ func (n *Npc) Tick() {
 	//fmt.Println("[tick]", n.Name, n.Age)
 
 	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(&sleep{}) {
-		fmt.Println(n.Name, "is feeling tired")
+		log.Printf("%s is feeling tired. tiredness = %d, cap = %d", n.Name, n.Tiredness, n.tirednessCap())
 		n.PlannedActions = append(n.PlannedActions, &sleep{})
 	}
 
 	if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {
-		fmt.Println(n.Name, "is feeling hungry")
+		log.Println(n.Name, "is feeling hungry")
 		n.PlannedActions = append(n.PlannedActions, &lookForFood{})
 	}
 	if n.Thirst > n.thirstCap() && !n.hasPlanned(&lookForWater{}) {
-		fmt.Println(n.Name, "is feeling thirsty")
+		log.Println(n.Name, "is feeling thirsty")
 		n.PlannedActions = append(n.PlannedActions, &lookForWater{})
 	}
 
@@ -169,12 +169,12 @@ func (n *Npc) Tick() {
 		n.CurrentAction = n.PlannedActions[0]
 		n.PlannedActions = n.PlannedActions[1:]
 
-		fmt.Println(n.Name, "decided to", reflect.TypeOf(n.CurrentAction))
+		log.Println(n.Name, "decided to", reflect.TypeOf(n.CurrentAction))
 	}
 
 	if n.CurrentAction != nil {
 		if n.CurrentAction.Perform(n) == true {
-			fmt.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
+			log.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
 			n.CurrentAction = nil
 		}
 	}

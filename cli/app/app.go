@@ -21,12 +21,6 @@ func main() {
 
 	log.Debug("debug msg")
 
-	/*
-		for i := 0; i < 10; i++ {
-			island.Tick()
-		}
-	*/
-
 	r := getRouter()
 
 	// r.GET("/", views.Index())
