@@ -1,10 +1,14 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
+    preload: preload,
+    create: create,
+    update: update,
+    render: render
+});
 
 function preload() {
-
     game.stage.backgroundColor = '#007236';
 
     game.load.image('mushroom', 'img/sprites/mushroom.png');
@@ -17,15 +21,12 @@ var logo1;
 var logo2;
 
 function create() {
-
     //  Modify the world and camera bounds
     game.world.setBounds(-1000, -1000, 2000, 2000);
 
     for (var i = 0; i < 200; i++) {
         game.add.sprite(game.world.randomX, game.world.randomY, 'mushroom');
     }
-
-    game.add.text(0, 0, "this text scrolls\nwith the background", { font: "32px Arial", fill: "#f26c4f", align: "center" });
 
     logo1 = game.add.sprite(0, 0, 'phaser');
     logo1.fixedToCamera = true;
@@ -36,6 +37,7 @@ function create() {
     logo2.cameraOffset.setTo(500, 100);
 
     var t = game.add.text(0, 0, "this text is fixed to the camera", { font: "32px Arial", fill: "#ffffff", align: "center" });
+
     t.fixedToCamera = true;
     t.cameraOffset.setTo(200, 500);
 
@@ -45,7 +47,6 @@ function create() {
 }
 
 function update() {
-
     if (cursors.up.isDown) {
         game.camera.y -= 4;
     } else if (cursors.down.isDown) {
@@ -60,7 +61,6 @@ function update() {
 }
 
 function render() {
-
     game.debug.cameraInfo(game.camera, 32, 32);
 }
 
