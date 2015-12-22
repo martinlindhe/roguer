@@ -32,6 +32,11 @@ func (i *Island) Tick() {
 	i.Age++
 }
 
+// Add ...
+func (i *Island) Add(o WorldObject) {
+	i.Spawns = append(i.Spawns, o)
+}
+
 // PrintSpawns ...
 func (i *Island) PrintSpawns() {
 
@@ -134,11 +139,6 @@ func GenerateIsland(seed int64, width int, height int) Island {
 		HeightMap: m}
 
 	return island
-}
-
-// Add ...
-func (i *Island) Add(o WorldObjectInstance) {
-	i.Spawns = append(i.Spawns, o)
 }
 
 // ...

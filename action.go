@@ -61,8 +61,9 @@ func (a *lookForFood) Perform(n *Npc) bool {
 	return false
 }
 
-func getRandomFoodFrom(p *Point) WorldObjectInstance { // XXX?!?!
+func getRandomFoodFrom(p *Point) WorldObjectInstance {
 
+	// XXX?!?!
 	var food sweetPotato
 	food.Defaults()
 
