@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"strings"
@@ -52,8 +53,13 @@ type plant struct {
 	Age      int
 }
 
+type edible struct {
+	Energy int
+}
+
 type sweetPotato struct {
 	plant
+	edible
 }
 
 type dwarf struct {
@@ -75,6 +81,12 @@ func (n *plant) Defaults() {
 	//n.npc.Defaults()  // NOTE: plant is currently base class
 	n.Name = "sdsdfgsdfg"
 	log.Printf("plant defaults")
+}
+
+func (n *sweetPotato) Defaults() {
+	n.plant.Defaults()
+	n.Name = "sweet potato"
+	fmt.Println("potato def: ", n.Name)
 }
 
 func (n *rabbit) Defaults() {
@@ -104,7 +116,7 @@ func (n *plant) Tick() {
 
 func (n *Npc) hungerCap() int {
 	// XXX
-	return n.Level * 100
+	return n.Level * 5
 }
 
 func (n *Npc) thirstCap() int {

@@ -1,10 +1,6 @@
 package rogue
 
-import (
-	"fmt"
-
-	log "github.com/Sirupsen/logrus"
-)
+import log "github.com/Sirupsen/logrus"
 
 // Action ...
 type Action interface {
@@ -34,14 +30,18 @@ type lookForFood struct {
 
 func (a *lookForFood) Perform(n *Npc) bool {
 
-	// XXX auto eat some food in inventory
+	// XXX auto eat some food in inventory instead of looking for food, if possible
 
-	fmt.Println(n.Name, "is looking for food", a.timeSpentLooking)
+	log.Println(n.Name, "is looking for food", a.timeSpentLooking)
 
 	// TODO something more advanced for looking for food
 	a.timeSpentLooking++
 	if a.timeSpentLooking > 5 {
-		n.Inventory = append(n.Inventory, &sweetPotato{})
+
+		var food sweetPotato
+		food.Defaults()
+		log.Printf("%s found something to eat: %s", n.Name, food.Name)
+		n.Inventory = append(n.Inventory, &food)
 
 		// XXX reduce hunger by some amount from the food eaten
 		n.Hunger = 0
@@ -56,7 +56,7 @@ type lookForWater struct {
 }
 
 func (a *lookForWater) Perform(n *Npc) bool {
-	fmt.Println(n.Name, "is looking for water", a.timeSpentLooking)
+	log.Println(n.Name, "is looking for water", a.timeSpentLooking)
 	// TODO something more advanced for looking for food
 	a.timeSpentLooking++
 	if a.timeSpentLooking > 5 {
