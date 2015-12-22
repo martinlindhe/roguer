@@ -8,6 +8,16 @@ type Action interface {
 	Perform(npc *Npc) bool
 }
 
+// Doing states
+const (
+	doingNothing = 0
+	doingSleeping
+	doingEating
+	doingDrinking
+	doingMoving
+	doingForaging
+)
+
 type sleep struct {
 }
 
@@ -38,8 +48,8 @@ func (a *lookForFood) Perform(n *Npc) bool {
 	a.timeSpentLooking++
 	if a.timeSpentLooking > 5 {
 
-		var food sweetPotato
-		food.Defaults()
+		food := getRandomFoodFrom(&n.Position)
+
 		log.Printf("%s found something to eat: %s", n.Name, food.Name)
 		n.Inventory = append(n.Inventory, &food)
 
@@ -49,6 +59,14 @@ func (a *lookForFood) Perform(n *Npc) bool {
 	}
 
 	return false
+}
+
+func getRandomFoodFrom(p *Point) WorldObjectInstance { // XXX?!?!
+
+	var food sweetPotato
+	food.Defaults()
+
+	return food
 }
 
 type lookForWater struct {

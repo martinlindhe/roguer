@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
-	"strings"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -15,31 +14,27 @@ type Point struct {
 	Y uint16
 }
 
-type worldObject interface {
+// WorldObject ...
+type WorldObject interface {
 	Tick()
 	Defaults()
 }
 
-// Doing states
-const (
-	doingNothing = 0
-	doingSleeping
-	doingEating
-	doingDrinking
-	doingMoving
-	doingForaging
-)
+// WorldObjectInstance ...
+type WorldObjectInstance struct {
+	Level    int
+	Age      int
+	Name     string
+	Position Point
+}
 
 // Npc ...
 type Npc struct {
-	Level          int
+	WorldObjectInstance
 	XP             int
-	Age            int
-	Name           string
-	Position       Point
 	CurrentAction  Action
 	PlannedActions []Action
-	Inventory      []worldObject
+	Inventory      []WorldObject
 
 	// the lower value, the less hungry npc is
 	Hunger    int
@@ -48,9 +43,7 @@ type Npc struct {
 }
 
 type plant struct {
-	Name     string
-	Position Point
-	Age      int
+	WorldObjectInstance
 }
 
 type edible struct {
@@ -71,7 +64,7 @@ type rabbit struct {
 }
 
 // Defaults ...
-func (n *Npc) Defaults() {
+func (n *WorldObjectInstance) Defaults() {
 	// init non-zero values
 	n.Level = 1
 	//log.Debug("npc defaults")
@@ -98,16 +91,6 @@ func (n *dwarf) Defaults() {
 	n.Npc.Defaults()
 	n.Name = n.generateName()
 	//log.Printf("dwarf defaults")
-}
-
-func (n *dwarf) generateName() string {
-	// generate a dwarfish name
-	a := []string{"ga", "gi", "go"}
-	b := []string{"m", "n", "r", "in"}
-	c := []string{"li", "dil", "la", "di"}
-
-	res := a[rand.Intn(len(a))] + b[rand.Intn(len(b))] + c[rand.Intn(len(c))]
-	return strings.Title(res)
 }
 
 func (n *plant) Tick() {
@@ -144,52 +127,6 @@ func (n *Npc) hasPlanned(a Action) bool {
 		}
 	}
 	return false
-}
-
-// Tick ...
-func (n *Npc) Tick() {
-
-	n.Age++
-	n.Hunger++
-	n.Tiredness++
-	n.Thirst++
-
-	//fmt.Println("[tick]", n.Name, n.Age)
-
-	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(&sleep{}) {
-		log.Printf("%s is feeling tired. tiredness = %d, cap = %d", n.Name, n.Tiredness, n.tirednessCap())
-		n.PlannedActions = append(n.PlannedActions, &sleep{})
-	}
-
-	if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {
-		log.Println(n.Name, "is feeling hungry")
-		n.PlannedActions = append(n.PlannedActions, &lookForFood{})
-	}
-	if n.Thirst > n.thirstCap() && !n.hasPlanned(&lookForWater{}) {
-		log.Println(n.Name, "is feeling thirsty")
-		n.PlannedActions = append(n.PlannedActions, &lookForWater{})
-	}
-
-	// select one action to be doing next
-	if n.CurrentAction == nil && len(n.PlannedActions) > 0 {
-		// shuffle action list, so behaviour is more random
-		if len(n.PlannedActions) > 1 {
-			shuffleActionSlice(n.PlannedActions)
-		}
-
-		// pick something
-		n.CurrentAction = n.PlannedActions[0]
-		n.PlannedActions = n.PlannedActions[1:]
-
-		log.Println(n.Name, "decided to", reflect.TypeOf(n.CurrentAction))
-	}
-
-	if n.CurrentAction != nil {
-		if n.CurrentAction.Perform(n) == true {
-			log.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
-			n.CurrentAction = nil
-		}
-	}
 }
 
 // shuffle slice, without allocations

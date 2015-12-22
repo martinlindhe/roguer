@@ -18,7 +18,7 @@ type Island struct {
 	Height    int
 	Seed      int64
 	HeightMap [][]uint
-	Spawns    []worldObject
+	Spawns    []WorldObject
 	Age       int64
 }
 
@@ -137,7 +137,7 @@ func GenerateIsland(seed int64, width int, height int) Island {
 }
 
 // Add ...
-func (i *Island) Add(o worldObject) {
+func (i *Island) Add(o WorldObjectInstance) {
 	i.Spawns = append(i.Spawns, o)
 }
 
