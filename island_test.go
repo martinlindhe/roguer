@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"fmt"
 	"image/png"
 	"os"
 	"testing"
@@ -22,8 +21,6 @@ func TestGenerateIsland(t *testing.T) {
 
 	islandColImgFile, _ := os.Create("test-island.png")
 	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
-
-	fmt.Println("oi ")
 
 	island.PrintSpawns()
 }

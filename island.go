@@ -21,13 +21,14 @@ type Island struct {
 	Spawns    []worldObject
 }
 
-// Tick ...
+// Tick executes one tick on each spawn in the zone
 func (i *Island) Tick() {
 	for _, o := range i.Spawns {
 		o.Tick()
 	}
 }
 
+// PrintSpawns ...
 func (i *Island) PrintSpawns() {
 
 	log.Printf("showing %d spawns:", len(i.Spawns))
@@ -44,12 +45,21 @@ func (i *Island) PrintSpawns() {
 func (i *Island) FillWithCritters() {
 
 	dwarfs := 10
-	log.Infof("Adding %d dwarfs", dwarfs)
+	//log.Infof("Adding %d dwarfs", dwarfs)
 	for n := 0; n < dwarfs; n++ {
 		var dwarf dwarf
 		dwarf.Defaults()
 		dwarf.Position = i.randomPointAboveWater()
 		i.Add(&dwarf)
+	}
+
+	rabbits := 10
+	log.Infof("Adding %d rabbits", rabbits)
+	for n := 0; n < rabbits; n++ {
+		var rabbit rabbit
+		rabbit.Defaults()
+		rabbit.Position = i.randomPointAboveWater()
+		i.Add(&rabbit)
 	}
 }
 

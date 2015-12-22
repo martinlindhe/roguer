@@ -30,6 +30,7 @@ const (
 	doingForaging
 )
 
+// Npc ...
 type Npc struct {
 	Level          int
 	XP             int
@@ -64,6 +65,7 @@ type rabbit struct {
 	Npc
 }
 
+// Defaults ...
 func (n *Npc) Defaults() {
 	// init non-zero values
 	n.Level = 1
@@ -74,6 +76,10 @@ func (n *plant) Defaults() {
 	//n.npc.Defaults()  // NOTE: plant is currently base class
 	n.Name = "sdsdfgsdfg"
 	log.Printf("plant defaults")
+}
+
+func (n *rabbit) Defaults() {
+	n.Name = "a rabbit"
 }
 
 func (n *dwarf) Defaults() {
@@ -128,6 +134,7 @@ func (n *Npc) hasPlanned(a Action) bool {
 	return false
 }
 
+// Tick ...
 func (n *Npc) Tick() {
 
 	n.Age++
