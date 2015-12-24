@@ -3,13 +3,11 @@ package rogue
 import (
 	"image"
 	"image/color"
-	"io/ioutil"
 	"math"
 	"math/rand"
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ghodss/yaml"
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
 )
@@ -20,7 +18,7 @@ type Island struct {
 	Height    int
 	Seed      int64
 	HeightMap [][]uint
-	Spawns    []WorldObject
+	Spawns    []WorldObjectInstance
 	Age       int64
 	Items     []item // all possible items in the game world
 }
@@ -36,7 +34,7 @@ func (i *Island) Tick() {
 }
 
 // Add ...
-func (i *Island) Add(o WorldObject) {
+func (i *Island) Add(o WorldObjectInstance) {
 	i.Spawns = append(i.Spawns, o)
 }
 
@@ -53,46 +51,19 @@ func (i *Island) PrintSpawns() {
 	}
 }
 
-type npcYaml struct {
-	All []npcSpecYaml `json:"all"` // Affects YAML field names too.
-}
-
-type npcSpecYaml struct {
-	Type     string   `json:"type"`
-	Name     []string `json:"name"`
-	Quantity int      `json:"qty"`
-}
-
 // FillWithCritters ...
 func (i *Island) FillWithCritters() {
 
 	// XXX parse yamls
-	i.spawnNpcsFromDefinition("data/npc.yml")
-
 	i.Items = getItemsFromDefinition("data/items.yml")
-}
 
-func (i *Island) spawnNpcsFromDefinition(defFileName string) {
-
-	data, err := ioutil.ReadFile(defFileName)
-	if err != nil {
-		panic(err)
-	}
-
-	var npcList npcYaml
-	err = yaml.Unmarshal(data, &npcList)
-	if err != nil {
-		panic(err)
-	}
-
-	//spew.Dump(npcList)
-	log.Infof("Processing %d entries from %s", len(npcList.All), defFileName)
+	npcs := getNpcsFromDefinition("data/npc.yml")
 
 	// generate critters based on yaml data
-	for _, npcSpec := range npcList.All {
+	for _, npcSpec := range npcs {
 		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
 		for n := 0; n < npcSpec.Quantity; n++ {
-			var o Npc
+			var o WorldObjectInstance
 
 			if len(npcSpec.Name) == 0 {
 				// if name field is unset, run a generator based on npc type
@@ -106,10 +77,9 @@ func (i *Island) spawnNpcsFromDefinition(defFileName string) {
 			o.Level = 1
 			o.Type = npcSpec.Type
 			o.Position = i.randomPointAboveWater()
-			i.Add(&o)
+			i.Add(o)
 		}
 	}
-
 }
 
 func (i *Island) randomPointAboveWater() Point {

@@ -1,6 +1,12 @@
 package rogue
 
-import "reflect"
+import (
+	"io/ioutil"
+	"reflect"
+
+	"github.com/qiniu/log"
+	"gopkg.in/yaml.v2"
+)
 
 // Point ...
 type Point struct {
@@ -34,6 +40,35 @@ type Npc struct {
 	Hunger    int
 	Thirst    int
 	Tiredness int
+}
+
+type npcListYaml struct {
+	All []npcSpecYaml `json:"all"` // Affects YAML field names too.
+}
+
+type npcSpecYaml struct {
+	Type     string   `json:"type"`
+	Name     []string `json:"name"`
+	Quantity int      `json:"qty"`
+}
+
+func getNpcsFromDefinition(defFileName string) []npcSpecYaml {
+
+	data, err := ioutil.ReadFile(defFileName)
+	if err != nil {
+		panic(err)
+	}
+
+	var npcList npcListYaml
+	err = yaml.Unmarshal(data, &npcList)
+	if err != nil {
+		panic(err)
+	}
+
+	//spew.Dump(npcList)
+	log.Infof("Processing %d entries from %s", len(npcList.All), defFileName)
+
+	return npcList.All
 }
 
 type plant struct {
