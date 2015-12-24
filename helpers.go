@@ -25,7 +25,7 @@ func make2DUintSlice(width int, height int) [][]uint {
 	return m
 }
 
-func Slice2DAsImage(data *[][]byte, width int, height int) image.Image {
+func slice2DAsImage(data *[][]byte, width int, height int) image.Image {
 	img := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
 
 	p := *data

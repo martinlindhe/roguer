@@ -111,7 +111,7 @@ func (i *Island) randomPointAboveWater() Point {
 	p := Point{uint16(rand.Intn(i.Width)), uint16(rand.Intn(i.Height))}
 
 	// above ground
-	if i.HeightMap[p.Y][p.X] > ShallowWater {
+	if i.HeightMap[p.Y][p.X] > shallowWater {
 		return p
 	}
 
@@ -127,7 +127,7 @@ func GenerateIsland(seed int64, width int, height int) Island {
 	roller := rollingparticle.New(seed, width, height, particleLength, innerBlur, outerBlur)
 
 	/*
-		rollerImage := Slice2DAsImage(&roller, width, height)
+		rollerImage := slice2DAsImage(&roller, width, height)
 		rollerImgFile, _ := os.Create("roller.png")
 		png.Encode(rollerImgFile, rollerImage)
 	*/
@@ -177,9 +177,9 @@ func GenerateIsland(seed int64, width int, height int) Island {
 
 // ...
 const (
-	DeepWater    = 80
-	ShallowWater = 90
-	Beach        = 95
+	deepWater    = 80
+	shallowWater = 90
+	beach        = 95
 )
 
 // ColoredHeightMapAsImage ...
@@ -193,13 +193,13 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 
 			var col color.RGBA
 			switch {
-			case b <= DeepWater:
+			case b <= deepWater:
 				col = color.RGBA{0x26, 0x2f, 0x71, 0xff} // deep water
 
-			case b <= ShallowWater:
+			case b <= shallowWater:
 				col = color.RGBA{0x46, 0x4D, 0x85, 0xff} // shallow water
 
-			case b <= Beach:
+			case b <= beach:
 				col = color.RGBA{0xD4, 0xBC, 0x6A, 0xff} // beach
 
 			case b <= 150:
