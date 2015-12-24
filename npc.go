@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"reflect"
 
+	"github.com/ghodss/yaml"
 	"github.com/qiniu/log"
-	"gopkg.in/yaml.v2"
 )
 
 // Point ...
@@ -59,16 +59,16 @@ func getNpcsFromDefinition(defFileName string) []npcSpecYaml {
 		panic(err)
 	}
 
-	var npcList npcListYaml
-	err = yaml.Unmarshal(data, &npcList)
+	var npcs npcListYaml
+	err = yaml.Unmarshal(data, &npcs)
 	if err != nil {
 		panic(err)
 	}
 
 	//spew.Dump(npcList)
-	log.Infof("Processing %d entries from %s", len(npcList.All), defFileName)
+	log.Infof("Read %d entries from %s", len(npcs.All), defFileName)
 
-	return npcList.All
+	return npcs.All
 }
 
 type plant struct {
