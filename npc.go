@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"reflect"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
-	"github.com/qiniu/log"
 )
 
 // Point ...

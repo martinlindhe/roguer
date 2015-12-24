@@ -8,7 +8,6 @@ import (
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
 )
@@ -59,8 +58,7 @@ func (i *Island) FillWithCritters() {
 	i.Items = getItemsFromDefinition("data/items.yml")
 
 	npcs := getNpcsFromDefinition("data/npc.yml")
-
-	spew.Dump(npcs)
+	// spew.Dump(npcs)
 
 	// generate critters based on yaml data
 	for _, npcSpec := range npcs {
