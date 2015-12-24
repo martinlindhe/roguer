@@ -1,0 +1,7 @@
+all:
+  dwarf:
+    # XXX recognize keyword and use randomizer
+    name: [dwarf]
+
+  rabbit:
+    name: a rabbit

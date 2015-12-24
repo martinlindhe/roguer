@@ -1,13 +1,16 @@
 package rogue
 
 import (
+	"fmt"
 	"image"
 	"image/color"
+	"io/ioutil"
 	"math"
 	"math/rand"
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/ghodss/yaml"
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
 )
@@ -50,8 +53,31 @@ func (i *Island) PrintSpawns() {
 	}
 }
 
+type npcYaml struct {
+	Details []npcDetailsYaml `json:"all"` // Affects YAML field names too.
+}
+
+type npcDetailsYaml struct {
+	Name string `json:"name"`
+}
+
 // FillWithCritters ...
 func (i *Island) FillWithCritters() {
+
+	// XXX parse yamls
+
+	data, err := ioutil.ReadFile("./data/npc.yml")
+	if err != nil {
+		panic(err)
+	}
+
+	var p2 npcYaml
+	err = yaml.Unmarshal(data, &p2)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+		return
+	}
+	fmt.Println(p2)
 
 	dwarfs := 1
 	//log.Infof("Adding %d dwarfs", dwarfs)
