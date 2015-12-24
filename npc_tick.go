@@ -32,17 +32,21 @@ func (n *Npc) Tick() {
 		item := n.pickSomethingToEat()
 		if item != nil {
 
-			// XXX unpack interface
-			food := item.(WorldObject)
+			// XXX EAT ETC
+			n.Hunger = 0
 
-			log.Printf("%s picked something to eat from inventory: %s with energy %d", n.Name, food.Name, food.Energy)
-			// reduce hunger by some amount from the food eaten
+			/*
+					// XXX unpack interface
+					food := item.(WorldObject)
 
-			n.Hunger -= food.Energy
-			if n.Hunger < 0 {
-				n.Hunger = 0
-			}
+					log.Printf("%s picked something to eat from inventory: %s with energy %d", n.Name, food.Name, food.Energy)
+					// reduce hunger by some amount from the food eaten
 
+				n.Hunger -= food.Energy
+				if n.Hunger < 0 {
+					n.Hunger = 0
+				}
+			*/
 		}
 
 		if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {

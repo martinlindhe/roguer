@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"image/png"
-	"net/http"
 	"os"
 
 	log "github.com/Sirupsen/logrus"
@@ -14,7 +13,6 @@ import (
 
 func main() {
 
-	// Only log the warning severity or above.
 	log.SetLevel(log.DebugLevel)
 
 	log.Info("rogue started")
@@ -22,14 +20,14 @@ func main() {
 	log.Debug("debug msg")
 
 	r := getRouter()
+	island := getIsland()
+	island.PrintSpawns()
 
-	// r.GET("/", views.Index())
 	r.GET("/", func(c *ace.C) {
-		//c.Header("Content-Type", "text/html; charset=utf-8")
 		c.String(200, views.Index())
 	})
 
-	// XXX run http server in separate process?
+	// XXX run http server in separate process? we also need a websock server
 
 	// listen and serve on 0.0.0.0:8080
 	appPort := 3322
@@ -38,6 +36,27 @@ func main() {
 	log.Infof("Starting http server on %s", listenAt)
 
 	r.Run(listenAt)
+}
+
+func getIsland() rogue.Island {
+	// XXX load existing world from disk
+	seed := int64(666666)
+	log.Infof("Generating island with seed %d ...", seed)
+	island := rogue.GenerateIsland(seed, 220, 140)
+	island.FillWithCritters()
+	log.Info("Done generating island")
+
+	// store island to disk as png
+	islandColImage := island.ColoredHeightMapAsImage()
+	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", seed)
+	islandColImgFile, _ := os.Create(islandColImageName)
+	png.Encode(islandColImgFile, islandColImage)
+	/*
+		islandImage := island.HeightMapAsImage()
+		islandImgFile, _ := os.Create("island.png")
+		png.Encode(islandImgFile, islandImage)
+	*/
+	return island
 }
 
 func getRouter() *ace.Ace {
@@ -49,7 +68,7 @@ func getRouter() *ace.Ace {
 
 	r.GET("/ping", pingController)
 
-	r.POST("/island/new", newIslandController)
+	//r.POST("/island/new", newIslandController)
 
 	r.Static("/js", "./public/js")
 	r.Static("/css", "./public/css")
@@ -65,6 +84,7 @@ func pingController(c *ace.C) {
 	c.JSON(200, map[string]string{"pong": "now"})
 }
 
+/*
 func newIslandController(c *ace.C) {
 
 	newIsland := struct {
@@ -74,21 +94,7 @@ func newIslandController(c *ace.C) {
 
 	c.ParseJSON(&newIsland)
 
-	log.Infof("Generating island %s with seed %d ...", newIsland.Name, newIsland.Seed)
-	island := rogue.GenerateIsland(newIsland.Seed, 220, 140)
-	island.FillWithCritters()
-	log.Info("Done generating island")
-
-	// store island to disk as png
-	islandColImage := island.ColoredHeightMapAsImage()
-	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", newIsland.Seed)
-	islandColImgFile, _ := os.Create(islandColImageName)
-	png.Encode(islandColImgFile, islandColImage)
-	/*
-		islandImage := island.HeightMapAsImage()
-		islandImgFile, _ := os.Create("island.png")
-		png.Encode(islandImgFile, islandImage)
-	*/
 	// XXX return as json
 	c.JSON(http.StatusOK, island)
 }
+*/
