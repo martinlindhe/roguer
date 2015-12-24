@@ -60,31 +60,30 @@ func (i *Island) FillWithCritters() {
 
 	npcs := getNpcsFromDefinition("data/npc.yml")
 
-	// XXX qty is not read!
 	spew.Dump(npcs)
-	/*
-		// generate critters based on yaml data
-		for _, npcSpec := range npcs {
-			log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
-			for n := 0; n < npcSpec.Quantity; n++ {
-				var o WorldObjectInstance
 
-				if len(npcSpec.Name) == 0 {
-					// if name field is unset, run a generator based on npc type
-					o.Name = generateNpcName(npcSpec.Type)
+	// generate critters based on yaml data
+	for _, npcSpec := range npcs {
+		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
+		for n := 0; n < npcSpec.Quantity; n++ {
+			var o WorldObjectInstance
 
-				} else {
-					// pick one name by random
-					o.Name = npcSpec.Name[rand.Intn(len(npcSpec.Name))]
-				}
+			if len(npcSpec.Name) == 0 {
+				// if name field is unset, run a generator based on npc type
+				o.Name = generateNpcName(npcSpec.Type)
 
-				o.Level = 1
-				o.Type = npcSpec.Type
-				o.Position = i.randomPointAboveWater()
-				i.Add(o)
+			} else {
+				// pick one name by random
+				o.Name = npcSpec.Name[rand.Intn(len(npcSpec.Name))]
 			}
+
+			o.Level = 1
+			o.Type = npcSpec.Type
+			o.Position = i.randomPointAboveWater()
+			i.Add(o)
 		}
-	*/
+	}
+
 }
 
 func (i *Island) randomPointAboveWater() Point {
