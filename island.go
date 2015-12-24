@@ -79,29 +79,26 @@ func (i *Island) FillWithCritters() {
 		panic(err)
 	}
 
-	spew.Dump(npcList)
+	//spew.Dump(npcList)
 
+	// generate critters based on yaml data
 	for _, npcSpec := range npcList.All {
 		spew.Dump(npcSpec)
-	}
-	// XXXXX generate critters based on yaml data
+		log.Infof("Adding %d of type %s", npcSpec.Quantity, npcSpec.Type)
+		for n := 0; n < npcSpec.Quantity; n++ {
+			var o Npc
 
-	dwarfs := 1
-	//log.Infof("Adding %d dwarfs", dwarfs)
-	for n := 0; n < dwarfs; n++ {
-		var dwarf dwarf
-		dwarf.Defaults()
-		dwarf.Position = i.randomPointAboveWater()
-		i.Add(&dwarf)
-	}
+			if npcSpec.Name[0] == "@generate" {
+				o.Name = generateNpcName(npcSpec.Type)
 
-	rabbits := 1
-	//log.Infof("Adding %d rabbits", rabbits)
-	for n := 0; n < rabbits; n++ {
-		var rabbit rabbit
-		rabbit.Defaults()
-		rabbit.Position = i.randomPointAboveWater()
-		i.Add(&rabbit)
+			} else {
+				// pick one name by random
+				o.Name = npcSpec.Name[rand.Intn(len(npcSpec.Name))]
+			}
+			o.Type = npcSpec.Type
+			o.Position = i.randomPointAboveWater()
+			i.Add(&o)
+		}
 	}
 }
 

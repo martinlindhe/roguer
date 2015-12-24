@@ -22,6 +22,7 @@ type WorldObjectInstance struct {
 	Level    int
 	Age      int
 	Name     string
+	Type     string
 	Position Point
 }
 
@@ -75,17 +76,6 @@ func (n *sweetPotato) Defaults() {
 	n.plant.Defaults()
 	n.Name = "sweet potato"
 	n.Energy = 5
-}
-
-func (n *rabbit) Defaults() {
-	n.Npc.Defaults()
-	n.Name = "a rabbit"
-}
-
-func (n *dwarf) Defaults() {
-	n.Npc.Defaults()
-	n.Name = n.generateName()
-	//log.Printf("dwarf defaults")
 }
 
 func (n *plant) Tick() {
