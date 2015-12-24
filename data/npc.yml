@@ -1,7 +1,9 @@
 all:
-  dwarf:
-    # XXX recognize keyword and use randomizer
-    name: [dwarf]
+    - type: dwarf
+      name: ["@generate"]
+      # XXX recognize keyword and run generator for "dwarf"
+      qty: 10
 
-  rabbit:
-    name: a rabbit
+    - type: rabbit
+      name: [a rabbit, a small rabbit, a brown rabbit]
+      qty: 10

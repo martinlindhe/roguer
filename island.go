@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"io/ioutil"
@@ -10,6 +9,7 @@ import (
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/ghodss/yaml"
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
@@ -54,11 +54,13 @@ func (i *Island) PrintSpawns() {
 }
 
 type npcYaml struct {
-	Details []npcDetailsYaml `json:"all"` // Affects YAML field names too.
+	All []npcSpecYaml `json:"all"` // Affects YAML field names too.
 }
 
-type npcDetailsYaml struct {
-	Name string `json:"name"`
+type npcSpecYaml struct {
+	Type     string   `json:"type"`
+	Name     []string `json:"name"`
+	Quantity int      `json:"qty"`
 }
 
 // FillWithCritters ...
@@ -71,13 +73,18 @@ func (i *Island) FillWithCritters() {
 		panic(err)
 	}
 
-	var p2 npcYaml
-	err = yaml.Unmarshal(data, &p2)
+	var npcList npcYaml
+	err = yaml.Unmarshal(data, &npcList)
 	if err != nil {
-		fmt.Printf("err: %v\n", err)
-		return
+		panic(err)
 	}
-	fmt.Println(p2)
+
+	spew.Dump(npcList)
+
+	for _, npcSpec := range npcList.All {
+		spew.Dump(npcSpec)
+	}
+	// XXXXX generate critters based on yaml data
 
 	dwarfs := 1
 	//log.Infof("Adding %d dwarfs", dwarfs)
