@@ -19,7 +19,7 @@ func TestGenerateIsland(t *testing.T) {
 	island := GenerateIsland(seed, 200, 100)
 	island.FillWithCritters()
 
-	islandColImgFile, _ := os.Create("test-island.png")
+	islandColImgFile, _ := os.Create("island_test.png")
 	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
 
 	for i := 0; i < 1; i++ {
