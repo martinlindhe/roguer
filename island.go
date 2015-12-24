@@ -9,7 +9,6 @@ import (
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/ghodss/yaml"
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
@@ -67,8 +66,12 @@ type npcSpecYaml struct {
 func (i *Island) FillWithCritters() {
 
 	// XXX parse yamls
+	i.spawnNpcsFromDefinition("data/npc.yml")
+}
 
-	data, err := ioutil.ReadFile("./data/npc.yml")
+func (i *Island) spawnNpcsFromDefinition(defFileName string) {
+
+	data, err := ioutil.ReadFile(defFileName)
 	if err != nil {
 		panic(err)
 	}
@@ -80,15 +83,16 @@ func (i *Island) FillWithCritters() {
 	}
 
 	//spew.Dump(npcList)
+	log.Infof("Processing %d entries from %s", len(npcList.All), defFileName)
 
 	// generate critters based on yaml data
 	for _, npcSpec := range npcList.All {
-		spew.Dump(npcSpec)
-		log.Infof("Adding %d of type %s", npcSpec.Quantity, npcSpec.Type)
+		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
 		for n := 0; n < npcSpec.Quantity; n++ {
 			var o Npc
 
-			if npcSpec.Name[0] == "@generate" {
+			if len(npcSpec.Name) == 0 {
+				// if name field is unset, run a generator based on npc type
 				o.Name = generateNpcName(npcSpec.Type)
 
 			} else {
