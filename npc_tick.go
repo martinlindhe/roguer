@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"math/rand"
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
@@ -79,5 +80,14 @@ func (n *Npc) Tick() {
 			log.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
 			n.CurrentAction = nil
 		}
+	}
+}
+
+// shuffle slice, without allocations
+func shuffleActionSlice(p []Action) {
+
+	for i := range p {
+		j := rand.Intn(i + 1)
+		p[i], p[j] = p[j], p[i]
 	}
 }

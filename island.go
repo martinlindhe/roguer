@@ -22,6 +22,7 @@ type Island struct {
 	HeightMap [][]uint
 	Spawns    []WorldObject
 	Age       int64
+	Items     []item // all possible items in the game world
 }
 
 // Tick executes one tick on each spawn in the zone
@@ -67,6 +68,8 @@ func (i *Island) FillWithCritters() {
 
 	// XXX parse yamls
 	i.spawnNpcsFromDefinition("data/npc.yml")
+
+	i.Items = getItemsFromDefinition("data/items.yml")
 }
 
 func (i *Island) spawnNpcsFromDefinition(defFileName string) {
@@ -99,11 +102,14 @@ func (i *Island) spawnNpcsFromDefinition(defFileName string) {
 				// pick one name by random
 				o.Name = npcSpec.Name[rand.Intn(len(npcSpec.Name))]
 			}
+
+			o.Level = 1
 			o.Type = npcSpec.Type
 			o.Position = i.randomPointAboveWater()
 			i.Add(&o)
 		}
 	}
+
 }
 
 func (i *Island) randomPointAboveWater() Point {

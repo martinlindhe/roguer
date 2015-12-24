@@ -1,9 +1,6 @@
 package rogue
 
-import (
-	"math/rand"
-	"reflect"
-)
+import "reflect"
 
 // Point ...
 type Point struct {
@@ -14,7 +11,6 @@ type Point struct {
 // WorldObject ...
 type WorldObject interface {
 	Tick()
-	Defaults()
 }
 
 // WorldObjectInstance ...
@@ -61,23 +57,6 @@ type rabbit struct {
 	Npc
 }
 
-// Defaults ...
-func (n *WorldObjectInstance) Defaults() {
-	// init non-zero values
-	n.Level = 1
-	//log.Debug("npc defaults")
-}
-
-func (n *plant) Defaults() {
-	n.WorldObjectInstance.Defaults()
-}
-
-func (n *sweetPotato) Defaults() {
-	n.plant.Defaults()
-	n.Name = "sweet potato"
-	n.Energy = 5
-}
-
 func (n *plant) Tick() {
 	n.Age++
 }
@@ -118,13 +97,4 @@ func (n *Npc) hasPlanned(a Action) bool {
 		}
 	}
 	return false
-}
-
-// shuffle slice, without allocations
-func shuffleActionSlice(p []Action) {
-
-	for i := range p {
-		j := rand.Intn(i + 1)
-		p[i], p[j] = p[j], p[i]
-	}
 }

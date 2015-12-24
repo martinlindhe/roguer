@@ -1,7 +1,7 @@
 all:
-    - type: dwarf
-      qty: 2
+  - type: dwarf
+    qty: 2
 
-    - type: rabbit
-      name: [a rabbit, a small rabbit, a white rabbit, a brown rabbit]
-      qty: 2
+  - type: rabbit
+    name: [a rabbit, a small rabbit, a white rabbit, a brown rabbit]
+    qty: 2

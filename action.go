@@ -49,7 +49,6 @@ func (a *lookForFood) Perform(n *Npc) bool {
 		// XXX?!?!  how to return a generic object ?!
 		//food := getRandomFoodFrom(&n.Position)
 		var food sweetPotato
-		food.Defaults()
 
 		n.Inventory = append(n.Inventory, &food)
 		return true
