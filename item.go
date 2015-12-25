@@ -25,7 +25,6 @@ func (i *Island) randomItemOfType(t string) Item {
 
 	for _, it := range i.ItemSpecs {
 		if it.Type == t {
-			log.Printf("XXX selecting %s for random roll", it.Name)
 			m = append(m, it)
 		}
 	}

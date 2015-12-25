@@ -31,4 +31,12 @@ func TestGenerateIsland(t *testing.T) {
 
 	// make sure that first critter has aged (failed at one time)
 	assert.Equal(t, true, island.Spawns[0].Age > 0)
+
+	//assert.Equal(t, true, len(island.Spawns[0].Inventory) > 0)
+
+	for i := 0; i < 11; i++ {
+		island.Tick()
+	}
+
+	//spew.Dump(island.Spawns)
 }

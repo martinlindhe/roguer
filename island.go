@@ -61,7 +61,7 @@ func (i *Island) addSpawn(o *Npc) {
 func (i *Island) Tick() {
 
 	i.Age++
-	log.Printf("World tick %d", i.Age)
+	//log.Printf("World tick %d", i.Age)
 
 	for _, o := range i.Spawns {
 		o.Tick()

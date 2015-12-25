@@ -26,26 +26,20 @@ func (n *Npc) Tick() {
 	if n.Hunger > n.hungerCap() {
 
 		// auto eat some food in inventory instead of looking for food, if possible
-		itemIdx, err := n.tryPickSomethingToEatFromInventory()
-		if err != nil {
-			log.Errorf("FAILED TO FIND FOOD: %s", err)
-		} else {
-			// eat item
+		itemIdx, err := n.tryFindItemTypeInInventory("food")
+		if err == nil {
+			item := n.removeFromInventory(itemIdx)
 
-			item := n.Inventory[itemIdx]
+			prevHunger := n.Hunger
 
-			log.Printf("%s picked something to eat from inventory: %s with energy %d", n.Name, item.Name, item.Energy)
-			// reduce hunger by some amount from the food eaten
-
+			// eat item: reduce hunger by some amount from the food eaten
 			n.Hunger -= item.Energy
 			if n.Hunger < 0 {
 				n.Hunger = 0
 			}
 
-			// XXX remove from inv
-			fmt.Println(n.Inventory)
-			n.removeFromInventory(itemIdx)
-			fmt.Println(n.Inventory)
+			energyDiff := prevHunger - n.Hunger
+			log.Printf("%s ate %s and gained %d energy", n.Name, item.Name, energyDiff)
 		}
 
 		if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {
