@@ -40,9 +40,6 @@ func TestFindFoodAndEat(t *testing.T) {
 	dw.Hunger = dw.hungerCap() + 1
 	island.Tick()
 
-	// make sure that npc has aged
-	assert.Equal(t, true, dw.Age > 0)
-
 	// make sure planned action: find food
 	assert.Equal(t, "find-food", dw.CurrentAction)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
@@ -54,6 +51,9 @@ func TestFindFoodAndEat(t *testing.T) {
 	for i := 0; i < duration; i++ {
 		island.Tick()
 	}
+
+	// make sure that npc has aged
+	assert.Equal(t, true, dw.Age > 0)
 
 	// make sure food was found
 	assert.Equal(t, true, len(dw.Inventory) > 0)
@@ -137,8 +137,6 @@ func TestSleep(t *testing.T) {
 	for i := 0; i < duration; i++ {
 		island.Tick()
 	}
-
-	island.Tick()
 
 	// make sure tiredness went down
 	assert.Equal(t, true, dw.Tiredness < oldTiredness)

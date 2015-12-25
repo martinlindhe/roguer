@@ -80,6 +80,15 @@ func (n *Npc) Tick() {
 				n.planAction("dig-hole")
 			}
 		}
+		/*
+			if n.Type == "humanoid" {
+				// XXX
+				if !n.hasPlanned("make-fire") && len(island.withinRadius("small fireplace", 30, n.Position)) == 0 {
+					log.Printf("%s decided to make a fireplace (protection)", n.Name)
+					n.planAction("make-fire")
+				}
+			}
+		*/
 	}
 
 	// select one action to be doing next
