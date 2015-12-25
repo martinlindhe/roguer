@@ -55,11 +55,12 @@ func InitIsland() {
 // Tick executes one tick on each spawn in the zone
 func (i *Island) Tick() {
 
+	i.Age++
 	log.Printf("World tick %d", i.Age)
+
 	for _, o := range i.Spawns {
 		o.Tick()
 	}
-	i.Age++
 }
 
 // Add ...
@@ -70,7 +71,7 @@ func (i *Island) Add(o *Npc) {
 // generate critters based on data file
 func (i *Island) fillWithCritters() {
 
-	log.Infof("Looking at %d blueprints for npcs", len(island.npcSpecs))
+	// log.Infof("Looking at %d blueprints for npcs", len(island.npcSpecs))
 
 	for _, npcSpec := range island.npcSpecs {
 		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
