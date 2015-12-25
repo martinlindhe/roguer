@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -165,8 +164,5 @@ func TestRabbitDigHole(t *testing.T) {
 		island.Tick()
 	}
 
-	holes := island.withinRadius("rabbit hole", 30, dw.Position)
-	spew.Dump(holes)
-
-	assert.Equal(t, true, len(holes) > 0)
+	assert.Equal(t, true, len(island.withinRadius("rabbit hole", 0, dw.Position)) > 0)
 }

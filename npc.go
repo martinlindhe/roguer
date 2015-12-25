@@ -2,6 +2,7 @@ package rogue
 
 import (
 	"io/ioutil"
+	"math"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
@@ -48,9 +49,25 @@ type npcSpec struct {
 	Quantity int      `json:"qty"`
 }
 
-func (i *Island) withinRadius(n string, radius int, pos Point) []Npc {
-	// XXXX
-	return nil
+func (n *Npc) distanceTo(pos Point) float64 {
+
+	xd := float64(pos.X - n.Position.X)
+	yd := float64(pos.Y - n.Position.Y)
+
+	return math.Hypot(xd, yd)
+}
+
+func (i *Island) withinRadius(n string, radius float64, pos Point) []Npc {
+	var res []Npc
+
+	for _, npc := range i.Spawns {
+		if npc.Name == n && npc.distanceTo(pos) <= radius {
+
+			res = append(res, *npc)
+		}
+	}
+
+	return res
 }
 
 func parseNpcsDefinition(defFileName string) []npcSpec {
