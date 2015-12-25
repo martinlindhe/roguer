@@ -1,11 +1,11 @@
 all:
   - type: food
     name: sweet potato
-    energy: 5
+    energy: 50
 
   - type: food
     name: carrot
-    energy: 5
+    energy: 50
 
   - type: drink
     name: pouch of water

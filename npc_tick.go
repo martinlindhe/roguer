@@ -19,12 +19,12 @@ func (n *Npc) Tick() {
 
 	fmt.Println("[tick]", n.Name, n.Age)
 
-	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(&sleep{}) {
+	if n.isTired() && !n.hasPlanned(&sleep{}) {
 		log.Printf("%s is feeling tired. tiredness = %d, cap = %d", n.Name, n.Tiredness, n.tirednessCap())
 		n.PlannedActions = append(n.PlannedActions, &sleep{})
 	}
 
-	if n.Hunger > n.hungerCap() {
+	if n.isHungry() {
 
 		// auto eat some food in inventory instead of looking for food, if possible
 		itemIdx, err := n.tryFindItemTypeInInventory("food")
@@ -43,13 +43,13 @@ func (n *Npc) Tick() {
 			log.Printf("%s ate %s and gained %d energy", n.Name, item.Name, energyDiff)
 		}
 
-		if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {
+		if n.isHungry() && !n.hasPlanned(&lookForFood{}) {
 			log.Println(n.Name, "is feeling hungry")
 			n.PlannedActions = append(n.PlannedActions, &lookForFood{})
 		}
 	}
 
-	if n.Thirst > n.thirstCap() {
+	if n.isThirsty() {
 
 		// auto eat some food in inventory instead of looking for food, if possible
 		itemIdx, err := n.tryFindItemTypeInInventory("drink")
@@ -68,7 +68,7 @@ func (n *Npc) Tick() {
 			log.Printf("%s _DRANK____ %s and gained %d energy", n.Name, item.Name, energyDiff)
 			os.Exit(1)
 		}
-		if n.Thirst > n.thirstCap() && !n.hasPlanned(&lookForWater{}) {
+		if n.isThirsty() && !n.hasPlanned(&lookForWater{}) {
 			log.Println(n.Name, "is feeling thirsty")
 			n.PlannedActions = append(n.PlannedActions, &lookForWater{})
 		}
