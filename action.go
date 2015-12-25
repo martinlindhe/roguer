@@ -34,7 +34,7 @@ const (
 )
 
 func (n *Npc) performSleep() bool {
-	energyGain := 4
+	energyGain := 10
 
 	log.Printf("%s is sleeping. tiredness = %d", n.Name, n.Tiredness)
 	n.TimeSpentOnCurrentAction++

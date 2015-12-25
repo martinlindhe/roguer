@@ -103,3 +103,36 @@ func TestFindWater(t *testing.T) {
 	assert.Equal(t, true, dw.Thirst < oldThirst)
 	assert.Equal(t, false, dw.isThirsty())
 }
+
+func TestSleep(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromType("dwarf")
+	assert.Equal(t, true, len(island.Spawns) == 1)
+	dw := island.Spawns[0]
+
+	// make npc tired
+	dw.Tiredness = dw.tirednessCap() + 1
+	island.Tick()
+
+	// make sure npc planned action: find water
+	assert.Equal(t, "sleep", dw.CurrentAction)
+
+	oldTiredness := dw.Tiredness
+
+	island.Tick()
+	assert.Equal(t, true, dw.isSleeping())
+
+	// progress until npc found food
+	for i := 0; i < 10; i++ { // XXXX need to find action "find food".duration, from actions.yml
+		island.Tick()
+	}
+
+	island.Tick()
+
+	// make sure tiredness went down
+	assert.Equal(t, true, dw.Tiredness < oldTiredness)
+	assert.Equal(t, false, dw.isTired())
+	assert.Equal(t, false, dw.isSleeping())
+}

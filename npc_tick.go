@@ -100,6 +100,8 @@ func (n *Npc) performCurrentAction() {
 		status = n.performFindFood()
 	case "find-water":
 		status = n.performFindWater()
+	case "sleep":
+		status = n.performSleep()
 	default:
 		panic(fmt.Errorf("Cant perform unknown action: %s", n.CurrentAction))
 	}
