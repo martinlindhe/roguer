@@ -48,24 +48,16 @@ func (a *lookForFood) Perform(n *Npc) bool {
 
 		// XXX?!?!  how to return a generic object ?!
 		//food := getRandomFoodFrom(&n.Position)
-		var food sweetPotato
+		//var food sweetPotato
 
-		n.Inventory = append(n.Inventory, &food)
+		food := island.randomItemOfType("food")
+		log.Printf("%s found a %s", n.Name, food.Name)
+		n.Inventory = append(n.Inventory, food)
 		return true
 	}
 
 	return false
 }
-
-/*
-func getRandomFoodFrom(p *Point) WorldObjectInstance {
-
-	// XXX?!?!
-	var food sweetPotato
-	food.Defaults()
-
-	return food
-}*/
 
 type lookForWater struct {
 	timeSpentLooking int

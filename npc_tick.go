@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 
@@ -30,24 +31,26 @@ func (n *Npc) Tick() {
 	if n.Hunger > n.hungerCap() {
 
 		// auto eat some food in inventory instead of looking for food, if possible
-		item := n.pickSomethingToEat()
-		if item != nil {
+		itemIdx, err := n.tryPickSomethingToEatFromInventory()
+		if err != nil {
+			log.Errorf("FAILED TO FIND FOOD: %s", err)
+		} else {
+			// eat item
 
-			// XXX EAT ETC
-			n.Hunger = 0
+			item := n.Inventory[itemIdx]
 
-			/*
-					// XXX unpack interface
-					food := item.(WorldObject)
+			log.Printf("%s picked something to eat from inventory: %s with energy %d", n.Name, item.Name, item.Energy)
+			// reduce hunger by some amount from the food eaten
 
-					log.Printf("%s picked something to eat from inventory: %s with energy %d", n.Name, food.Name, food.Energy)
-					// reduce hunger by some amount from the food eaten
+			n.Hunger -= item.Energy
+			if n.Hunger < 0 {
+				n.Hunger = 0
+			}
 
-				n.Hunger -= food.Energy
-				if n.Hunger < 0 {
-					n.Hunger = 0
-				}
-			*/
+			// XXX remove from inv
+			fmt.Println(n.Inventory)
+			n.removeFromInventory(itemIdx)
+			fmt.Println(n.Inventory)
 		}
 
 		if n.Hunger > n.hungerCap() && !n.hasPlanned(&lookForFood{}) {

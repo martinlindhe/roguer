@@ -1,10 +1,13 @@
 package rogue
 
 import (
+	"fmt"
 	"image"
 	"image/color"
+	"image/png"
 	"math"
 	"math/rand"
+	"os"
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
@@ -20,7 +23,30 @@ type Island struct {
 	HeightMap [][]uint
 	Spawns    []WorldObjectInstance
 	Age       int64
-	Items     []item // all possible items in the game world
+	Items     []Item // all possible items in the game world
+}
+
+var island Island // singelton
+
+// InitIsland inits the singelton
+func InitIsland() {
+	// XXX load existing world from disk
+	seed := int64(666666)
+	log.Infof("Generating island with seed %d ...", seed)
+	island = GenerateIsland(seed, 220, 140)
+	island.FillWithCritters()
+	log.Info("Done generating island")
+
+	// store island to disk as png
+	islandColImage := island.ColoredHeightMapAsImage()
+	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", seed)
+	islandColImgFile, _ := os.Create(islandColImageName)
+	png.Encode(islandColImgFile, islandColImage)
+	/*
+		islandImage := island.HeightMapAsImage()
+		islandImgFile, _ := os.Create("island.png")
+		png.Encode(islandImgFile, islandImage)
+	*/
 }
 
 // Tick executes one tick on each spawn in the zone

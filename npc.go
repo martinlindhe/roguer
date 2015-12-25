@@ -34,7 +34,7 @@ type Npc struct {
 	XP             int
 	CurrentAction  Action
 	PlannedActions []Action
-	Inventory      []WorldObject
+	Inventory      []Item
 
 	// the lower value, the less hungry npc is
 	Hunger    int
@@ -71,31 +71,6 @@ func getNpcsFromDefinition(defFileName string) []npcSpecYaml {
 	return npcs.All
 }
 
-type plant struct {
-	WorldObjectInstance
-}
-
-type edible struct {
-	Energy int
-}
-
-type sweetPotato struct {
-	plant
-	edible
-}
-
-type dwarf struct {
-	Npc
-}
-
-type rabbit struct {
-	Npc
-}
-
-func (n *plant) Tick() {
-	n.Age++
-}
-
 func (n *Npc) hungerCap() int {
 	return n.Level * 5
 }
@@ -106,15 +81,6 @@ func (n *Npc) thirstCap() int {
 
 func (n *Npc) tirednessCap() int {
 	return n.Level * 5
-}
-
-func (n *Npc) pickSomethingToEat() WorldObject {
-	// XXX find something edible in inventory, or nil
-	if len(n.Inventory) == 0 {
-		return nil
-	}
-
-	return n.Inventory[0]
 }
 
 // check if npc already has planned to do a

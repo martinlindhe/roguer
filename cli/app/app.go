@@ -2,11 +2,8 @@ package main
 
 import (
 	"fmt"
-	"image/png"
-	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
 	"github.com/plimble/ace"
 )
@@ -20,7 +17,7 @@ func main() {
 	log.Debug("debug msg")
 
 	r := getRouter()
-	island := getIsland()
+	initIsland()
 	island.PrintSpawns()
 
 	r.GET("/", func(c *ace.C) {
@@ -36,27 +33,6 @@ func main() {
 	log.Infof("Starting http server on %s", listenAt)
 
 	r.Run(listenAt)
-}
-
-func getIsland() rogue.Island {
-	// XXX load existing world from disk
-	seed := int64(666666)
-	log.Infof("Generating island with seed %d ...", seed)
-	island := rogue.GenerateIsland(seed, 220, 140)
-	island.FillWithCritters()
-	log.Info("Done generating island")
-
-	// store island to disk as png
-	islandColImage := island.ColoredHeightMapAsImage()
-	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", seed)
-	islandColImgFile, _ := os.Create(islandColImageName)
-	png.Encode(islandColImgFile, islandColImage)
-	/*
-		islandImage := island.HeightMapAsImage()
-		islandImgFile, _ := os.Create("island.png")
-		png.Encode(islandImgFile, islandImage)
-	*/
-	return island
 }
 
 func getRouter() *ace.Ace {

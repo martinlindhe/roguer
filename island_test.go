@@ -22,7 +22,7 @@ func TestGenerateIsland(t *testing.T) {
 	islandColImgFile, _ := os.Create("island_test.png")
 	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
 
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 3; i++ {
 		island.Tick()
 	}
 
