@@ -1,10 +1,8 @@
 package rogue
 
 import (
-	"fmt"
 	"image/png"
 	"os"
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,11 +44,11 @@ func TestGenerateIslandOneDwarf(t *testing.T) {
 	assert.Equal(t, true, dw2.Age > 0)
 
 	// make sure npc 1 planned action: find food
-	assert.Equal(t, "*rogue.lookForFood", fmt.Sprintf("%s", reflect.TypeOf(dw.CurrentAction)))
+	assert.Equal(t, "find-food", dw.CurrentAction)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
 
 	// make sure npc 2 planned action: find water
-	assert.Equal(t, "*rogue.lookForWater", fmt.Sprintf("%s", reflect.TypeOf(dw2.CurrentAction)))
+	assert.Equal(t, "find-water", dw2.CurrentAction)
 
 	// progress until npc found food
 	for i := 0; i < 5; i++ { // XXXX need to find action "find food".duration, from actions.yml

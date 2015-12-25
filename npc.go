@@ -2,7 +2,6 @@ package rogue
 
 import (
 	"io/ioutil"
-	"reflect"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
@@ -27,10 +26,11 @@ type Npc struct {
 	Type     string
 	Position Point
 
-	XP             int
-	CurrentAction  Action
-	PlannedActions []Action
-	Inventory      []Item
+	XP                       int
+	TimeSpentOnCurrentAction int
+	CurrentAction            string
+	PlannedActions           []string
+	Inventory                []Item
 
 	// the lower value, the less hungry npc is
 	Hunger    int
@@ -66,18 +66,20 @@ func parseNpcsDefinition(defFileName string) []npcSpec {
 }
 
 // check if npc already has planned to do a
-func (n *Npc) hasPlanned(a Action) bool {
+func (n *Npc) hasPlanned(t string) bool {
 
-	t := reflect.TypeOf(a)
-
-	if reflect.TypeOf(n.CurrentAction) == t {
+	if n.CurrentAction == t {
 		return true
 	}
 
 	for _, v := range n.PlannedActions {
-		if reflect.TypeOf(v) == t {
+		if v == t {
 			return true
 		}
 	}
 	return false
+}
+
+func (n *Npc) planAction(t string) {
+	n.PlannedActions = append(n.PlannedActions, t)
 }

@@ -8,6 +8,16 @@ type Action interface {
 	Perform(npc *Npc) bool
 }
 
+type actionList struct {
+	All []actionYaml `json:"all"`
+}
+
+type actionYaml struct {
+	Name      string `json:"name"`
+	Duration  int    `json:"duration"`
+	TimeSpent int
+}
+
 // Doing states
 const (
 	doingNothing = 0
@@ -18,15 +28,11 @@ const (
 	doingForaging
 )
 
-type sleep struct {
-	timeSpent int
-}
-
-func (a *sleep) Perform(n *Npc) bool {
+func (n *Npc) performSleep() bool {
 	energyGain := 4
 
 	log.Printf("%s is sleeping. tiredness = %d", n.Name, n.Tiredness)
-	a.timeSpent++
+	n.TimeSpentOnCurrentAction++
 	n.Tiredness -= energyGain
 
 	if n.Tiredness <= 0 {
@@ -35,25 +41,21 @@ func (a *sleep) Perform(n *Npc) bool {
 		return true
 	}
 
-	if a.timeSpent > 60 {
-		// never sleep more than 60 ticks
+	if n.TimeSpentOnCurrentAction > 30 {
+		// never sleep more than 30 ticks
 		return true
 	}
 
 	return false
 }
 
-type lookForFood struct {
-	timeSpent int
-}
+func (n *Npc) performFindFood() bool {
 
-func (a *lookForFood) Perform(n *Npc) bool {
-
-	log.Println(n.Name, "is looking for food", a.timeSpent)
+	log.Println(n.Name, "is looking for food")
 
 	// TODO something more advanced for looking for food
-	a.timeSpent++
-	if a.timeSpent > 5 {
+	n.TimeSpentOnCurrentAction++
+	if n.TimeSpentOnCurrentAction > 5 {
 
 		item := island.randomItemOfType("food")
 		log.Printf("%s found a %s", n.Name, item.Name)
@@ -64,16 +66,12 @@ func (a *lookForFood) Perform(n *Npc) bool {
 	return false
 }
 
-type lookForWater struct {
-	timeSpent int
-}
-
-func (a *lookForWater) Perform(n *Npc) bool {
-	log.Println(n.Name, "is looking for water", a.timeSpent)
+func (n *Npc) performFindWater() bool {
+	log.Println(n.Name, "is looking for water")
 
 	// TODO something more advanced for looking for water
-	a.timeSpent++
-	if a.timeSpent > 5 {
+	n.TimeSpentOnCurrentAction++
+	if n.TimeSpentOnCurrentAction > 5 {
 
 		item := island.randomItemOfType("drink")
 		log.Printf("%s found a %s", n.Name, item.Name)

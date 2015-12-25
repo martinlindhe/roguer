@@ -18,9 +18,9 @@ func (n *Npc) Tick() {
 
 	fmt.Println("[tick]", n.Name, n.Age)
 
-	if n.isTired() && !n.hasPlanned(&sleep{}) {
+	if n.isTired() && !n.hasPlanned("sleep") {
 		log.Printf("%s is feeling tired. tiredness = %d, cap = %d", n.Name, n.Tiredness, n.tirednessCap())
-		n.PlannedActions = append(n.PlannedActions, &sleep{})
+		n.planAction("sleep")
 	}
 
 	if n.isHungry() {
@@ -42,9 +42,9 @@ func (n *Npc) Tick() {
 			log.Printf("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
 		}
 
-		if n.isHungry() && !n.hasPlanned(&lookForFood{}) {
+		if n.isHungry() && !n.hasPlanned("find-food") {
 			log.Printf("%s is feeling hungry (%d hunger)", n.Name, n.Hunger)
-			n.PlannedActions = append(n.PlannedActions, &lookForFood{})
+			n.planAction("find-food")
 		}
 	}
 
@@ -66,14 +66,14 @@ func (n *Npc) Tick() {
 			energyDiff := prevThirst - n.Thirst
 			log.Printf("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
 		}
-		if n.isThirsty() && !n.hasPlanned(&lookForWater{}) {
+		if n.isThirsty() && !n.hasPlanned("find-water") {
 			log.Printf("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
-			n.PlannedActions = append(n.PlannedActions, &lookForWater{})
+			n.planAction("find-water")
 		}
 	}
 
 	// select one action to be doing next
-	if n.CurrentAction == nil && len(n.PlannedActions) > 0 {
+	if len(n.CurrentAction) == 0 && len(n.PlannedActions) > 0 {
 		// shuffle action list, so behaviour is more random
 		if len(n.PlannedActions) > 1 {
 			shuffleActionSlice(n.PlannedActions)
@@ -86,16 +86,32 @@ func (n *Npc) Tick() {
 		log.Println(n.Name, "decided to", reflect.TypeOf(n.CurrentAction))
 	}
 
-	if n.CurrentAction != nil {
-		if n.CurrentAction.Perform(n) == true {
+	n.performCurrentAction()
+}
+
+func (n *Npc) performCurrentAction() {
+	if len(n.CurrentAction) == 0 {
+		return
+	}
+
+	switch n.CurrentAction {
+	case "find-food":
+		if n.performFindFood() == true {
 			log.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
-			n.CurrentAction = nil
+			n.CurrentAction = ""
 		}
+	case "find-water":
+		if n.performFindWater() == true {
+			log.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
+			n.CurrentAction = ""
+		}
+	default:
+		panic(fmt.Errorf("Cant perform unknown action: %s", n.CurrentAction))
 	}
 }
 
 // shuffle slice, without allocations
-func shuffleActionSlice(p []Action) {
+func shuffleActionSlice(p []string) {
 
 	for i := range p {
 		j := rand.Intn(i + 1)
