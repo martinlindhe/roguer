@@ -24,14 +24,11 @@ func TestGenerateIsland(t *testing.T) {
 	islandColImgFile, _ := os.Create("island_test.png")
 	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
 
-	// make sure spawns was created
+	// make sure spawns was created (failed at one time)
 	assert.Equal(t, true, len(island.Spawns) > 0)
 
 	island.Tick()
-	island.Tick()
 
-	// make sure that first critter has aged! XXX currently failing:
-	assert.Equal(t, true, island.Spawns[0].Age > 1)
-
-	//spew.Dump(island.Spawns)
+	// make sure that first critter has aged (failed at one time)
+	assert.Equal(t, true, island.Spawns[0].Age > 0)
 }

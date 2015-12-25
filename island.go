@@ -21,7 +21,7 @@ type Island struct {
 	Seed      int64
 	Age       int64
 	HeightMap [][]uint
-	Spawns    []Npc
+	Spawns    []*Npc
 
 	// lookup lists:
 	ItemSpecs []Item
@@ -52,6 +52,11 @@ func InitIsland() {
 	*/
 }
 
+// Add ...
+func (i *Island) addSpawn(o *Npc) {
+	i.Spawns = append(i.Spawns, o)
+}
+
 // Tick executes one tick on each spawn in the zone
 func (i *Island) Tick() {
 
@@ -63,11 +68,6 @@ func (i *Island) Tick() {
 	}
 }
 
-// Add ...
-func (i *Island) Add(o *Npc) {
-	i.Spawns = append(i.Spawns, *o)
-}
-
 // generate critters based on data file
 func (i *Island) fillWithCritters() {
 
@@ -76,7 +76,7 @@ func (i *Island) fillWithCritters() {
 	for _, npcSpec := range island.npcSpecs {
 		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
 		for n := 0; n < npcSpec.Quantity; n++ {
-			var o Npc
+			o := new(Npc)
 
 			if len(npcSpec.Name) == 0 {
 				// if name field is unset, run a generator based on npc type
@@ -90,7 +90,7 @@ func (i *Island) fillWithCritters() {
 			o.Level = 1
 			o.Type = npcSpec.Type
 			o.Position = i.randomPointAboveWater()
-			i.Add(&o)
+			i.addSpawn(o)
 		}
 	}
 }
