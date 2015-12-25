@@ -72,15 +72,13 @@ func (n *Npc) Tick() {
 	}
 
 	if !n.isTired() && !n.isHungry() && !n.isThirsty() {
-		// XXX when basic needs is resolved, randomly pick something that would help improve
-		// situation for the npc
+		// when basic needs is resolved, randomly pick something
+		// that would help improve situation for the npc
 
-		n.planAction("dig-hole")
-
-		// XXX rabbit: dig a hole (shelter)
-		// XXX if there is no shelter within 30 radius from Pos
-		cnt := len(island.withinRadius("rabbit hole", 30, n.Position))
-		log.Printf("XXXX: found %d ", cnt)
+		if !n.hasPlanned("dig-hole") && len(island.withinRadius("rabbit hole", 30, n.Position)) == 0 {
+			log.Printf("%s decided to dig a hole (shelter)", n.Name)
+			n.planAction("dig-hole")
+		}
 	}
 
 	// select one action to be doing next
@@ -95,7 +93,7 @@ func (n *Npc) Tick() {
 		n.PlannedActions = n.PlannedActions[1:]
 		n.TimeSpentOnCurrentAction = 0
 
-		log.Println(n.Name, "decided to", n.CurrentAction)
+		log.Println(n.Name, "started to", n.CurrentAction)
 	}
 
 	n.performCurrentAction()
