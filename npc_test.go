@@ -48,7 +48,10 @@ func TestFindFoodAndEat(t *testing.T) {
 	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
 
 	// progress until npc found food
-	for i := 0; i < 5; i++ { // XXXX need to find action "find food".duration, from actions.yml
+	duration := island.findActionByName("find food").Duration
+	assert.Equal(t, true, duration > 0)
+
+	for i := 0; i < duration; i++ {
 		island.Tick()
 	}
 
@@ -84,8 +87,11 @@ func TestFindWaterAndDrink(t *testing.T) {
 	assert.Equal(t, "find-water", dw.CurrentAction)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
 
+	duration := island.findActionByName("find water").Duration
+	assert.Equal(t, true, duration > 0)
+
 	// progress until npc found food
-	for i := 0; i < 5; i++ { // XXXX need to find action "find drink".duration, from actions.yml
+	for i := 0; i < duration; i++ {
 		island.Tick()
 	}
 
@@ -124,8 +130,11 @@ func TestSleep(t *testing.T) {
 	island.Tick()
 	assert.Equal(t, true, dw.isSleeping())
 
+	duration := island.findActionByName("sleep on ground").Duration
+	assert.Equal(t, true, duration > 0)
+
 	// progress until npc wakes up
-	for i := 0; i < 10; i++ { // XXXX need to find action "sleep.duration, from actions.yml
+	for i := 0; i < duration; i++ {
 		island.Tick()
 	}
 

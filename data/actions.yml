@@ -1,17 +1,28 @@
 # TODO make use of this
 
 all:
-  - type: eat
+  - name: eat
+    type: eat
     duration: 1
 
-  - type: drink
+  - name: drink
+    type: drink
     duration: 1
 
-  - type: sleep
+  - name: sleep on ground
+    type: sleep
     duration: 30
+    energy: 10
 
-  - type: "find-food"
+  - name: sleep in bed
+    type: sleep
+    duration: 30
+    energy: 10
+
+  - name: find food
+    type: "find-food"
     duration: 5
 
-  - type: "find-water"
+  - name: find water
+    type: "find-water"
     duration: 5

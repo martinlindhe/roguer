@@ -4,7 +4,6 @@ import "fmt"
 
 // returns index in inventory of something edible
 func (n *Npc) tryFindItemTypeInInventory(t string) (int, error) {
-	// XXX find something edible in inventory, or nil
 
 	if len(n.Inventory) == 0 {
 		return -1, fmt.Errorf("Inventory is empty")
@@ -21,13 +20,13 @@ func (n *Npc) tryFindItemTypeInInventory(t string) (int, error) {
 
 func (n *Npc) removeFromInventory(index int) Item {
 
-	x := n.Inventory[index]
+	val := n.Inventory[index]
 
 	copy(n.Inventory[index:], n.Inventory[index+1:])
 	n.Inventory[len(n.Inventory)-1] = Item{}
 	n.Inventory = n.Inventory[:len(n.Inventory)-1]
 
-	return x
+	return val
 }
 
 func (n *Npc) hasItemTypeInInventory(t string) bool {

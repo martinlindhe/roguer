@@ -9,7 +9,7 @@ func (n *Npc) thirstCap() int {
 }
 
 func (n *Npc) tirednessCap() int {
-	return 100 + (n.Level * 5)
+	return 10000 + (n.Level * 100)
 }
 
 func (n *Npc) isHungry() bool {
