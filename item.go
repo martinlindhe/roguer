@@ -46,18 +46,6 @@ func parseItemsDefinition(defFileName string) []Item {
 		panic(err)
 	}
 
-	//spew.Dump(npcList)
-	log.Infof("Processing %d entries from %s", len(items.All), defFileName)
-
-	var res []Item
-
-	for _, itemSpec := range items.All {
-		// log.Infof("Adding %s: %s", itemSpec.Type, itemSpec.Name)
-		var o Item
-		o.Name = itemSpec.Name
-		o.Type = itemSpec.Type
-		res = append(res, o)
-	}
-
-	return res
+	log.Infof("Read %d entries from %s", len(items.All), defFileName)
+	return items.All
 }

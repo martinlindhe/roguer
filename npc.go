@@ -38,32 +38,30 @@ type Npc struct {
 	Tiredness int
 }
 
-type npcListYaml struct {
-	All []npcSpecYaml `json:"all"`
+type npcList struct {
+	All []npcSpec `json:"all"`
 }
 
-type npcSpecYaml struct {
+type npcSpec struct {
 	Type     string   `json:"type"`
 	Name     []string `json:"name"`
 	Quantity int      `json:"qty"`
 }
 
-func parseNpcsDefinition(defFileName string) []npcSpecYaml {
+func parseNpcsDefinition(defFileName string) []npcSpec {
 
 	data, err := ioutil.ReadFile(defFileName)
 	if err != nil {
 		panic(err)
 	}
 
-	var npcs npcListYaml
+	var npcs npcList
 	err = yaml.Unmarshal(data, &npcs)
 	if err != nil {
 		panic(err)
 	}
 
-	//spew.Dump(npcList)
 	log.Infof("Read %d entries from %s", len(npcs.All), defFileName)
-
 	return npcs.All
 }
 
