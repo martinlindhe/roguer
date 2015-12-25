@@ -74,10 +74,11 @@ func (n *Npc) Tick() {
 	if !n.isTired() && !n.isHungry() && !n.isThirsty() {
 		// when basic needs is resolved, randomly pick something
 		// that would help improve situation for the npc
-
-		if !n.hasPlanned("dig-hole") && len(island.withinRadius("rabbit hole", 30, n.Position)) == 0 {
-			log.Printf("%s decided to dig a hole (shelter)", n.Name)
-			n.planAction("dig-hole")
+		if n.Race == "rabbit" {
+			if !n.hasPlanned("dig-hole") && len(island.withinRadius("rabbit hole", 30, n.Position)) == 0 {
+				log.Printf("%s decided to dig a hole (shelter)", n.Name)
+				n.planAction("dig-hole")
+			}
 		}
 	}
 

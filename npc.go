@@ -24,6 +24,7 @@ type Npc struct {
 	Level    int
 	Age      int
 	Name     string
+	Race     string
 	Type     string
 	Position Point
 
@@ -45,6 +46,7 @@ type npcList struct {
 
 type npcSpec struct {
 	Type     string   `json:"type"`
+	Race     string   `json:"race"`
 	Name     []string `json:"name"`
 	Quantity int      `json:"qty"`
 }

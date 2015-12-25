@@ -6,12 +6,12 @@ import (
 	"strings"
 )
 
-func generateNpcName(t string) string {
-	if t == "dwarf" {
+func (n *Npc) generatRandomName() string {
+	if n.Race == "dwarf" {
 		return generateDwarfName()
 	}
 
-	panic(fmt.Errorf("unknown npc type: %s", t))
+	panic(fmt.Errorf("unknown npc type: %v", n))
 }
 
 // generate a dwarfish name

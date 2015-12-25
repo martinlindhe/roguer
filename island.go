@@ -82,35 +82,51 @@ func (i *Island) fillWithCritters() {
 
 func (i *Island) getNpcSpecFromName(n string) npcSpec {
 	for _, npcSpec := range island.npcSpecs {
-		if npcSpec.Name[0] == n {
+		if len(npcSpec.Name) > 0 && npcSpec.Name[0] == n {
 			return npcSpec
 		}
 	}
 
-	panic(fmt.Errorf("npc spec not found: %s", n))
+	panic(fmt.Errorf("npc spec by name not found: %s", n))
+}
+
+func (i *Island) getNpcSpecFromRace(n string) npcSpec {
+	for _, npcSpec := range island.npcSpecs {
+		if npcSpec.Race == n {
+			return npcSpec
+		}
+	}
+
+	panic(fmt.Errorf("npc spec by race not found: %s", n))
 }
 
 func (i *Island) addNpcFromName(n string, pos Point) {
 
-	npc := island.getNpcSpecFromName(n)
-	island.addNpcFromSpec(npc, pos)
+	island.addNpcFromSpec(island.getNpcSpecFromName(n), pos)
+}
+
+func (i *Island) addNpcFromRace(n string, pos Point) {
+
+	island.addNpcFromSpec(island.getNpcSpecFromRace(n), pos)
 }
 
 func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
 	o := new(Npc)
 
+	o.Level = 1
+	o.Race = spec.Race
+	o.Type = spec.Type
+	o.Position = pos
+
 	if len(spec.Name) == 0 {
 		// if name field is unset, run a generator based on npc type
-		o.Name = generateNpcName(spec.Type)
+		o.Name = o.generatRandomName()
 
 	} else {
 		// pick one name by random
 		o.Name = spec.Name[rand.Intn(len(spec.Name))]
 	}
 
-	o.Level = 1
-	o.Type = spec.Type
-	o.Position = pos
 	i.addSpawn(o)
 }
 
