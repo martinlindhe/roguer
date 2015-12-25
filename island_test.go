@@ -28,7 +28,7 @@ func prepareIsland() {
 	island.Spawns = nil
 }
 
-func TestFindFood(t *testing.T) {
+func TestFindFoodAndEat(t *testing.T) {
 
 	prepareIsland()
 
@@ -68,7 +68,7 @@ func TestFindFood(t *testing.T) {
 	assert.Equal(t, false, dw.isHungry())
 }
 
-func TestFindWater(t *testing.T) {
+func TestFindWaterAndDrink(t *testing.T) {
 
 	prepareIsland()
 
@@ -85,7 +85,7 @@ func TestFindWater(t *testing.T) {
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
 
 	// progress until npc found food
-	for i := 0; i < 5; i++ { // XXXX need to find action "find food".duration, from actions.yml
+	for i := 0; i < 5; i++ { // XXXX need to find action "find drink".duration, from actions.yml
 		island.Tick()
 	}
 
@@ -116,7 +116,7 @@ func TestSleep(t *testing.T) {
 	dw.Tiredness = dw.tirednessCap() + 1
 	island.Tick()
 
-	// make sure npc planned action: find water
+	// make sure npc planned action: sleep
 	assert.Equal(t, "sleep", dw.CurrentAction)
 
 	oldTiredness := dw.Tiredness
@@ -124,8 +124,8 @@ func TestSleep(t *testing.T) {
 	island.Tick()
 	assert.Equal(t, true, dw.isSleeping())
 
-	// progress until npc found food
-	for i := 0; i < 10; i++ { // XXXX need to find action "find food".duration, from actions.yml
+	// progress until npc wakes up
+	for i := 0; i < 10; i++ { // XXXX need to find action "sleep.duration, from actions.yml
 		island.Tick()
 	}
 
