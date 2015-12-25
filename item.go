@@ -8,6 +8,10 @@ import (
 	"github.com/ghodss/yaml"
 )
 
+type itemList struct {
+	All []Item `json:"all"`
+}
+
 // Item ...
 type Item struct {
 	Age    int
@@ -16,16 +20,12 @@ type Item struct {
 	Energy int    `json:"energy"`
 }
 
-type itemList struct {
-	All []Item `json:"all"` // Affects YAML field names too.
-}
-
 func (i *Island) randomItemOfType(t string) Item {
 	var m []Item
 
-	for _, it := range i.Items {
+	for _, it := range i.ItemSpecs {
 		if it.Type == t {
-			log.Printf("xxx selecting %s for random roll", it.Name)
+			log.Printf("XXX selecting %s for random roll", it.Name)
 			m = append(m, it)
 		}
 	}
@@ -50,14 +50,12 @@ func getItemsFromDefinition(defFileName string) []Item {
 	log.Infof("Processing %d entries from %s", len(items.All), defFileName)
 
 	var res []Item
-	// generate critters based on yaml data
-	for _, itemSpec := range items.All {
-		log.Infof("Adding %s: %s", itemSpec.Type, itemSpec.Name)
-		var o Item
 
+	for _, itemSpec := range items.All {
+		// log.Infof("Adding %s: %s", itemSpec.Type, itemSpec.Name)
+		var o Item
 		o.Name = itemSpec.Name
 		o.Type = itemSpec.Type
-
 		res = append(res, o)
 	}
 

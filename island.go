@@ -8,7 +8,6 @@ import (
 	"math"
 	"math/rand"
 	"os"
-	"reflect"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/martinlindhe/rogue/rollingparticle"
@@ -23,7 +22,8 @@ type Island struct {
 	HeightMap [][]uint
 	Spawns    []Npc
 	Age       int64
-	Items     []Item // all possible items in the game world
+	ItemSpecs []Item        // all possible items in the game world
+	npcSpecs  []npcSpecYaml // all possible npcs
 }
 
 var island Island // singelton
@@ -33,8 +33,9 @@ func InitIsland() {
 	// XXX load existing world from disk
 	seed := int64(666666)
 	log.Infof("Generating island with seed %d ...", seed)
-	island = GenerateIsland(seed, 220, 140)
-	island.FillWithCritters()
+	island = generateIsland(seed, 220, 140)
+
+	island.fillWithCritters()
 	log.Info("Done generating island")
 
 	// store island to disk as png
@@ -52,7 +53,7 @@ func InitIsland() {
 // Tick executes one tick on each spawn in the zone
 func (i *Island) Tick() {
 
-	//log.Printf("World tick %d", i.Age)
+	log.Printf("World tick %d", i.Age)
 	for _, o := range i.Spawns {
 		o.Tick()
 	}
@@ -60,34 +61,14 @@ func (i *Island) Tick() {
 }
 
 // Add ...
-func (i *Island) Add(o Npc) {
-	i.Spawns = append(i.Spawns, o)
+func (i *Island) Add(o *Npc) {
+	i.Spawns = append(i.Spawns, *o)
 }
 
-// PrintSpawns ...
-func (i *Island) PrintSpawns() {
+// generate critters based on data file
+func (i *Island) fillWithCritters() {
 
-	log.Printf("showing %d spawns:", len(i.Spawns))
-
-	for _, sp := range i.Spawns {
-		// XXX need to cast to  instance of the object to call .Name, .Pos
-		spawn := reflect.ValueOf(sp)
-		log.Println(spawn)
-		//log.Printf("%s at %s", spawn.Name, spawn.Position)
-	}
-}
-
-// FillWithCritters ...
-func (i *Island) FillWithCritters() {
-
-	// XXX parse yamls
-	i.Items = getItemsFromDefinition("data/items.yml")
-
-	npcs := getNpcsFromDefinition("data/npc.yml")
-	// spew.Dump(npcs)
-
-	// generate critters based on yaml data
-	for _, npcSpec := range npcs {
+	for _, npcSpec := range island.npcSpecs {
 		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
 		for n := 0; n < npcSpec.Quantity; n++ {
 			var o Npc
@@ -104,10 +85,9 @@ func (i *Island) FillWithCritters() {
 			o.Level = 1
 			o.Type = npcSpec.Type
 			o.Position = i.randomPointAboveWater()
-			i.Add(o)
+			i.Add(&o)
 		}
 	}
-
 }
 
 func (i *Island) randomPointAboveWater() Point {
@@ -123,7 +103,7 @@ func (i *Island) randomPointAboveWater() Point {
 }
 
 // GenerateIsland returns a new island
-func GenerateIsland(seed int64, width int, height int) Island {
+func generateIsland(seed int64, width int, height int) Island {
 
 	particleLength := 8
 	innerBlur := 0.85
@@ -175,6 +155,10 @@ func GenerateIsland(seed int64, width int, height int) Island {
 		Height:    height,
 		Seed:      seed,
 		HeightMap: m}
+
+	// load all possible world items
+	island.ItemSpecs = getItemsFromDefinition("data/items.yml")
+	island.npcSpecs = getNpcsFromDefinition("data/npc.yml")
 
 	return island
 }

@@ -4,20 +4,25 @@ import (
 	"image/png"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func BenchmarkGenerateIsland(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 
-		GenerateIsland(666, 220, 140)
+		generateIsland(666, 220, 140)
 	}
 }
 
 func TestGenerateIsland(t *testing.T) {
 
 	seed := int64(123)
-	island := GenerateIsland(seed, 200, 100)
-	island.FillWithCritters()
+	island := generateIsland(seed, 200, 100)
+	island.fillWithCritters()
+
+	// XXX currently failing:
+	assert.Equal(t, true, len(island.Spawns) > 0)
 
 	islandColImgFile, _ := os.Create("island_test.png")
 	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
@@ -26,5 +31,5 @@ func TestGenerateIsland(t *testing.T) {
 		island.Tick()
 	}
 
-	island.PrintSpawns()
+	//spew.Dump(island.Spawns)
 }

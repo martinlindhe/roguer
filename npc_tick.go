@@ -16,7 +16,7 @@ func (n *Npc) Tick() {
 	n.Tiredness++
 	n.Thirst++
 
-	//fmt.Println("[tick]", n.Name, n.Age)
+	fmt.Println("[tick]", n.Name, n.Age)
 
 	if n.Tiredness > n.tirednessCap() && !n.hasPlanned(&sleep{}) {
 		log.Printf("%s is feeling tired. tiredness = %d, cap = %d", n.Name, n.Tiredness, n.tirednessCap())
