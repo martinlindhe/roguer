@@ -75,28 +75,28 @@ func (i *Island) fillWithCritters() {
 	for _, npcSpec := range island.npcSpecs {
 		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
 		for n := 0; n < npcSpec.Quantity; n++ {
-			i.addNpcFromSpec(npcSpec)
+			i.addNpcFromSpec(npcSpec, i.randomPointAboveWater())
 		}
 	}
 }
 
-func (i *Island) getNpcSpecFromType(t string) npcSpec {
+func (i *Island) getNpcSpecFromName(n string) npcSpec {
 	for _, npcSpec := range island.npcSpecs {
-		if npcSpec.Type == t {
+		if npcSpec.Name[0] == n {
 			return npcSpec
 		}
 	}
 
-	panic(fmt.Errorf("npc spec not found: %s", t))
+	panic(fmt.Errorf("npc spec not found: %s", n))
 }
 
-func (i *Island) addNpcFromType(t string) {
+func (i *Island) addNpcFromName(n string, pos Point) {
 
-	npc := island.getNpcSpecFromType("dwarf")
-	island.addNpcFromSpec(npc)
+	npc := island.getNpcSpecFromName(n)
+	island.addNpcFromSpec(npc, pos)
 }
 
-func (i *Island) addNpcFromSpec(spec npcSpec) {
+func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
 	o := new(Npc)
 
 	if len(spec.Name) == 0 {
@@ -110,7 +110,7 @@ func (i *Island) addNpcFromSpec(spec npcSpec) {
 
 	o.Level = 1
 	o.Type = spec.Type
-	o.Position = i.randomPointAboveWater()
+	o.Position = pos
 	i.addSpawn(o)
 }
 

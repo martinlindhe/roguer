@@ -105,9 +105,7 @@ func (n *Npc) performDigHole() bool {
 
 	n.TimeSpentOnCurrentAction++
 	if n.TimeSpentOnCurrentAction > finder.Duration {
-
-		// XXX spawn rabbit hole obj and put here
-
+		island.addNpcFromName("rabbit hole", n.Position)
 		return true
 	}
 

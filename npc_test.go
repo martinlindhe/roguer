@@ -32,7 +32,7 @@ func TestFindFoodAndEat(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromType("dwarf")
+	island.addNpcFromName("dwarf", island.randomPointAboveWater())
 	assert.Equal(t, true, len(island.Spawns) == 1)
 	dw := island.Spawns[0]
 
@@ -75,7 +75,7 @@ func TestFindWaterAndDrink(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromType("dwarf")
+	island.addNpcFromName("dwarf", island.randomPointAboveWater())
 	assert.Equal(t, true, len(island.Spawns) == 1)
 	dw := island.Spawns[0]
 
@@ -114,7 +114,7 @@ func TestSleep(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromType("dwarf")
+	island.addNpcFromName("dwarf", island.randomPointAboveWater())
 	assert.Equal(t, true, len(island.Spawns) == 1)
 	dw := island.Spawns[0]
 
@@ -150,7 +150,7 @@ func TestRabbitDigHole(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromType("rabbit")
+	island.addNpcFromName("rabbit", island.randomPointAboveWater())
 	assert.Equal(t, true, len(island.Spawns) == 1)
 	dw := island.Spawns[0]
 

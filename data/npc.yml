@@ -1,7 +1,12 @@
 all:
-  - type: dwarf
+  - type: humanoid
+    name: [dwarf]
     qty: 2
 
-  - type: rabbit
+  - type: "plant-eater"
     name: [a rabbit, a small rabbit, a white rabbit, a brown rabbit]
     qty: 2
+
+  - type: shelter
+    name: ["rabbit hole"]
+    qty: 0
