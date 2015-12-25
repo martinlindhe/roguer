@@ -39,11 +39,11 @@ func (n *Npc) Tick() {
 			}
 
 			energyDiff := prevHunger - n.Hunger
-			log.Printf("%s ate %s and gained %d energy", n.Name, item.Name, energyDiff)
+			log.Printf("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
 		}
 
 		if n.isHungry() && !n.hasPlanned(&lookForFood{}) {
-			log.Println(n.Name, "is feeling hungry")
+			log.Printf("%s is feeling hungry (%d hunger)", n.Name, n.Hunger)
 			n.PlannedActions = append(n.PlannedActions, &lookForFood{})
 		}
 	}
@@ -64,10 +64,10 @@ func (n *Npc) Tick() {
 			}
 
 			energyDiff := prevThirst - n.Thirst
-			log.Printf("%s drank %s and gained %d energy", n.Name, item.Name, energyDiff)
+			log.Printf("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
 		}
 		if n.isThirsty() && !n.hasPlanned(&lookForWater{}) {
-			log.Println(n.Name, "is feeling thirsty")
+			log.Printf("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
 			n.PlannedActions = append(n.PlannedActions, &lookForWater{})
 		}
 	}

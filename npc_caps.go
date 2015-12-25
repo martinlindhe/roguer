@@ -1,15 +1,15 @@
 package rogue
 
 func (n *Npc) hungerCap() int {
-	return n.Level * 5
+	return 100 + (n.Level * 5)
 }
 
 func (n *Npc) thirstCap() int {
-	return n.Level * 5
+	return 100 + (n.Level * 5)
 }
 
 func (n *Npc) tirednessCap() int {
-	return n.Level * 5
+	return 100 + (n.Level * 5)
 }
 
 func (n *Npc) isHungry() bool {

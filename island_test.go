@@ -83,7 +83,3 @@ func TestGenerateIslandOneDwarf(t *testing.T) {
 
 	assert.Equal(t, false, dw2.isThirsty())
 }
-
-// XXX need tests for behaviour now: need 1 dwarf to live on the map, and be hungry
-
-// XXXX: make dwarf thirsty and give it water, make sure it drinks it.. etc
