@@ -1,6 +1,11 @@
 package rogue
 
-import log "github.com/Sirupsen/logrus"
+import (
+	"io/ioutil"
+
+	log "github.com/Sirupsen/logrus"
+	"github.com/ghodss/yaml"
+)
 
 // Action ...
 type Action interface {
@@ -9,11 +14,11 @@ type Action interface {
 }
 
 type actionList struct {
-	All []actionYaml `json:"all"`
+	All []actionSpec `json:"all"`
 }
 
-type actionYaml struct {
-	Name      string `json:"name"`
+type actionSpec struct {
+	Type      string `json:"type"`
 	Duration  int    `json:"duration"`
 	TimeSpent int
 }
@@ -81,4 +86,21 @@ func (n *Npc) performFindWater() bool {
 	}
 
 	return false
+}
+
+func parseActionsDefinition(defFileName string) []actionSpec {
+
+	data, err := ioutil.ReadFile(defFileName)
+	if err != nil {
+		panic(err)
+	}
+
+	var actions actionList
+	err = yaml.Unmarshal(data, &actions)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Infof("Read %d entries from %s", len(actions.All), defFileName)
+	return actions.All
 }

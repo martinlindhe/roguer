@@ -24,8 +24,9 @@ type Island struct {
 	Spawns    []*Npc
 
 	// lookup lists:
-	ItemSpecs []Item
-	npcSpecs  []npcSpec
+	ItemSpecs   []Item
+	npcSpecs    []npcSpec
+	actionSpecs []actionSpec
 }
 
 var island Island // singelton
@@ -182,6 +183,8 @@ func generateIsland(seed int64, width int, height int) {
 	// load all possible world items and npcs
 	island.ItemSpecs = parseItemsDefinition("data/items.yml")
 	island.npcSpecs = parseNpcsDefinition("data/npc.yml")
+
+	island.actionSpecs = parseActionsDefinition("data/actions.yml")
 }
 
 // ...
