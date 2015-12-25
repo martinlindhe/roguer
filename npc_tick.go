@@ -3,7 +3,6 @@ package rogue
 import (
 	"fmt"
 	"math/rand"
-	"reflect"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -95,19 +94,19 @@ func (n *Npc) performCurrentAction() {
 		return
 	}
 
+	status := false
 	switch n.CurrentAction {
 	case "find-food":
-		if n.performFindFood() == true {
-			log.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
-			n.CurrentAction = ""
-		}
+		status = n.performFindFood()
 	case "find-water":
-		if n.performFindWater() == true {
-			log.Println(n.Name, "finished performing", reflect.TypeOf(n.CurrentAction))
-			n.CurrentAction = ""
-		}
+		status = n.performFindWater()
 	default:
 		panic(fmt.Errorf("Cant perform unknown action: %s", n.CurrentAction))
+	}
+
+	if status == true {
+		log.Println(n.Name, "finished performing", n.CurrentAction)
+		n.CurrentAction = ""
 	}
 }
 
