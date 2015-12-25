@@ -8,14 +8,9 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-// Tick base class
-func (n *WorldObjectInstance) Tick() {
-	n.Age++
-}
-
 // Tick ...
 func (n *Npc) Tick() {
-	n.WorldObjectInstance.Tick()
+	n.Age++
 
 	n.Hunger++
 	n.Tiredness++

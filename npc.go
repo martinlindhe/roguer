@@ -19,18 +19,14 @@ type WorldObject interface {
 	Tick()
 }
 
-// WorldObjectInstance ...
-type WorldObjectInstance struct {
+// Npc ...
+type Npc struct {
 	Level    int
 	Age      int
 	Name     string
 	Type     string
 	Position Point
-}
 
-// Npc ...
-type Npc struct {
-	WorldObjectInstance
 	XP             int
 	CurrentAction  Action
 	PlannedActions []Action

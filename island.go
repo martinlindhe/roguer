@@ -21,7 +21,7 @@ type Island struct {
 	Height    int
 	Seed      int64
 	HeightMap [][]uint
-	Spawns    []WorldObjectInstance
+	Spawns    []Npc
 	Age       int64
 	Items     []Item // all possible items in the game world
 }
@@ -60,7 +60,7 @@ func (i *Island) Tick() {
 }
 
 // Add ...
-func (i *Island) Add(o WorldObjectInstance) {
+func (i *Island) Add(o Npc) {
 	i.Spawns = append(i.Spawns, o)
 }
 
@@ -90,7 +90,7 @@ func (i *Island) FillWithCritters() {
 	for _, npcSpec := range npcs {
 		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
 		for n := 0; n < npcSpec.Quantity; n++ {
-			var o WorldObjectInstance
+			var o Npc
 
 			if len(npcSpec.Name) == 0 {
 				// if name field is unset, run a generator based on npc type
