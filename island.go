@@ -29,14 +29,14 @@ type Island struct {
 	actionSpecs []actionSpec
 }
 
-var island Island // singelton
+var island *Island // singelton
 
 // InitIsland inits the singelton
 func InitIsland() {
 	// XXX load existing world from disk
 	seed := int64(666666)
 	log.Infof("Generating island with seed %d ...", seed)
-	generateIsland(seed, 220, 140)
+	island = generateIsland(seed, 220, 140)
 
 	island.fillWithCritters()
 	log.Info("Done generating island")
@@ -126,8 +126,7 @@ func (i *Island) randomPointAboveWater() Point {
 	return i.randomPointAboveWater()
 }
 
-// GenerateIsland sets the island singelton
-func generateIsland(seed int64, width int, height int) {
+func generateIsland(seed int64, width int, height int) *Island {
 
 	particleLength := 8
 	innerBlur := 0.85
@@ -174,17 +173,18 @@ func generateIsland(seed int64, width int, height int) {
 		}
 	}
 
-	island = Island{
+	is := &Island{
 		Width:     width,
 		Height:    height,
 		Seed:      seed,
 		HeightMap: m}
 
-	// load all possible world items and npcs
-	island.ItemSpecs = parseItemsDefinition("data/items.yml")
-	island.npcSpecs = parseNpcsDefinition("data/npc.yml")
+	// load all possible world items, NPC:s and actions
+	is.ItemSpecs = parseItemsDefinition("data/items.yml")
+	is.npcSpecs = parseNpcsDefinition("data/npc.yml")
+	is.actionSpecs = parseActionsDefinition("data/actions.yml")
 
-	island.actionSpecs = parseActionsDefinition("data/actions.yml")
+	return is
 }
 
 // ...

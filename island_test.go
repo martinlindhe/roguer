@@ -15,14 +15,24 @@ func BenchmarkGenerateIsland(b *testing.B) {
 	}
 }
 
+func prepareIsland() {
+	if island == nil {
+		seed := int64(123)
+		island = generateIsland(seed, 200, 100)
+
+		islandColImgFile, _ := os.Create("island_test.png")
+		png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
+	}
+
+	// clear spawns between tests
+	island.Spawns = nil
+}
+
 func TestFindFood(t *testing.T) {
 
-	seed := int64(123)
-	generateIsland(seed, 200, 100)
-	island.addNpcFromType("dwarf")
+	prepareIsland()
 
-	islandColImgFile, _ := os.Create("island_test.png")
-	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
+	island.addNpcFromType("dwarf")
 
 	// make sure npcs was created
 	assert.Equal(t, true, len(island.Spawns) == 1)
@@ -65,12 +75,9 @@ func TestFindFood(t *testing.T) {
 
 func TestFindWater(t *testing.T) {
 
-	seed := int64(123)
-	generateIsland(seed, 200, 100)
-	island.addNpcFromType("dwarf")
+	prepareIsland()
 
-	islandColImgFile, _ := os.Create("island_test.png")
-	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
+	island.addNpcFromType("dwarf")
 
 	// make sure npcs was created
 	assert.Equal(t, true, len(island.Spawns) == 1)
