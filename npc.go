@@ -39,7 +39,7 @@ type Npc struct {
 }
 
 type npcListYaml struct {
-	All []npcSpecYaml `json:"all"` // Affects YAML field names too.
+	All []npcSpecYaml `json:"all"`
 }
 
 type npcSpecYaml struct {
@@ -65,18 +65,6 @@ func getNpcsFromDefinition(defFileName string) []npcSpecYaml {
 	log.Infof("Read %d entries from %s", len(npcs.All), defFileName)
 
 	return npcs.All
-}
-
-func (n *Npc) hungerCap() int {
-	return n.Level * 5
-}
-
-func (n *Npc) thirstCap() int {
-	return n.Level * 100
-}
-
-func (n *Npc) tirednessCap() int {
-	return n.Level * 5
 }
 
 // check if npc already has planned to do a
