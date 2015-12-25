@@ -74,16 +74,17 @@ func (n *Npc) Tick() {
 
 	// select one action to be doing next
 	if len(n.CurrentAction) == 0 && len(n.PlannedActions) > 0 {
-		// shuffle action list, so behaviour is more random
+		// shuffle actions
 		if len(n.PlannedActions) > 1 {
 			shuffleActionSlice(n.PlannedActions)
 		}
 
-		// pick something
+		// pick first
 		n.CurrentAction = n.PlannedActions[0]
 		n.PlannedActions = n.PlannedActions[1:]
+		n.TimeSpentOnCurrentAction = 0
 
-		log.Println(n.Name, "decided to", reflect.TypeOf(n.CurrentAction))
+		log.Println(n.Name, "decided to", n.CurrentAction)
 	}
 
 	n.performCurrentAction()
