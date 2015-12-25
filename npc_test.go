@@ -145,3 +145,29 @@ func TestSleep(t *testing.T) {
 	assert.Equal(t, false, dw.isTired())
 	assert.Equal(t, false, dw.isSleeping())
 }
+
+func TestRabbitDigHole(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromType("rabbit")
+	assert.Equal(t, true, len(island.Spawns) == 1)
+	dw := island.Spawns[0]
+
+	island.Tick()
+	assert.Equal(t, "dig hole", dw.CurrentAction)
+
+	duration := island.findActionByName("dig hole").Duration
+	assert.Equal(t, true, duration > 0)
+
+	for i := 0; i < duration; i++ {
+		island.Tick()
+	}
+
+	assert.Equal(t, true, len(island.withinRadius("rabbit hole", 30, dw.Position)) > 0)
+}
+
+func (i *Island) withinRadius(n string, radius int, pos Point) []Npc {
+	// XXXX
+	return nil
+}

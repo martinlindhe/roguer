@@ -71,6 +71,9 @@ func (n *Npc) Tick() {
 		}
 	}
 
+	if !n.isTired() && !n.isHungry() && !n.isThirsty() {
+	}
+
 	// select one action to be doing next
 	if len(n.CurrentAction) == 0 && len(n.PlannedActions) > 0 {
 		// shuffle actions
