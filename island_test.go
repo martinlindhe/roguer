@@ -33,21 +33,17 @@ func TestFindFood(t *testing.T) {
 	prepareIsland()
 
 	island.addNpcFromType("dwarf")
-
-	// make sure npcs was created
 	assert.Equal(t, true, len(island.Spawns) == 1)
-
 	dw := island.Spawns[0]
 
-	// make npc 1 hungry
+	// make npc hungry
 	dw.Hunger = dw.hungerCap() + 1
-
 	island.Tick()
 
 	// make sure that npc has aged
 	assert.Equal(t, true, dw.Age > 0)
 
-	// make sure npc 1 planned action: find food
+	// make sure planned action: find food
 	assert.Equal(t, "find-food", dw.CurrentAction)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
 
@@ -56,7 +52,7 @@ func TestFindFood(t *testing.T) {
 		island.Tick()
 	}
 
-	// make sure food was found for npc 1
+	// make sure food was found
 	assert.Equal(t, true, len(dw.Inventory) > 0)
 	assert.Equal(t, true, dw.hasItemTypeInInventory("food"))
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
@@ -64,12 +60,11 @@ func TestFindFood(t *testing.T) {
 	oldHunger := dw.Hunger
 	island.Tick()
 
-	// make sure npc 1 consumed food
+	// make sure npc consumed food
 	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
 
 	// make sure hunger went down
 	assert.Equal(t, true, dw.Hunger < oldHunger)
-
 	assert.Equal(t, false, dw.isHungry())
 }
 
@@ -78,18 +73,14 @@ func TestFindWater(t *testing.T) {
 	prepareIsland()
 
 	island.addNpcFromType("dwarf")
-
-	// make sure npcs was created
 	assert.Equal(t, true, len(island.Spawns) == 1)
-
 	dw := island.Spawns[0]
 
-	// make npc 2 thirsty
+	// make npc thirsty
 	dw.Thirst = dw.thirstCap() + 1
-
 	island.Tick()
 
-	// make sure npc 2 planned action: find water
+	// make sure npc planned action: find water
 	assert.Equal(t, "find-water", dw.CurrentAction)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
 
@@ -98,17 +89,17 @@ func TestFindWater(t *testing.T) {
 		island.Tick()
 	}
 
-	// make sure water was found for npc 2
+	// make sure water was found
 	assert.Equal(t, true, len(dw.Inventory) > 0)
 	assert.Equal(t, true, dw.hasItemTypeInInventory("drink"))
 
 	oldThirst := dw.Thirst
 	island.Tick()
-	// make sure npc 2 consumed water
+
+	// make sure npc consumed water
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
 
-	// make sure hunger went down
+	// make sure thirst went down
 	assert.Equal(t, true, dw.Thirst < oldThirst)
-
 	assert.Equal(t, false, dw.isThirsty())
 }
