@@ -3,6 +3,7 @@ package rogue
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
@@ -48,9 +49,29 @@ func (n *Npc) Tick() {
 		}
 	}
 
-	if n.Thirst > n.thirstCap() && !n.hasPlanned(&lookForWater{}) {
-		log.Println(n.Name, "is feeling thirsty")
-		n.PlannedActions = append(n.PlannedActions, &lookForWater{})
+	if n.Thirst > n.thirstCap() {
+
+		// auto eat some food in inventory instead of looking for food, if possible
+		itemIdx, err := n.tryFindItemTypeInInventory("drink")
+		if err == nil {
+			item := n.removeFromInventory(itemIdx)
+
+			prevThirst := n.Thirst
+
+			// eat item: reduce hunger by some amount from the food eaten
+			n.Thirst -= item.Energy
+			if n.Thirst < 0 {
+				n.Thirst = 0
+			}
+
+			energyDiff := prevThirst - n.Thirst
+			log.Printf("%s _DRANK____ %s and gained %d energy", n.Name, item.Name, energyDiff)
+			os.Exit(1)
+		}
+		if n.Thirst > n.thirstCap() && !n.hasPlanned(&lookForWater{}) {
+			log.Println(n.Name, "is feeling thirsty")
+			n.PlannedActions = append(n.PlannedActions, &lookForWater{})
+		}
 	}
 
 	// select one action to be doing next

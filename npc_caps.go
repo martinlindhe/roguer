@@ -5,7 +5,7 @@ func (n *Npc) hungerCap() int {
 }
 
 func (n *Npc) thirstCap() int {
-	return n.Level * 100
+	return n.Level * 5
 }
 
 func (n *Npc) tirednessCap() int {

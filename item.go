@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 
@@ -27,6 +28,10 @@ func (i *Island) randomItemOfType(t string) Item {
 		if it.Type == t {
 			m = append(m, it)
 		}
+	}
+
+	if len(m) == 0 {
+		panic(fmt.Errorf("no items of type %s found", t))
 	}
 
 	return m[rand.Intn(len(m))]

@@ -75,7 +75,7 @@ func (a *lookForWater) Perform(n *Npc) bool {
 	a.timeSpent++
 	if a.timeSpent > 5 {
 
-		item := island.randomItemOfType("water")
+		item := island.randomItemOfType("drink")
 		log.Printf("%s found a %s", n.Name, item.Name)
 		n.Inventory = append(n.Inventory, item)
 
