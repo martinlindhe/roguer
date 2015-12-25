@@ -11,3 +11,7 @@ all:
   - type: shelter
     name: ["rabbit hole"]
     qty: 0
+
+  - type: fireplace
+    name: ["small fireplace"]
+    qty: 0

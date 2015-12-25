@@ -162,5 +162,6 @@ func TestRabbitDigHole(t *testing.T) {
 		island.Tick()
 	}
 
-	assert.Equal(t, true, len(island.withinRadius("rabbit hole", 0, dw.Position)) > 0)
+	assert.Equal(t, true, len(island.withinRadiusOfName("rabbit hole", 0, dw.Position)) == 1)
+	assert.Equal(t, true, len(island.withinRadiusOfType("shelter", 0, dw.Position)) == 1)
 }

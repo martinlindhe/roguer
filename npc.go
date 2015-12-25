@@ -59,12 +59,23 @@ func (n *Npc) distanceTo(pos Point) float64 {
 	return math.Hypot(xd, yd)
 }
 
-func (i *Island) withinRadius(n string, radius float64, pos Point) []Npc {
+func (i *Island) withinRadiusOfName(n string, radius float64, pos Point) []Npc {
 	var res []Npc
 
 	for _, npc := range i.Spawns {
 		if npc.Name == n && npc.distanceTo(pos) <= radius {
+			res = append(res, *npc)
+		}
+	}
 
+	return res
+}
+
+func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []Npc {
+	var res []Npc
+
+	for _, npc := range i.Spawns {
+		if npc.Type == t && npc.distanceTo(pos) <= radius {
 			res = append(res, *npc)
 		}
 	}
