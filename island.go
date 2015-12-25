@@ -157,8 +157,8 @@ func generateIsland(seed int64, width int, height int) Island {
 		HeightMap: m}
 
 	// load all possible world items
-	island.ItemSpecs = getItemsFromDefinition("data/items.yml")
-	island.npcSpecs = getNpcsFromDefinition("data/npc.yml")
+	island.ItemSpecs = parseItemsDefinition("data/items.yml")
+	island.npcSpecs = parseNpcsDefinition("data/npc.yml")
 
 	return island
 }

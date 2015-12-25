@@ -33,7 +33,7 @@ func (i *Island) randomItemOfType(t string) Item {
 	return m[rand.Intn(len(m))]
 }
 
-func getItemsFromDefinition(defFileName string) []Item {
+func parseItemsDefinition(defFileName string) []Item {
 
 	data, err := ioutil.ReadFile(defFileName)
 	if err != nil {

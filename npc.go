@@ -48,7 +48,7 @@ type npcSpecYaml struct {
 	Quantity int      `json:"qty"`
 }
 
-func getNpcsFromDefinition(defFileName string) []npcSpecYaml {
+func parseNpcsDefinition(defFileName string) []npcSpecYaml {
 
 	data, err := ioutil.ReadFile(defFileName)
 	if err != nil {
