@@ -48,6 +48,11 @@ type npcSpec struct {
 	Quantity int      `json:"qty"`
 }
 
+func (i *Island) withinRadius(n string, radius int, pos Point) []Npc {
+	// XXXX
+	return nil
+}
+
 func parseNpcsDefinition(defFileName string) []npcSpec {
 
 	data, err := ioutil.ReadFile(defFileName)

@@ -72,6 +72,15 @@ func (n *Npc) Tick() {
 	}
 
 	if !n.isTired() && !n.isHungry() && !n.isThirsty() {
+		// XXX when basic needs is resolved, randomly pick something that would help improve
+		// situation for the npc
+
+		n.planAction("dig-hole")
+
+		// XXX rabbit: dig a hole (shelter)
+		// XXX if there is no shelter within 30 radius from Pos
+		cnt := len(island.withinRadius("rabbit hole", 30, n.Position))
+		log.Printf("XXXX: found %d ", cnt)
 	}
 
 	// select one action to be doing next
@@ -105,6 +114,8 @@ func (n *Npc) performCurrentAction() {
 		status = n.performFindWater()
 	case "sleep":
 		status = n.performSleep()
+	case "dig-hole":
+		status = n.performDigHole()
 	default:
 		panic(fmt.Errorf("Cant perform unknown action: %s", n.CurrentAction))
 	}

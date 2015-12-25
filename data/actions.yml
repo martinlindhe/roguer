@@ -26,3 +26,7 @@ all:
   - name: find water
     type: "find-water"
     duration: 5
+
+  - name: dig hole
+    type: "dig-hole"
+    duration: 20

@@ -98,6 +98,22 @@ func (n *Npc) performFindWater() bool {
 	return false
 }
 
+func (n *Npc) performDigHole() bool {
+
+	finder := island.findActionByName("dig hole")
+	log.Println(n.Name, "is digging a hole")
+
+	n.TimeSpentOnCurrentAction++
+	if n.TimeSpentOnCurrentAction > finder.Duration {
+
+		// XXX spawn rabbit hole obj and put here
+
+		return true
+	}
+
+	return false
+}
+
 func parseActionsDefinition(defFileName string) []actionSpec {
 
 	data, err := ioutil.ReadFile(defFileName)

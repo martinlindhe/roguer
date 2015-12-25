@@ -155,7 +155,7 @@ func TestRabbitDigHole(t *testing.T) {
 	dw := island.Spawns[0]
 
 	island.Tick()
-	assert.Equal(t, "dig hole", dw.CurrentAction)
+	assert.Equal(t, "dig-hole", dw.CurrentAction)
 
 	duration := island.findActionByName("dig hole").Duration
 	assert.Equal(t, true, duration > 0)
@@ -165,9 +165,4 @@ func TestRabbitDigHole(t *testing.T) {
 	}
 
 	assert.Equal(t, true, len(island.withinRadius("rabbit hole", 30, dw.Position)) > 0)
-}
-
-func (i *Island) withinRadius(n string, radius int, pos Point) []Npc {
-	// XXXX
-	return nil
 }
