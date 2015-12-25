@@ -1,34 +1,29 @@
 all:
   - name: eat
-    type: eat
+    type: consume
     duration: 1
 
   - name: drink
-    type: drink
+    type: consume
     duration: 1
 
-  - name: sleep on ground
-    type: sleep
-    duration: 30
-    energy: 10
-
-  - name: sleep in bed
+  - name: sleep
     type: sleep
     duration: 30
     energy: 10
 
   - name: find food
-    type: "find-food"
+    type: forage
     duration: 5
 
   - name: find water
-    type: "find-water"
+    type: forage
     duration: 5
 
   - name: dig hole
-    type: "dig-hole"
+    type: build
     duration: 20
 
-  - name: make fire
-    type: "make-fire"
-    duration: 5
+  - name: build fireplace
+    type: build
+    duration: 10

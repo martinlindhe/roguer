@@ -130,7 +130,7 @@ func TestSleep(t *testing.T) {
 	island.Tick()
 	assert.Equal(t, true, dw.isSleeping())
 
-	duration := island.findActionByName("sleep on ground").Duration
+	duration := island.findActionByName("sleep").Duration
 	assert.Equal(t, true, duration > 0)
 
 	// progress until npc wakes up

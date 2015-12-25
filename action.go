@@ -39,11 +39,14 @@ func (i *Island) findActionByName(n string) actionSpec {
 
 func (n *Npc) performSleep() bool {
 
-	sleep := island.findActionByName("sleep on ground")
+	sleep := island.findActionByName("sleep")
 
-	log.Printf("%s is sleeping. tiredness = %d. energy gain = %d", n.Name, n.Tiredness, sleep.Energy)
+	// XXX make use of sleeping bag or other shelter, and gain energy bonus
+	energy := 1 * sleep.Energy
+
+	log.Printf("%s is sleeping. tiredness = %d. energy gain = %d", n.Name, n.Tiredness, energy)
 	n.TimeSpentOnCurrentAction++
-	n.Tiredness -= sleep.Energy
+	n.Tiredness -= energy
 
 	if n.Tiredness <= 0 {
 		n.Tiredness = 0
