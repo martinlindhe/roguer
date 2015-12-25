@@ -134,7 +134,7 @@ func TestSleep(t *testing.T) {
 	assert.Equal(t, true, duration > 0)
 
 	// progress until npc wakes up
-	for i := 0; i < duration; i++ {
+	for i := 0; i < duration-1; i++ {
 		island.Tick()
 	}
 

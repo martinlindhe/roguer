@@ -39,6 +39,7 @@ func (n *Npc) Tick() {
 
 			energyDiff := prevHunger - n.Hunger
 			log.Printf("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
+			return
 		}
 
 		if n.isHungry() && !n.hasPlanned("find-food") {
@@ -64,6 +65,7 @@ func (n *Npc) Tick() {
 
 			energyDiff := prevThirst - n.Thirst
 			log.Printf("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
+			return
 		}
 		if n.isThirsty() && !n.hasPlanned("find-water") {
 			log.Printf("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
@@ -80,15 +82,14 @@ func (n *Npc) Tick() {
 				n.planAction("dig-hole")
 			}
 		}
-		/*
-			if n.Type == "humanoid" {
-				// XXX
-				if !n.hasPlanned("make-fire") && len(island.withinRadius("small fireplace", 30, n.Position)) == 0 {
-					log.Printf("%s decided to make a fireplace (protection)", n.Name)
-					n.planAction("make-fire")
-				}
+
+		if n.Type == "humanoid" {
+			// XXX
+			if !n.hasPlanned("make-fire") && len(island.withinRadius("small fireplace", 30, n.Position)) == 0 {
+				log.Printf("%s decided to make a fireplace (protection)", n.Name)
+				n.planAction("make-fire")
 			}
-		*/
+		}
 	}
 
 	// select one action to be doing next
