@@ -19,9 +19,9 @@ type Island struct {
 	Width     int
 	Height    int
 	Seed      int64
+	Age       int64
 	HeightMap [][]uint
 	Spawns    []Npc
-	Age       int64
 
 	// lookup lists:
 	ItemSpecs []Item
@@ -35,7 +35,7 @@ func InitIsland() {
 	// XXX load existing world from disk
 	seed := int64(666666)
 	log.Infof("Generating island with seed %d ...", seed)
-	island = generateIsland(seed, 220, 140)
+	generateIsland(seed, 220, 140)
 
 	island.fillWithCritters()
 	log.Info("Done generating island")
@@ -69,6 +69,8 @@ func (i *Island) Add(o *Npc) {
 
 // generate critters based on data file
 func (i *Island) fillWithCritters() {
+
+	log.Infof("Looking at %d blueprints for npcs", len(island.npcSpecs))
 
 	for _, npcSpec := range island.npcSpecs {
 		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
@@ -104,8 +106,8 @@ func (i *Island) randomPointAboveWater() Point {
 	return i.randomPointAboveWater()
 }
 
-// GenerateIsland returns a new island
-func generateIsland(seed int64, width int, height int) Island {
+// GenerateIsland sets the island singelton
+func generateIsland(seed int64, width int, height int) {
 
 	particleLength := 8
 	innerBlur := 0.85
@@ -152,7 +154,7 @@ func generateIsland(seed int64, width int, height int) Island {
 		}
 	}
 
-	island := Island{
+	island = Island{
 		Width:     width,
 		Height:    height,
 		Seed:      seed,
@@ -161,8 +163,6 @@ func generateIsland(seed int64, width int, height int) Island {
 	// load all possible world items and npcs
 	island.ItemSpecs = parseItemsDefinition("data/items.yml")
 	island.npcSpecs = parseNpcsDefinition("data/npc.yml")
-
-	return island
 }
 
 // ...

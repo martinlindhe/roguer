@@ -18,7 +18,7 @@ func BenchmarkGenerateIsland(b *testing.B) {
 func TestGenerateIsland(t *testing.T) {
 
 	seed := int64(123)
-	island := generateIsland(seed, 200, 100)
+	generateIsland(seed, 200, 100)
 	island.fillWithCritters()
 
 	// XXX currently failing:
