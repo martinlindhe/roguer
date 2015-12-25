@@ -19,40 +19,45 @@ const (
 )
 
 type sleep struct {
+	timeSpent int
 }
 
 func (a *sleep) Perform(n *Npc) bool {
 	energyGain := 4
 
 	log.Printf("%s is sleeping. tiredness = %d", n.Name, n.Tiredness)
+	a.timeSpent++
 	n.Tiredness -= energyGain
-	if n.Tiredness < 0 {
+
+	if n.Tiredness <= 0 {
 		//log.Printf("%s woke up. tiredness = %d", n.Name, n.Tiredness)
 		n.Tiredness = 0
 		return true
 	}
+
+	if a.timeSpent > 60 {
+		// never sleep more than 60 ticks
+		return true
+	}
+
 	return false
 }
 
 type lookForFood struct {
-	timeSpentLooking int
+	timeSpent int
 }
 
 func (a *lookForFood) Perform(n *Npc) bool {
 
-	log.Println(n.Name, "is looking for food", a.timeSpentLooking)
+	log.Println(n.Name, "is looking for food", a.timeSpent)
 
 	// TODO something more advanced for looking for food
-	a.timeSpentLooking++
-	if a.timeSpentLooking > 5 {
+	a.timeSpent++
+	if a.timeSpent > 5 {
 
-		// XXX?!?!  how to return a generic object ?!
-		//food := getRandomFoodFrom(&n.Position)
-		//var food sweetPotato
-
-		food := island.randomItemOfType("food")
-		log.Printf("%s found a %s", n.Name, food.Name)
-		n.Inventory = append(n.Inventory, food)
+		item := island.randomItemOfType("food")
+		log.Printf("%s found a %s", n.Name, item.Name)
+		n.Inventory = append(n.Inventory, item)
 		return true
 	}
 
@@ -60,16 +65,20 @@ func (a *lookForFood) Perform(n *Npc) bool {
 }
 
 type lookForWater struct {
-	timeSpentLooking int
+	timeSpent int
 }
 
 func (a *lookForWater) Perform(n *Npc) bool {
-	log.Println(n.Name, "is looking for water", a.timeSpentLooking)
-	// TODO something more advanced for looking for food
-	a.timeSpentLooking++
-	if a.timeSpentLooking > 5 {
-		// XXX reduce thirst by some amount from the water drunk
-		n.Thirst = 0
+	log.Println(n.Name, "is looking for water", a.timeSpent)
+
+	// TODO something more advanced for looking for water
+	a.timeSpent++
+	if a.timeSpent > 5 {
+
+		item := island.randomItemOfType("water")
+		log.Printf("%s found a %s", n.Name, item.Name)
+		n.Inventory = append(n.Inventory, item)
+
 		return true
 	}
 
