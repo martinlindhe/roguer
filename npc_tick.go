@@ -3,7 +3,6 @@ package rogue
 import (
 	"fmt"
 	"math/rand"
-	"os"
 	"reflect"
 
 	log "github.com/Sirupsen/logrus"
@@ -65,8 +64,7 @@ func (n *Npc) Tick() {
 			}
 
 			energyDiff := prevThirst - n.Thirst
-			log.Printf("%s _DRANK____ %s and gained %d energy", n.Name, item.Name, energyDiff)
-			os.Exit(1)
+			log.Printf("%s drank %s and gained %d energy", n.Name, item.Name, energyDiff)
 		}
 		if n.isThirsty() && !n.hasPlanned(&lookForWater{}) {
 			log.Println(n.Name, "is feeling thirsty")
