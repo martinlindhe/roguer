@@ -71,28 +71,46 @@ func (i *Island) Tick() {
 // generate critters based on data file
 func (i *Island) fillWithCritters() {
 
-	// log.Infof("Looking at %d blueprints for npcs", len(island.npcSpecs))
-
 	for _, npcSpec := range island.npcSpecs {
 		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
 		for n := 0; n < npcSpec.Quantity; n++ {
-			o := new(Npc)
-
-			if len(npcSpec.Name) == 0 {
-				// if name field is unset, run a generator based on npc type
-				o.Name = generateNpcName(npcSpec.Type)
-
-			} else {
-				// pick one name by random
-				o.Name = npcSpec.Name[rand.Intn(len(npcSpec.Name))]
-			}
-
-			o.Level = 1
-			o.Type = npcSpec.Type
-			o.Position = i.randomPointAboveWater()
-			i.addSpawn(o)
+			i.addNpcFromSpec(npcSpec)
 		}
 	}
+}
+
+func (i *Island) getNpcSpecFromType(t string) npcSpec {
+	for _, npcSpec := range island.npcSpecs {
+		if npcSpec.Type == t {
+			return npcSpec
+		}
+	}
+
+	panic(fmt.Errorf("npc spec not found: %s", t))
+}
+
+func (i *Island) addNpcFromType(t string) {
+
+	npc := island.getNpcSpecFromType("dwarf")
+	island.addNpcFromSpec(npc)
+}
+
+func (i *Island) addNpcFromSpec(spec npcSpec) {
+	o := new(Npc)
+
+	if len(spec.Name) == 0 {
+		// if name field is unset, run a generator based on npc type
+		o.Name = generateNpcName(spec.Type)
+
+	} else {
+		// pick one name by random
+		o.Name = spec.Name[rand.Intn(len(spec.Name))]
+	}
+
+	o.Level = 1
+	o.Type = spec.Type
+	o.Position = i.randomPointAboveWater()
+	i.addSpawn(o)
 }
 
 func (i *Island) randomPointAboveWater() Point {

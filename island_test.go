@@ -19,24 +19,26 @@ func TestGenerateIsland(t *testing.T) {
 
 	seed := int64(123)
 	generateIsland(seed, 200, 100)
-	island.fillWithCritters()
+	island.addNpcFromType("dwarf")
 
 	islandColImgFile, _ := os.Create("island_test.png")
 	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
 
-	// make sure spawns was created (failed at one time)
-	assert.Equal(t, true, len(island.Spawns) > 0)
+	// make sure spawns was created
+	assert.Equal(t, true, len(island.Spawns) == 1)
 
 	island.Tick()
 
-	// make sure that first critter has aged (failed at one time)
+	// make sure that first critter has aged
 	assert.Equal(t, true, island.Spawns[0].Age > 0)
 
-	//assert.Equal(t, true, len(island.Spawns[0].Inventory) > 0)
+	// inject an idea so it will happen before something is auto-picked
 
-	for i := 0; i < 31; i++ {
+	for i := 0; i < 5; i++ {
 		island.Tick()
 	}
+
+	assert.Equal(t, true, len(island.Spawns[0].Inventory) > 0)
 
 	//spew.Dump(island.Spawns)
 }

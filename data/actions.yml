@@ -1,0 +1,10 @@
+# TODO read and make use of this
+
+all:
+  - type: sleep
+
+  - type: eat
+
+  - type: drink
+
+  - type: lookForFood
