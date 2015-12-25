@@ -7,7 +7,7 @@ func (n *Npc) tryFindItemTypeInInventory(t string) (int, error) {
 	// XXX find something edible in inventory, or nil
 
 	if len(n.Inventory) == 0 {
-		return 0, fmt.Errorf("Inventory is empty")
+		return -1, fmt.Errorf("Inventory is empty")
 	}
 
 	for idx, it := range n.Inventory {
@@ -16,8 +16,7 @@ func (n *Npc) tryFindItemTypeInInventory(t string) (int, error) {
 		}
 	}
 
-	// XXX iterate and check types
-	return 0, nil
+	return -1, fmt.Errorf("%s has no items of %s in inventory", n.Name, t)
 }
 
 func (n *Npc) removeFromInventory(index int) Item {
@@ -29,4 +28,13 @@ func (n *Npc) removeFromInventory(index int) Item {
 	n.Inventory = n.Inventory[:len(n.Inventory)-1]
 
 	return x
+}
+
+func (n *Npc) hasItemTypeInInventory(t string) bool {
+
+	_, err := n.tryFindItemTypeInInventory(t)
+	if err != nil {
+		return false
+	}
+	return true
 }

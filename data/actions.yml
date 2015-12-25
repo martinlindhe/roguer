@@ -1,10 +1,17 @@
 # TODO read and make use of this
 
 all:
-  - type: sleep
-
   - type: eat
+    duration: 1
 
   - type: drink
+    duration: 1
 
-  - type: lookForFood
+  - type: sleep
+    duration: 30
+
+  - type: "find-food"
+    duration: 5
+
+  - type: "find-water"
+    duration: 5
