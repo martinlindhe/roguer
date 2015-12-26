@@ -9,18 +9,21 @@ all:
     qty: 2
 
   - type: shelter
-    name: ["small hole"]
+    name: [small hole]
     qty: 0
 
   - type: fireplace
-    name: ["small fireplace"]
+    name: [small fireplace]
     qty: 0
 
   - type: shelter
-    name: ["small shelter"]
+    name: [small shelter]
 
   - type: food producer
-    name: ["farmland"]
+    name: [farmland]
 
   - type: food producer
-    name: ["apple tree"]
+    name: [apple tree]
+
+  - type: tree
+    name: [oak tree]

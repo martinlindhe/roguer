@@ -13,21 +13,21 @@ func (n *Npc) tirednessCap() int {
 }
 
 func (n *Npc) isHungry() bool {
-	if n.Hunger > n.hungerCap() {
+	if n.Hunger >= n.hungerCap() {
 		return true
 	}
 	return false
 }
 
 func (n *Npc) isThirsty() bool {
-	if n.Thirst > n.thirstCap() {
+	if n.Thirst >= n.thirstCap() {
 		return true
 	}
 	return false
 }
 
 func (n *Npc) isTired() bool {
-	if n.Tiredness > n.tirednessCap() {
+	if n.Tiredness >= n.tirednessCap() {
 		return true
 	}
 	return false

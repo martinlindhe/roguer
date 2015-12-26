@@ -77,7 +77,7 @@ func (n *Npc) performSleep() bool {
 	}
 	energy := mult * n.CurrentAction.Energy
 
-	log.Printf("%s is sleeping. tiredness = %d. energy gain = %d", n.Name, n.Tiredness, energy)
+	log.Debugln("%s is sleeping. tiredness = %d. energy gain = %d", n.Name, n.Tiredness, energy)
 	n.CurrentAction.Duration--
 	n.Tiredness -= energy
 
@@ -98,7 +98,7 @@ func (n *Npc) performSleep() bool {
 
 func (n *Npc) performForage() bool {
 
-	log.Println(n.Name, "is performing", n.CurrentAction.Name)
+	log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
 
 	// TODO actually move around, and dont re-visit previously foraged places
 	n.CurrentAction.Duration--
@@ -116,7 +116,7 @@ func (n *Npc) performForage() bool {
 
 func (n *Npc) performBuild() bool {
 
-	log.Println(n.Name, "is performing", n.CurrentAction.Name)
+	log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
 
 	n.CurrentAction.Duration--
 	if n.CurrentAction.Duration < 0 {

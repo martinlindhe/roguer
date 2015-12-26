@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"fmt"
 	"math/rand"
 
 	log "github.com/Sirupsen/logrus"
@@ -15,7 +14,7 @@ func (n *Npc) Tick() {
 	n.Tiredness++
 	n.Thirst++
 
-	fmt.Println("[tick]", n.Name, n.Age)
+	log.Debug("[tick]", n.Name, n.Age)
 
 	if n.isTired() && !n.hasPlanned("sleep") {
 		log.Printf("%s is feeling tired (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
