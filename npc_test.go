@@ -68,6 +68,10 @@ func TestCanBuildAt(t *testing.T) {
 	assert.Equal(t, true, len(island.Spawns) == 1)
 
 	assert.Equal(t, true, island.canBuildAt(island.Spawns[0].Position))
+
+	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
+
+	assert.Equal(t, false, island.canBuildAt(island.Spawns[0].Position))
 }
 
 func TestFindFoodAndEat(t *testing.T) {
@@ -262,6 +266,9 @@ func TestBuildFireplace(t *testing.T) {
 	dw.addToInventory("firewood")
 
 	island.Tick()
+
+	// XXX currently failing: npc chose to build shelter even though they are nearby
+
 	assert.Equal(t, false, dw.CurrentAction == nil)
 	assert.Equal(t, "build small fireplace", dw.CurrentAction.Name)
 
