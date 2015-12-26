@@ -135,7 +135,7 @@ func generateIsland(seed int64, width int, height int) *Island {
 		HeightMap: m}
 
 	// load all possible world items, NPC:s and actions
-	is.npcSpecs = parseNpcsDefinition("data/npc.yml")
+	is.npcSpecs = parseObjectsDefinition("data/objs.yml")
 	is.actionSpecs = parseActionsDefinition("data/actions.yml")
 
 	return is

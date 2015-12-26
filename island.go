@@ -129,6 +129,29 @@ func (i *Island) isAboveWater(p Point) bool {
 	return false
 }
 
+func (i *Island) withinRadiusOfName(n string, radius float64, pos Point) []Obj {
+
+	var res []Obj
+	for _, npc := range i.Spawns {
+		if npc.Name == n && npc.distanceTo(pos) <= radius {
+			res = append(res, *npc)
+		}
+	}
+	return res
+}
+
+func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []Obj {
+
+	var res []Obj
+	for _, npc := range i.Spawns {
+
+		if npc.Type == t && npc.distanceTo(pos) <= radius {
+			res = append(res, *npc)
+		}
+	}
+	return res
+}
+
 // ColoredHeightMapAsImage ...
 func (i *Island) ColoredHeightMapAsImage() image.Image {
 

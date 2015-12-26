@@ -29,6 +29,33 @@ type actionSpec struct {
 	TimeSpent int
 }
 
+// check if npc already has planned to do a
+func (n *Obj) hasPlanned(t string) bool {
+
+	if n.CurrentAction != nil && n.CurrentAction.Name == t {
+		return true
+	}
+
+	for _, v := range n.PlannedActions {
+		if v.Name == t {
+			return true
+		}
+	}
+	return false
+}
+
+func (n *Obj) planAction(actionName string) {
+
+	if n.hasPlanned(actionName) {
+		return
+	}
+
+	a := island.findActionByName(actionName)
+	log.Printf("%s decided to %s", n.Name, a.Name)
+
+	n.PlannedActions = append(n.PlannedActions, a)
+}
+
 func (n *Obj) performCurrentAction() {
 	if n.CurrentAction == nil {
 		return
