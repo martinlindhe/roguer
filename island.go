@@ -19,7 +19,7 @@ type Island struct {
 	Spawns    []*Obj
 
 	// lookup lists:
-	npcSpecs    []npcSpec
+	npcSpecs    []objSpec
 	actionSpecs []actionSpec
 }
 
@@ -53,20 +53,20 @@ func (i *Island) Tick() {
 	}
 }
 
-func (i *Island) getNpcSpecFromName(n string) npcSpec {
-	for _, npcSpec := range island.npcSpecs {
-		if npcSpec.Name == n {
-			return npcSpec
+func (i *Island) getNpcSpecFromName(n string) objSpec {
+	for _, spec := range island.npcSpecs {
+		if spec.Name == n {
+			return spec
 		}
 	}
 
 	panic(fmt.Errorf("npc spec by name not found: %s", n))
 }
 
-func (i *Island) getNpcSpecFromRace(n string) npcSpec {
-	for _, npcSpec := range island.npcSpecs {
-		if npcSpec.Race == n {
-			return npcSpec
+func (i *Island) getNpcSpecFromRace(n string) objSpec {
+	for _, spec := range island.npcSpecs {
+		if spec.Race == n {
+			return spec
 		}
 	}
 
@@ -83,7 +83,7 @@ func (i *Island) addNpcFromRace(n string, pos Point) {
 	island.addNpcFromSpec(island.getNpcSpecFromRace(n), pos)
 }
 
-func (i *Island) getNpcFromSpec(spec npcSpec) *Obj {
+func (i *Island) getNpcFromSpec(spec objSpec) *Obj {
 	o := new(Obj)
 
 	o.Level = 1
@@ -103,7 +103,7 @@ func (i *Island) getNpcFromSpec(spec npcSpec) *Obj {
 	return o
 }
 
-func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
+func (i *Island) addNpcFromSpec(spec objSpec, pos Point) {
 
 	o := i.getNpcFromSpec(spec)
 	o.Position = pos

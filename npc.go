@@ -14,11 +14,6 @@ type Point struct {
 	Y int
 }
 
-// WorldObject ...
-type WorldObject interface {
-	Tick()
-}
-
 // Obj is a in-game object, such as a npc or a item
 type Obj struct {
 	Level    int
@@ -42,11 +37,11 @@ type Obj struct {
 	Tiredness int
 }
 
-type npcList struct {
-	All []npcSpec `json:"all"`
+type objList struct {
+	All []objSpec `json:"all"`
 }
 
-type npcSpec struct {
+type objSpec struct {
 	Type   string     `json:"type"`
 	Class  string     `json:"class"`
 	Race   string     `json:"race"`
@@ -91,14 +86,14 @@ func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []Obj {
 	return res
 }
 
-func parseNpcsDefinition(defFileName string) []npcSpec {
+func parseNpcsDefinition(defFileName string) []objSpec {
 
 	data, err := ioutil.ReadFile(defFileName)
 	if err != nil {
 		panic(err)
 	}
 
-	var npcs npcList
+	var npcs objList
 	err = yaml.Unmarshal(data, &npcs)
 	if err != nil {
 		panic(err)
