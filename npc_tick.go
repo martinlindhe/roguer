@@ -18,7 +18,7 @@ func (n *Npc) Tick() {
 	fmt.Println("[tick]", n.Name, n.Age)
 
 	if n.isTired() && !n.hasPlanned("sleep") {
-		log.Printf("%s is feeling tired. tiredness = %d, cap = %d", n.Name, n.Tiredness, n.tirednessCap())
+		log.Printf("%s is feeling tired (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
 		n.planAction("sleep")
 	}
 
@@ -74,8 +74,8 @@ func (n *Npc) Tick() {
 	}
 
 	if !n.isTired() && !n.isHungry() && !n.isThirsty() {
-		// when basic needs is resolved, randomly pick something
-		// that would help improve situation for the npc
+		// when basic needs is resolved, randomly decide to do
+		// something that would help improve situation for the npc
 		if n.Race == "rabbit" {
 			if !n.hasPlanned("dig small hole") && len(island.withinRadiusOfName("small hole", 30, n.Position)) == 0 {
 				log.Printf("%s decided to dig a hole (shelter)", n.Name)
@@ -87,8 +87,8 @@ func (n *Npc) Tick() {
 			if !n.hasPlanned("build small fireplace") && len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
 				log.Printf("%s decided to build a fireplace (protection)", n.Name)
 				n.planAction("build small fireplace")
-			} else if !n.hasPlanned("build small shelter") && len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
-				// XXX
+			}
+			if !n.hasPlanned("build small shelter") && len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
 				log.Printf("%s decided to build a shelter (shelter)", n.Name)
 				n.planAction("build small shelter")
 			}

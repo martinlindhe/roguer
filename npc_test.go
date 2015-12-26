@@ -185,7 +185,10 @@ func TestBuildFireplace(t *testing.T) {
 	prepareIsland()
 
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
-	assert.Equal(t, true, len(island.Spawns) == 1)
+	// add shelter here, so dwarf dont need to build one
+	island.addNpcFromName("small shelter", island.Spawns[0].Position)
+
+	assert.Equal(t, true, len(island.Spawns) == 2)
 	dw := island.Spawns[0]
 
 	island.Tick()
@@ -209,7 +212,6 @@ func TestBuildShelter(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 
 	// add fireplace here, so dwarf dont need to build one
-	// XXXX it will ignore this and still build one, wtf?!
 	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
 
 	assert.Equal(t, true, len(island.Spawns) == 2)
