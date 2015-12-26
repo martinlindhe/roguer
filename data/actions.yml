@@ -26,3 +26,8 @@ all:
     type: build
     result: small shelter
     duration: 10
+
+  - name: build farmland
+    type: build
+    result: farmland
+    duration: 10

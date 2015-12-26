@@ -92,6 +92,10 @@ func (n *Npc) Tick() {
 				log.Printf("%s decided to build a shelter (shelter)", n.Name)
 				n.planAction("build small shelter")
 			}
+			if !n.hasPlanned("build farmland") && len(island.withinRadiusOfName("farmland", 0, n.Position)) == 0 {
+				log.Printf("%s decided to build farmland (food)", n.Name)
+				n.planAction("build farmland")
+			}
 		}
 	}
 

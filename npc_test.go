@@ -187,8 +187,9 @@ func TestBuildFireplace(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 	// add shelter here, so dwarf dont need to build one
 	island.addNpcFromName("small shelter", island.Spawns[0].Position)
+	island.addNpcFromName("farmland", island.Spawns[0].Position)
 
-	assert.Equal(t, true, len(island.Spawns) == 2)
+	assert.Equal(t, true, len(island.Spawns) == 3)
 	dw := island.Spawns[0]
 
 	island.Tick()
@@ -213,8 +214,9 @@ func TestBuildShelter(t *testing.T) {
 
 	// add fireplace here, so dwarf dont need to build one
 	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
+	island.addNpcFromName("farmland", island.Spawns[0].Position)
 
-	assert.Equal(t, true, len(island.Spawns) == 2)
+	assert.Equal(t, true, len(island.Spawns) == 3)
 	dw := island.Spawns[0]
 
 	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
