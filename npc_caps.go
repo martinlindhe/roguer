@@ -1,5 +1,10 @@
 package rogue
 
+func (n *Npc) ageCap() int {
+	// XXX what is a sane age?
+	return 100000
+}
+
 func (n *Npc) hungerCap() int {
 	return 100 + (n.Level * 5)
 }
