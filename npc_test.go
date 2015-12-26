@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -197,9 +196,10 @@ func TestWithinRadiusOfType(t *testing.T) {
 	island.addNpcFromName("small fireplace", island.randomPointAboveWater())
 	assert.Equal(t, true, len(island.Spawns) == 1)
 
-	spew.Dump(island.Spawns[0])
-	// XXX fails:
-	assert.Equal(t, true, len(island.withinRadiusOfType("small fireplace", 30, island.Spawns[0].Position)) == 1)
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 0, island.Spawns[0].Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, island.Spawns[0].Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, island.Spawns[0].Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, island.Spawns[0].Position)))
 }
 
 /*
@@ -214,6 +214,8 @@ func TestBuildShelter(t *testing.T) {
 	assert.Equal(t, true, len(island.Spawns) == 2)
 	dw := island.Spawns[0]
 
+	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
+
 	island.Tick()
 	assert.Equal(t, "build small shelter", dw.CurrentAction.Name)
 
@@ -223,8 +225,5 @@ func TestBuildShelter(t *testing.T) {
 	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
-
-	assert.Equal(t, true, len(island.withinRadiusOfName("small fireplace", 0, dw.Position)) == 1)
-	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
 }
 */
