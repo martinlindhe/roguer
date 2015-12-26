@@ -41,7 +41,7 @@ func TestFindFoodAndEat(t *testing.T) {
 	island.Tick()
 
 	// make sure planned action: find food
-	assert.Equal(t, "find-food", dw.CurrentAction)
+	assert.Equal(t, "find food", dw.CurrentAction.Name)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
 
 	// progress until npc found food
@@ -84,7 +84,7 @@ func TestFindWaterAndDrink(t *testing.T) {
 	island.Tick()
 
 	// make sure npc planned action: find water
-	assert.Equal(t, "find-water", dw.CurrentAction)
+	assert.Equal(t, "find water", dw.CurrentAction.Name)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
 
 	duration := island.findActionByName("find water").Duration
@@ -123,7 +123,7 @@ func TestSleep(t *testing.T) {
 	island.Tick()
 
 	// make sure npc planned action: sleep
-	assert.Equal(t, "sleep", dw.CurrentAction)
+	assert.Equal(t, "sleep", dw.CurrentAction.Name)
 
 	oldTiredness := dw.Tiredness
 
@@ -153,7 +153,7 @@ func TestRabbitDigHole(t *testing.T) {
 	dw := island.Spawns[0]
 
 	island.Tick()
-	assert.Equal(t, "dig-hole", dw.CurrentAction)
+	assert.Equal(t, "dig hole", dw.CurrentAction.Name)
 
 	duration := island.findActionByName("dig hole").Duration
 	assert.Equal(t, true, duration > 0)
@@ -175,7 +175,7 @@ func TestBuildFireplace(t *testing.T) {
 	dw := island.Spawns[0]
 
 	island.Tick()
-	assert.Equal(t, "build-fireplace", dw.CurrentAction)
+	assert.Equal(t, "build fireplace", dw.CurrentAction.Name)
 
 	duration := island.findActionByName("build fireplace").Duration
 	assert.Equal(t, true, duration > 0)
@@ -187,3 +187,29 @@ func TestBuildFireplace(t *testing.T) {
 	assert.Equal(t, true, len(island.withinRadiusOfName("small fireplace", 0, dw.Position)) == 1)
 	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
 }
+
+/*
+func TestBuildShelter(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
+
+	assert.Equal(t, true, len(island.Spawns) == 2)
+	dw := island.Spawns[0]
+
+	island.Tick()
+	assert.Equal(t, "build-shelter", dw.CurrentAction)
+
+	duration := island.findActionByName("build shelter").Duration
+	assert.Equal(t, true, duration > 0)
+
+	for i := 0; i < duration; i++ {
+		island.Tick()
+	}
+
+	assert.Equal(t, true, len(island.withinRadiusOfName("small fireplace", 0, dw.Position)) == 1)
+	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
+}
+*/

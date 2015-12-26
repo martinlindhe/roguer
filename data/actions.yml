@@ -27,3 +27,7 @@ all:
   - name: build fireplace
     type: build
     duration: 10
+
+  - name: build shelter
+    type: build
+    duration: 10

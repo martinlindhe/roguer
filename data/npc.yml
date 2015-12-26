@@ -15,3 +15,6 @@ all:
   - type: fireplace
     name: ["small fireplace"]
     qty: 0
+
+  - type: shelter
+    name: ["small shelter"]

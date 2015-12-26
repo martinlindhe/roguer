@@ -34,7 +34,7 @@ func (n *Npc) isTired() bool {
 }
 
 func (n *Npc) isSleeping() bool {
-	if n.CurrentAction == "sleep" {
+	if n.CurrentAction != nil && n.CurrentAction.Name == "sleep" {
 		return true
 	}
 	return false

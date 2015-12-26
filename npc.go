@@ -28,11 +28,10 @@ type Npc struct {
 	Type     string
 	Position Point
 
-	XP                       int
-	TimeSpentOnCurrentAction int
-	CurrentAction            string
-	PlannedActions           []string
-	Inventory                []Item
+	XP             int
+	CurrentAction  *actionSpec
+	PlannedActions []actionSpec
+	Inventory      []Item
 
 	// the lower value, the less hungry npc is
 	Hunger    int
@@ -103,18 +102,20 @@ func parseNpcsDefinition(defFileName string) []npcSpec {
 // check if npc already has planned to do a
 func (n *Npc) hasPlanned(t string) bool {
 
-	if n.CurrentAction == t {
+	if n.CurrentAction != nil && n.CurrentAction.Name == t {
 		return true
 	}
 
 	for _, v := range n.PlannedActions {
-		if v == t {
+		if v.Name == t {
 			return true
 		}
 	}
 	return false
 }
 
-func (n *Npc) planAction(t string) {
-	n.PlannedActions = append(n.PlannedActions, t)
+func (n *Npc) planAction(actionName string) {
+
+	a := island.findActionByName(actionName)
+	n.PlannedActions = append(n.PlannedActions, a)
 }
