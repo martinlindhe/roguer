@@ -31,3 +31,8 @@ all:
     type: build
     result: farmland
     duration: 10
+
+  - name: plant apple tree
+    type: build
+    result: apple tree
+    duration: 10

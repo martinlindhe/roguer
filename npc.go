@@ -117,6 +117,12 @@ func (n *Npc) hasPlanned(t string) bool {
 
 func (n *Npc) planAction(actionName string) {
 
+	if n.hasPlanned(actionName) {
+		return
+	}
+
 	a := island.findActionByName(actionName)
+	log.Printf("%s decided to %s", n.Name, a.Name)
+
 	n.PlannedActions = append(n.PlannedActions, a)
 }

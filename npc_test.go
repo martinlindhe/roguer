@@ -189,8 +189,9 @@ func TestBuildFireplace(t *testing.T) {
 	// add nessecities, so they dont need to be built
 	island.addNpcFromName("small shelter", island.Spawns[0].Position)
 	island.addNpcFromName("farmland", island.Spawns[0].Position)
+	island.addNpcFromName("apple tree", island.Spawns[0].Position)
 
-	assert.Equal(t, true, len(island.Spawns) == 3)
+	assert.Equal(t, true, len(island.Spawns) == 4)
 	dw := island.Spawns[0]
 
 	island.Tick()
@@ -216,8 +217,9 @@ func TestBuildShelter(t *testing.T) {
 	// add nessecities, so they dont need to be built
 	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
 	island.addNpcFromName("farmland", island.Spawns[0].Position)
+	island.addNpcFromName("apple tree", island.Spawns[0].Position)
 
-	assert.Equal(t, true, len(island.Spawns) == 3)
+	assert.Equal(t, true, len(island.Spawns) == 4)
 	dw := island.Spawns[0]
 
 	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
@@ -245,8 +247,9 @@ func TestBuildFarmland(t *testing.T) {
 	// add nessecities, so they dont need to be built
 	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
 	island.addNpcFromName("small shelter", island.Spawns[0].Position)
+	island.addNpcFromName("apple tree", island.Spawns[0].Position)
 
-	assert.Equal(t, true, len(island.Spawns) == 3)
+	assert.Equal(t, true, len(island.Spawns) == 4)
 	dw := island.Spawns[0]
 
 	island.Tick()
@@ -260,6 +263,6 @@ func TestBuildFarmland(t *testing.T) {
 		island.Tick()
 	}
 
-	assert.Equal(t, true, len(island.withinRadiusOfName("farmland", 0, dw.Position)) == 1)
-	assert.Equal(t, true, len(island.withinRadiusOfType("food producer", 0, dw.Position)) == 1)
+	assert.Equal(t, 1, len(island.withinRadiusOfName("farmland", 0, dw.Position)))
+	assert.Equal(t, 2, len(island.withinRadiusOfType("food producer", 0, dw.Position))) // including apple tree
 }

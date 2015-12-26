@@ -84,17 +84,17 @@ func (n *Npc) Tick() {
 		}
 
 		if n.Type == "humanoid" {
-			if !n.hasPlanned("build small fireplace") && len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
-				log.Printf("%s decided to build a fireplace (protection)", n.Name)
+			if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
 				n.planAction("build small fireplace")
 			}
-			if !n.hasPlanned("build small shelter") && len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
-				log.Printf("%s decided to build a shelter (shelter)", n.Name)
+			if len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
 				n.planAction("build small shelter")
 			}
-			if !n.hasPlanned("build farmland") && len(island.withinRadiusOfName("farmland", 0, n.Position)) == 0 {
-				log.Printf("%s decided to build farmland (food)", n.Name)
+			if len(island.withinRadiusOfName("farmland", 0, n.Position)) == 0 {
 				n.planAction("build farmland")
+			}
+			if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
+				n.planAction("plant apple tree")
 			}
 		}
 	}
