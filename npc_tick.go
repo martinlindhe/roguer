@@ -23,10 +23,6 @@ func (n *Npc) Tick() bool {
 
 		treeSpec := island.getNpcSpecFromName(n.Name)
 
-		// XXX
-		//spew.Dump(n)
-		//spew.Dump(treeSpec.Drops)
-
 		for _, drop := range treeSpec.Drops {
 
 			roll := float64(rand.Intn(100)) // between 0-99
@@ -123,8 +119,8 @@ func (n *Npc) Tick() bool {
 
 		if n.Type == "humanoid" {
 
-			if !n.hasItemInInventory("firewood") {
-				n.planAction("find firewood")
+			if !n.hasItemTypeInInventory("wood") {
+				n.planAction("find fire wood")
 			}
 
 			//if island.canBuildAt(n.Position) {

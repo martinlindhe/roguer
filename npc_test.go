@@ -81,7 +81,7 @@ func TestFindFoodAndEat(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
-	dw.addToInventory("firewood")
+	dw.addToInventory("small branch")
 	assert.Equal(t, 1, len(dw.Inventory)) // firewood
 
 	// make npc hungry
@@ -126,7 +126,7 @@ func TestFindWaterAndDrink(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
-	dw.addToInventory("firewood")
+	dw.addToInventory("small branch")
 	assert.Equal(t, 1, len(dw.Inventory)) // firewood
 
 	// make npc thirsty
@@ -176,7 +176,7 @@ func TestFindFirewood(t *testing.T) {
 
 	island.Tick()
 	assert.Equal(t, false, dw.CurrentAction == nil)
-	assert.Equal(t, "find firewood", dw.CurrentAction.Name)
+	assert.Equal(t, "find fire wood", dw.CurrentAction.Name)
 
 	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
@@ -195,7 +195,7 @@ func TestSleep(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
-	dw.addToInventory("firewood")
+	dw.addToInventory("small branch")
 
 	// make npc tired
 	dw.Tiredness = dw.tirednessCap() + 1
@@ -230,7 +230,7 @@ func TestRabbitDigHole(t *testing.T) {
 	island.addNpcFromRace("rabbit", island.randomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
-	dw.addToInventory("firewood")
+	dw.addToInventory("small branch")
 
 	island.Tick()
 	assert.Equal(t, "dig small hole", dw.CurrentAction.Name)
@@ -253,7 +253,7 @@ func TestBuildFireplace(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 
 	dw := island.Spawns[0]
-	dw.addToInventory("firewood")
+	dw.addToInventory("small branch")
 
 	// add nessecities nearby, so they dont need to be built
 	nextTo := island.Spawns[0].Position
@@ -298,7 +298,7 @@ func TestBuildShelter(t *testing.T) {
 	assert.Equal(t, 4, len(island.Spawns))
 
 	dw := island.Spawns[0]
-	dw.addToInventory("firewood")
+	dw.addToInventory("small branch")
 
 	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, dw.Position)))
 
@@ -329,7 +329,7 @@ func TestBuildFarmland(t *testing.T) {
 	assert.Equal(t, 4, len(island.Spawns))
 
 	dw := island.Spawns[0]
-	dw.addToInventory("firewood")
+	dw.addToInventory("small branch")
 
 	island.Tick()
 	assert.Equal(t, false, dw.CurrentAction == nil)

@@ -33,9 +33,11 @@ all:
     name: oak tree
     drops:
       - name: small branch
-        chance: 5.1
+        chance: 15.5
+      - name: branch
+        chance: 10
       - name: oak seed
-        chance: 1.0
+        chance: 1
 
   - type: food
     class: object
@@ -54,5 +56,10 @@ all:
 
   - type: wood
     class: object
-    name: firewood
+    name: small branch
+    energy: 50
+
+  - type: wood
+    class: object
+    name: branch
     energy: 100

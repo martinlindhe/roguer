@@ -14,9 +14,9 @@ all:
     result: [pouch of water]
     duration: 5
   
-  - name: find firewood
+  - name: find fire wood
     type: forage
-    result: [firewood]
+    result: [small branch, branch]
     duration: 10
 
   - name: dig small hole
