@@ -5,7 +5,6 @@ import (
 	"math/rand"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 )
 
 // Tick npc ticks until it returns false
@@ -26,7 +25,17 @@ func (n *Npc) Tick() bool {
 
 		// XXX
 		//spew.Dump(n)
-		spew.Dump(treeSpec.Drops)
+		//spew.Dump(treeSpec.Drops)
+
+		for _, drop := range treeSpec.Drops {
+
+			roll := float64(rand.Intn(100)) // between 0-99
+			log.Printf("Rolled %f for check if %s is spawned, %f chance", roll, drop.Name, drop.Chance)
+
+			if roll <= drop.Chance {
+				log.Printf("XXXX spawn a %s", drop.Name)
+			}
+		}
 	}
 
 	if n.Class != "npc" {

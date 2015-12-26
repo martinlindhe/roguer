@@ -36,3 +36,23 @@ all:
         chance: 5.1
       - name: oak seed
         chance: 1.0
+
+  - type: food
+    class: object
+    name: sweet potato
+    energy: 50
+
+  - type: food
+    class: object
+    name: carrot
+    energy: 50
+
+  - type: drink
+    class: object
+    name: pouch of water
+    energy: 100
+
+  - type: wood
+    class: object
+    name: firewood
+    energy: 100

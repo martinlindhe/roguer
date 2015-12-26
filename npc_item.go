@@ -20,16 +20,18 @@ func (n *Npc) tryFindItemTypeInInventory(t string) (int, error) {
 
 func (n *Npc) addToInventory(itemName string) {
 
-	item := island.itemOfName(itemName)
-	n.Inventory = append(n.Inventory, item)
+	spec := island.getNpcSpecFromName(itemName)
+	o := island.getNpcFromSpec(spec)
+
+	n.Inventory = append(n.Inventory, *o)
 }
 
-func (n *Npc) removeFromInventory(index int) Item {
+func (n *Npc) removeFromInventory(index int) Npc {
 
 	val := n.Inventory[index]
 
 	copy(n.Inventory[index:], n.Inventory[index+1:])
-	n.Inventory[len(n.Inventory)-1] = Item{}
+	n.Inventory[len(n.Inventory)-1] = Npc{}
 	n.Inventory = n.Inventory[:len(n.Inventory)-1]
 
 	return val

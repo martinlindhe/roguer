@@ -28,11 +28,12 @@ type Npc struct {
 	Type     string
 	Class    string
 	Position Point
+	Energy   int
 
 	XP             int
 	CurrentAction  *actionSpec
 	PlannedActions []actionSpec
-	Inventory      []Item
+	Inventory      []Npc
 
 	// the lower value, the less hungry npc is
 	Hunger    int
@@ -45,11 +46,12 @@ type npcList struct {
 }
 
 type npcSpec struct {
-	Type  string     `json:"type"`
-	Class string     `json:"class"`
-	Race  string     `json:"race"`
-	Name  string     `json:"name"`
-	Drops []dropSpec `json:"drops"`
+	Type   string     `json:"type"`
+	Class  string     `json:"class"`
+	Race   string     `json:"race"`
+	Name   string     `json:"name"`
+	Energy int        `json:"energy"`
+	Drops  []dropSpec `json:"drops"`
 }
 
 type dropSpec struct {

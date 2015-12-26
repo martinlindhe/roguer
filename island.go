@@ -24,7 +24,6 @@ type Island struct {
 	Spawns    []*Npc
 
 	// lookup lists:
-	ItemSpecs   []Item
 	npcSpecs    []npcSpec
 	actionSpecs []actionSpec
 }
@@ -118,14 +117,14 @@ func (i *Island) addNpcFromRace(n string, pos Point) {
 	island.addNpcFromSpec(island.getNpcSpecFromRace(n), pos)
 }
 
-func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
+func (i *Island) getNpcFromSpec(spec npcSpec) *Npc {
 	o := new(Npc)
 
 	o.Level = 1
 	o.Race = spec.Race
 	o.Type = spec.Type
 	o.Class = spec.Class
-	o.Position = pos
+	o.Energy = spec.Energy
 
 	if spec.Name == "" {
 		// if name field is unset, let the npc generate a name
@@ -134,6 +133,13 @@ func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
 		o.Name = spec.Name
 	}
 
+	return o
+}
+
+func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
+
+	o := i.getNpcFromSpec(spec)
+	o.Position = pos
 	i.addSpawn(o)
 }
 
@@ -203,7 +209,6 @@ func generateIsland(seed int64, width int, height int) *Island {
 		HeightMap: m}
 
 	// load all possible world items, NPC:s and actions
-	is.ItemSpecs = parseItemsDefinition("data/items.yml")
 	is.npcSpecs = parseNpcsDefinition("data/npc.yml")
 	is.actionSpecs = parseActionsDefinition("data/actions.yml")
 
