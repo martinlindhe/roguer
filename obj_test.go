@@ -414,8 +414,14 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	island.addNpcFromName("small fireplace", nextTo)
 	assert.Equal(t, 2, len(island.Spawns))
 
-	// XXX make dwarf wanna move to shelter
+	// make dwarf wanna move to shelter
 	dw.Coldness = dw.coldnessCap() + 1
+	assert.Equal(t, true, dw.isCold())
 
 	island.Tick()
+
+	// XXX let them travel to destination
+
+	// XXX let them get warm by the fire
+	assert.Equal(t, false, dw.isCold())
 }
