@@ -77,16 +77,16 @@ func (n *Npc) Tick() {
 		// when basic needs is resolved, randomly pick something
 		// that would help improve situation for the npc
 		if n.Race == "rabbit" {
-			if !n.hasPlanned("dig hole") && len(island.withinRadiusOfName("rabbit hole", 30, n.Position)) == 0 {
+			if !n.hasPlanned("dig small hole") && len(island.withinRadiusOfName("small hole", 30, n.Position)) == 0 {
 				log.Printf("%s decided to dig a hole (shelter)", n.Name)
-				n.planAction("dig hole")
+				n.planAction("dig small hole")
 			}
 		}
 
 		if n.Type == "humanoid" {
-			if !n.hasPlanned("build fireplace") && len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
+			if !n.hasPlanned("build small fireplace") && len(island.withinRadiusOfType("small fireplace", 30, n.Position)) == 0 {
 				log.Printf("%s decided to build a fireplace (protection)", n.Name)
-				n.planAction("build fireplace")
+				n.planAction("build small fireplace")
 			} /* else if !n.hasPlanned("build shelter") && len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
 				// XXX
 				log.Printf("%s decided to build a shelter (shelter)", n.Name)

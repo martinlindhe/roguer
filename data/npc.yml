@@ -3,7 +3,7 @@ all:
     race: dwarf
     qty: 2
 
-  - type: "plant-eater"
+  - type: plant eater
     race: rabbit
     name: [a rabbit, a small rabbit, a white rabbit, a brown rabbit]
     qty: 2

@@ -45,10 +45,10 @@ func TestFindFoodAndEat(t *testing.T) {
 	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
 
 	// progress until npc found food
-	duration := island.findActionByName("find food").Duration
+	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
-	for i := 0; i < duration; i++ {
+	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
@@ -87,11 +87,11 @@ func TestFindWaterAndDrink(t *testing.T) {
 	assert.Equal(t, "find water", dw.CurrentAction.Name)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
 
-	duration := island.findActionByName("find water").Duration
+	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	// progress until npc found food
-	for i := 0; i < duration; i++ {
+	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
@@ -130,11 +130,11 @@ func TestSleep(t *testing.T) {
 	island.Tick()
 	assert.Equal(t, true, dw.isSleeping())
 
-	duration := island.findActionByName("sleep").Duration
+	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	// progress until npc wakes up
-	for i := 0; i < duration-1; i++ {
+	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
@@ -153,12 +153,12 @@ func TestRabbitDigHole(t *testing.T) {
 	dw := island.Spawns[0]
 
 	island.Tick()
-	assert.Equal(t, "dig hole", dw.CurrentAction.Name)
+	assert.Equal(t, "dig small hole", dw.CurrentAction.Name)
 
-	duration := island.findActionByName("dig hole").Duration
+	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
-	for i := 0; i < duration; i++ {
+	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
@@ -175,12 +175,12 @@ func TestBuildFireplace(t *testing.T) {
 	dw := island.Spawns[0]
 
 	island.Tick()
-	assert.Equal(t, "build fireplace", dw.CurrentAction.Name)
+	assert.Equal(t, "build small fireplace", dw.CurrentAction.Name)
 
-	duration := island.findActionByName("build fireplace").Duration
+	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
-	for i := 0; i < duration; i++ {
+	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
@@ -202,10 +202,10 @@ func TestBuildShelter(t *testing.T) {
 	island.Tick()
 	assert.Equal(t, "build-shelter", dw.CurrentAction)
 
-	duration := island.findActionByName("build shelter").Duration
+	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
-	for i := 0; i < duration; i++ {
+	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 

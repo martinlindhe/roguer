@@ -20,14 +20,17 @@ all:
     type: forage
     duration: 5
 
-  - name: dig hole
+  - name: dig small hole
     type: build
+    result: small hole
     duration: 20
 
-  - name: build fireplace
+  - name: build small fireplace
     type: build
+    result: small fireplace
     duration: 10
 
-  - name: build shelter
+  - name: build small shelter
     type: build
+    result: small shelter
     duration: 10

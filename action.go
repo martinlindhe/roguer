@@ -32,6 +32,7 @@ func (n *Npc) performCurrentAction() {
 		return
 	}
 
+	// XXX react on TYPE, be more generic:
 	status := false
 	switch n.CurrentAction.Name {
 	case "find food":
@@ -40,9 +41,9 @@ func (n *Npc) performCurrentAction() {
 		status = n.performFindWater()
 	case "sleep":
 		status = n.performSleep()
-	case "dig hole":
+	case "dig small hole":
 		status = n.performDigHole()
-	case "build fireplace":
+	case "build small fireplace":
 		status = n.performBuildFireplace()
 	default:
 		panic(fmt.Errorf("Cant perform unknown action: %s", n.CurrentAction))
