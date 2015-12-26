@@ -10,8 +10,8 @@ import (
 
 // Point ...
 type Point struct {
-	X uint16
-	Y uint16
+	X int
+	Y int
 }
 
 // WorldObject ...
@@ -52,8 +52,8 @@ type npcSpec struct {
 
 func (n *Npc) distanceTo(pos Point) float64 {
 
-	xd := float64(pos.X - n.Position.X)
-	yd := float64(pos.Y - n.Position.Y)
+	xd := math.Abs(float64(n.Position.X - pos.X))
+	yd := math.Abs(float64(n.Position.Y - pos.Y))
 
 	return math.Hypot(xd, yd)
 }

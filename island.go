@@ -132,7 +132,7 @@ func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
 
 func (i *Island) randomPointAboveWater() Point {
 
-	p := Point{uint16(rand.Intn(i.Width)), uint16(rand.Intn(i.Height))}
+	p := Point{rand.Intn(i.Width), rand.Intn(i.Height)}
 
 	// above ground
 	if i.HeightMap[p.Y][p.X] > shallowWater {

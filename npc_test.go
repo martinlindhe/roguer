@@ -251,23 +251,24 @@ func TestBuildFireplace(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 
+	dw := island.Spawns[0]
+	dw.addToInventory("firewood")
+
 	// add nessecities nearby, so they dont need to be built
 	nextTo := island.Spawns[0].Position
-	//nextTo.Y++
+	nextTo.Y++
 	// make sure nextTo is changed
-	//assert.Equal(t, false, island.Spawns[0].Position.Y == nextTo.Y)
+	assert.Equal(t, false, island.Spawns[0].Position.Y == nextTo.Y)
 
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("farmland", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
 
+	assert.Equal(t, 1, len(island.withinRadiusOfType("shelter", 30, dw.Position)))
+
 	assert.Equal(t, true, len(island.Spawns) == 4)
-	dw := island.Spawns[0]
-	dw.addToInventory("firewood")
 
 	island.Tick()
-
-	// XXX currently failing: npc chose to build shelter even though they are nearby
 
 	assert.Equal(t, false, dw.CurrentAction == nil)
 	assert.Equal(t, "build small fireplace", dw.CurrentAction.Name)
