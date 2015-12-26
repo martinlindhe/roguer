@@ -59,56 +59,7 @@ func (n *Obj) npcTick() bool {
 		n.planAction("sleep")
 	}
 
-	if n.isHungry() {
-
-		// auto eat some food in inventory instead of looking for food, if possible
-		itemIdx, err := n.tryFindItemTypeInInventory("food")
-		if err == nil {
-			item := n.removeFromInventory(itemIdx)
-
-			prevHunger := n.Hunger
-
-			// eat item: reduce hunger by some amount from the food eaten
-			n.Hunger -= item.Energy
-			if n.Hunger < 0 {
-				n.Hunger = 0
-			}
-
-			energyDiff := prevHunger - n.Hunger
-			log.Printf("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
-			return true
-		}
-
-		if n.isHungry() && !n.hasPlanned("find food") {
-			log.Printf("%s is feeling hungry (%d hunger)", n.Name, n.Hunger)
-			n.planAction("find food")
-		}
-	}
-
-	if n.isThirsty() {
-
-		// auto eat some food in inventory instead of looking for food, if possible
-		itemIdx, err := n.tryFindItemTypeInInventory("drink")
-		if err == nil {
-			item := n.removeFromInventory(itemIdx)
-
-			prevThirst := n.Thirst
-
-			// eat item: reduce hunger by some amount from the food eaten
-			n.Thirst -= item.Energy
-			if n.Thirst < 0 {
-				n.Thirst = 0
-			}
-
-			energyDiff := prevThirst - n.Thirst
-			log.Printf("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
-			return true
-		}
-		if n.isThirsty() && !n.hasPlanned("find water") {
-			log.Printf("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
-			n.planAction("find water")
-		}
-	}
+	n.hungerThirstTick()
 
 	if !n.isTired() && !n.isHungry() && !n.isThirsty() {
 		// when basic needs is resolved, randomly decide to do
@@ -160,6 +111,61 @@ func (n *Obj) npcTick() bool {
 
 	n.performCurrentAction()
 	return true
+}
+
+func (n *Obj) hungerThirstTick() {
+
+	if n.isHungry() {
+
+		// auto eat some food in inventory instead of looking for food, if possible
+		itemIdx, err := n.tryFindItemTypeInInventory("food")
+		if err == nil {
+			item := n.removeFromInventory(itemIdx)
+
+			prevHunger := n.Hunger
+
+			// eat item: reduce hunger by some amount from the food eaten
+			n.Hunger -= item.Energy
+			if n.Hunger < 0 {
+				n.Hunger = 0
+			}
+
+			energyDiff := prevHunger - n.Hunger
+			log.Printf("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
+			return
+		}
+
+		if n.isHungry() && !n.hasPlanned("find food") {
+			log.Printf("%s is feeling hungry (%d hunger)", n.Name, n.Hunger)
+			n.planAction("find food")
+		}
+	}
+
+	if n.isThirsty() {
+
+		// auto eat some food in inventory instead of looking for food, if possible
+		itemIdx, err := n.tryFindItemTypeInInventory("drink")
+		if err == nil {
+			item := n.removeFromInventory(itemIdx)
+
+			prevThirst := n.Thirst
+
+			// eat item: reduce hunger by some amount from the food eaten
+			n.Thirst -= item.Energy
+			if n.Thirst < 0 {
+				n.Thirst = 0
+			}
+
+			energyDiff := prevThirst - n.Thirst
+			log.Printf("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
+			return
+		}
+		if n.isThirsty() && !n.hasPlanned("find water") {
+			log.Printf("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
+			n.planAction("find water")
+		}
+	}
+
 }
 
 // shuffle slice, without allocations
