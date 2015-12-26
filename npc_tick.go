@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"fmt"
 	"math/rand"
 
 	log "github.com/Sirupsen/logrus"
@@ -15,6 +16,15 @@ func (n *Npc) Tick() {
 	n.Thirst++
 
 	log.Debug("[tick]", n.Name, n.Age)
+
+	if n.isSleeping() {
+		if n.CurrentAction.Name != "sleep" {
+			// XXX not sure this can happen
+			panic(fmt.Errorf("sleeping and doing something that requires being awake: %s", n.CurrentAction.Name))
+		}
+		n.performCurrentAction()
+		return
+	}
 
 	if n.isTired() && !n.hasPlanned("sleep") {
 		log.Printf("%s is feeling tired (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
