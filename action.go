@@ -3,6 +3,7 @@ package rogue
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
@@ -26,6 +27,33 @@ type actionSpec struct {
 	TimeSpent int
 }
 
+func (n *Npc) performCurrentAction() {
+	if len(n.CurrentAction) == 0 {
+		return
+	}
+
+	status := false
+	switch n.CurrentAction {
+	case "find-food":
+		status = n.performFindFood()
+	case "find-water":
+		status = n.performFindWater()
+	case "sleep":
+		status = n.performSleep()
+	case "dig-hole":
+		status = n.performDigHole()
+	case "build-fireplace":
+		status = n.performBuildFireplace()
+	default:
+		panic(fmt.Errorf("Cant perform unknown action: %s", n.CurrentAction))
+	}
+
+	if status == true {
+		log.Println(n.Name, "finished performing", n.CurrentAction)
+		n.CurrentAction = ""
+	}
+}
+
 func (i *Island) findActionByName(n string) actionSpec {
 
 	for _, spec := range i.actionSpecs {
@@ -41,8 +69,14 @@ func (n *Npc) performSleep() bool {
 
 	sleep := island.findActionByName("sleep")
 
-	// XXX make use of sleeping bag or other shelter, and gain energy bonus
-	energy := 1 * sleep.Energy
+	mult := 1
+	if len(island.withinRadiusOfType("shelter", 0, n.Position)) > 0 {
+		// XXX make use of sleeping bag or other shelter, and gain energy bonus
+		log.Printf("XXX %s get sleeping bonus from nearby shelter", n.Name)
+		os.Exit(0)
+		mult = 3
+	}
+	energy := mult * sleep.Energy
 
 	log.Printf("%s is sleeping. tiredness = %d. energy gain = %d", n.Name, n.Tiredness, energy)
 	n.TimeSpentOnCurrentAction++
@@ -109,6 +143,20 @@ func (n *Npc) performDigHole() bool {
 	n.TimeSpentOnCurrentAction++
 	if n.TimeSpentOnCurrentAction > finder.Duration {
 		island.addNpcFromName("rabbit hole", n.Position)
+		return true
+	}
+
+	return false
+}
+
+func (n *Npc) performBuildFireplace() bool {
+
+	finder := island.findActionByName("build fireplace")
+	log.Println(n.Name, "is building a fireplace")
+
+	n.TimeSpentOnCurrentAction++
+	if n.TimeSpentOnCurrentAction > finder.Duration {
+		island.addNpcFromName("small fireplace", n.Position)
 		return true
 	}
 

@@ -165,3 +165,25 @@ func TestRabbitDigHole(t *testing.T) {
 	assert.Equal(t, true, len(island.withinRadiusOfName("rabbit hole", 0, dw.Position)) == 1)
 	assert.Equal(t, true, len(island.withinRadiusOfType("shelter", 0, dw.Position)) == 1)
 }
+
+func TestBuildFireplace(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	assert.Equal(t, true, len(island.Spawns) == 1)
+	dw := island.Spawns[0]
+
+	island.Tick()
+	assert.Equal(t, "build-fireplace", dw.CurrentAction)
+
+	duration := island.findActionByName("build fireplace").Duration
+	assert.Equal(t, true, duration > 0)
+
+	for i := 0; i < duration; i++ {
+		island.Tick()
+	}
+
+	assert.Equal(t, true, len(island.withinRadiusOfName("small fireplace", 0, dw.Position)) == 1)
+	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
+}

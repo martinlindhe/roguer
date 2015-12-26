@@ -85,9 +85,9 @@ func (n *Npc) Tick() {
 
 		if n.Type == "humanoid" {
 			// XXX
-			if !n.hasPlanned("make-fire") && len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
-				log.Printf("%s decided to make a fireplace (protection)", n.Name)
-				n.planAction("make-fire")
+			if !n.hasPlanned("build-fireplace") && len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
+				log.Printf("%s decided to build a fireplace (protection)", n.Name)
+				n.planAction("build-fireplace")
 			}
 		}
 	}
@@ -108,31 +108,6 @@ func (n *Npc) Tick() {
 	}
 
 	n.performCurrentAction()
-}
-
-func (n *Npc) performCurrentAction() {
-	if len(n.CurrentAction) == 0 {
-		return
-	}
-
-	status := false
-	switch n.CurrentAction {
-	case "find-food":
-		status = n.performFindFood()
-	case "find-water":
-		status = n.performFindWater()
-	case "sleep":
-		status = n.performSleep()
-	case "dig-hole":
-		status = n.performDigHole()
-	default:
-		panic(fmt.Errorf("Cant perform unknown action: %s", n.CurrentAction))
-	}
-
-	if status == true {
-		log.Println(n.Name, "finished performing", n.CurrentAction)
-		n.CurrentAction = ""
-	}
 }
 
 // shuffle slice, without allocations
