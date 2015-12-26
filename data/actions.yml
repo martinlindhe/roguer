@@ -6,37 +6,40 @@ all:
 
   - name: find food
     type: forage
+    result: [sweet potato, carrot]
     duration: 5
 
   - name: find water
     type: forage
+    result: [pouch of water]
     duration: 5
   
   - name: find firewood
     type: forage
+    result: [firewood]
     duration: 10
 
   - name: dig small hole
     type: build
-    result: small hole
+    result: [small hole]
     duration: 20
 
   - name: build small fireplace
     type: build
-    result: small fireplace
+    result: [small fireplace]
     duration: 10
 
   - name: build small shelter
     type: build
-    result: small shelter
+    result: [small shelter]
     duration: 10
 
   - name: build farmland
     type: build
-    result: farmland
+    result: [farmland]
     duration: 10
 
   - name: plant apple tree
     type: build
-    result: apple tree
+    result: [apple tree]
     duration: 10

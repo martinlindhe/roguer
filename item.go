@@ -37,6 +37,17 @@ func (i *Island) randomItemOfType(t string) Item {
 	return m[rand.Intn(len(m))]
 }
 
+func (i *Island) itemOfName(n string) Item {
+
+	for _, it := range i.ItemSpecs {
+		if it.Name == n {
+			return it
+		}
+	}
+
+	panic(fmt.Errorf("no items of name %s found", n))
+}
+
 func parseItemsDefinition(defFileName string) []Item {
 
 	data, err := ioutil.ReadFile(defFileName)

@@ -3,6 +3,7 @@ package rogue
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 
 	log "github.com/Sirupsen/logrus"
@@ -20,11 +21,11 @@ type actionList struct {
 }
 
 type actionSpec struct {
-	Name      string `json:"name"`
-	Type      string `json:"type"`
-	Result    string `json:"result"`
-	Duration  int    `json:"duration"`
-	Energy    int    `json:"energy"`
+	Name      string   `json:"name"`
+	Type      string   `json:"type"`
+	Result    []string `json:"result"`
+	Duration  int      `json:"duration"`
+	Energy    int      `json:"energy"`
 	TimeSpent int
 }
 
@@ -99,18 +100,12 @@ func (n *Npc) performForage() bool {
 
 	log.Println(n.Name, "is performing", n.CurrentAction.Name)
 
-	// TODO something more advanced for looking for food
+	// TODO actually move around, and dont re-visit previously foraged places
 	n.CurrentAction.Duration--
 	if n.CurrentAction.Duration < 0 {
 
-		var item Item
-		if n.CurrentAction.Name == "find food" {
-			item = island.randomItemOfType("food")
-		} else if n.CurrentAction.Name == "find water" {
-			item = island.randomItemOfType("drink")
-		} else {
-			panic(fmt.Errorf("Unknown forage: %s", n.CurrentAction.Name))
-		}
+		rnd := n.CurrentAction.Result[rand.Intn(len(n.CurrentAction.Result))]
+		item := island.itemOfName(rnd)
 
 		log.Printf("%s found a %s", n.Name, item.Name)
 		n.Inventory = append(n.Inventory, item)
@@ -126,7 +121,8 @@ func (n *Npc) performBuild() bool {
 
 	n.CurrentAction.Duration--
 	if n.CurrentAction.Duration < 0 {
-		island.addNpcFromName(n.CurrentAction.Result, n.Position)
+		rnd := n.CurrentAction.Result[rand.Intn(len(n.CurrentAction.Result))]
+		island.addNpcFromName(rnd, n.Position)
 		return true
 	}
 
