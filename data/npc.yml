@@ -22,7 +22,7 @@ all:
   - type: food producer
     name: [farmland]
 
-  - type: food producer
+  - type: tree
     name: [apple tree]
 
   - type: tree

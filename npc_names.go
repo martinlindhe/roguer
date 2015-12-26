@@ -7,11 +7,15 @@ import (
 )
 
 func (n *Npc) generatRandomName() string {
+	if n.Race == "" {
+		return n.Name
+	}
+
 	if n.Race == "dwarf" {
 		return generateDwarfName()
 	}
 
-	panic(fmt.Errorf("unknown npc type: %v", n))
+	panic(fmt.Errorf("unknown npc race: %s", n.Race))
 }
 
 // generate a dwarfish name

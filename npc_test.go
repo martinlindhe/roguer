@@ -300,5 +300,5 @@ func TestBuildFarmland(t *testing.T) {
 	}
 
 	assert.Equal(t, 1, len(island.withinRadiusOfName("farmland", 0, dw.Position)))
-	assert.Equal(t, 2, len(island.withinRadiusOfType("food producer", 0, dw.Position))) // including apple tree
+	assert.Equal(t, 1, len(island.withinRadiusOfType("food producer", 0, dw.Position)))
 }
