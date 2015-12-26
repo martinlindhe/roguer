@@ -52,8 +52,8 @@ type npcSpec struct {
 
 func (n *Npc) distanceTo(pos Point) float64 {
 
-	xd := math.Abs(float64(n.Position.X - pos.X))
-	yd := math.Abs(float64(n.Position.Y - pos.Y))
+	xd := float64(n.Position.X - pos.X)
+	yd := float64(n.Position.Y - pos.Y)
 
 	return math.Hypot(xd, yd)
 }
