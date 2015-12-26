@@ -28,6 +28,20 @@ func prepareIsland() {
 	island.Spawns = nil
 }
 
+func TestWithinRadiusOfType(t *testing.T) {
+
+	prepareIsland()
+	assert.Equal(t, true, len(island.Spawns) == 0)
+
+	island.addNpcFromName("small fireplace", island.randomPointAboveWater())
+	assert.Equal(t, true, len(island.Spawns) == 1)
+
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 0, island.Spawns[0].Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, island.Spawns[0].Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, island.Spawns[0].Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, island.Spawns[0].Position)))
+}
+
 func TestFindFoodAndEat(t *testing.T) {
 
 	prepareIsland()
@@ -188,27 +202,14 @@ func TestBuildFireplace(t *testing.T) {
 	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
 }
 
-func TestWithinRadiusOfType(t *testing.T) {
-
-	prepareIsland()
-	assert.Equal(t, true, len(island.Spawns) == 0)
-
-	island.addNpcFromName("small fireplace", island.randomPointAboveWater())
-	assert.Equal(t, true, len(island.Spawns) == 1)
-
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 0, island.Spawns[0].Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, island.Spawns[0].Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, island.Spawns[0].Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, island.Spawns[0].Position)))
-}
-
-/*
 func TestBuildShelter(t *testing.T) {
 
 	prepareIsland()
 
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+
 	// add fireplace here, so dwarf dont need to build one
+	// XXXX it will ignore this and still build one, wtf?!
 	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
 
 	assert.Equal(t, true, len(island.Spawns) == 2)
@@ -217,6 +218,7 @@ func TestBuildShelter(t *testing.T) {
 	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
 
 	island.Tick()
+	assert.Equal(t, false, dw.CurrentAction == nil)
 	assert.Equal(t, "build small shelter", dw.CurrentAction.Name)
 
 	duration := dw.CurrentAction.Duration
@@ -226,4 +228,3 @@ func TestBuildShelter(t *testing.T) {
 		island.Tick()
 	}
 }
-*/

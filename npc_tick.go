@@ -84,15 +84,14 @@ func (n *Npc) Tick() {
 		}
 
 		if n.Type == "humanoid" {
-			if !n.hasPlanned("build small fireplace") && len(island.withinRadiusOfType("small fireplace", 30, n.Position)) == 0 {
+			if !n.hasPlanned("build small fireplace") && len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
 				log.Printf("%s decided to build a fireplace (protection)", n.Name)
 				n.planAction("build small fireplace")
-			} /* else if !n.hasPlanned("build shelter") && len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
+			} else if !n.hasPlanned("build small shelter") && len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
 				// XXX
 				log.Printf("%s decided to build a shelter (shelter)", n.Name)
-				n.planAction("build shelter")
-			}*/
-			// XXX planAction ska ta action name & hitta utifrån yml data!
+				n.planAction("build small shelter")
+			}
 		}
 	}
 
