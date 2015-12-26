@@ -11,6 +11,10 @@ all:
   - name: find water
     type: forage
     duration: 5
+  
+  - name: find firewood
+    type: forage
+    duration: 10
 
   - name: dig small hole
     type: build
