@@ -7,19 +7,19 @@ import (
 )
 
 func (n *Obj) generateName() string {
-	if n.Race == "" {
+	if n.Name != "" {
 		return n.Name
 	}
 
 	if n.Race == "dwarf" {
-		return generateDwarfName()
+		return randomDwarfName()
 	}
 
 	panic(fmt.Errorf("unknown npc race: %s", n.Race))
 }
 
 // generate a dwarfish name
-func generateDwarfName() string {
+func randomDwarfName() string {
 
 	a := []string{"ga", "gi", "go"}
 	b := []string{"m", "n", "r", "in"}

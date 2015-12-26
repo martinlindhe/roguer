@@ -7,7 +7,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-// Tick npc ticks until it returns false
+// Tick until it returns false
 func (n *Obj) Tick() bool {
 	n.Age++
 
@@ -33,8 +33,12 @@ func (n *Obj) Tick() bool {
 		}
 	}
 
+	return n.npcTick()
+}
+
+func (n *Obj) npcTick() bool {
+
 	if n.Class != "npc" {
-		log.Debugf("aborting tick for non-npc: %s", n.Name)
 		return true
 	}
 
