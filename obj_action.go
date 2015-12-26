@@ -23,15 +23,28 @@ func (n *Obj) hasPlanned(actionName string) bool {
 	return false
 }
 
-func (n *Obj) planAction(actionName string) {
+func (n *Obj) planAction(params ...interface{}) {
 
-	if n.hasPlanned(actionName) {
-		return
+	actionName := ""
+	var dst Point
+	for _, it := range params {
+		switch t := it.(type) {
+		case string:
+			actionName = it.(string)
+			if n.hasPlanned(actionName) {
+				return
+			}
+		case Point:
+			dst = it.(Point)
+		default:
+			panic(t)
+		}
 	}
 
 	a := island.findActionByName(actionName)
 	log.Printf("%s decided to %s", n.Name, a.Name)
 
+	a.Destination = dst
 	n.PlannedActions = append(n.PlannedActions, a)
 }
 

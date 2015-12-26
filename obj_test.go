@@ -388,6 +388,15 @@ func TestNpcDiesOfOldAge(t *testing.T) {
 	assert.Equal(t, 0, len(island.Spawns))
 }
 
+func TestSpawnGravel(t *testing.T) {
+
+	prepareIsland()
+
+	assert.Equal(t, 0, len(island.Spawns))
+	island.spawnGravel()
+	assert.Equal(t, 25676, len(island.Spawns))
+}
+
 func TestNpcMovesToFireplace(t *testing.T) {
 
 	prepareIsland()
@@ -409,14 +418,4 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	dw.Coldness = dw.coldnessCap() + 1
 
 	island.Tick()
-
-}
-
-func TestSpawnGravel(t *testing.T) {
-
-	prepareIsland()
-
-	assert.Equal(t, 0, len(island.Spawns))
-	island.spawnGravel()
-	assert.Equal(t, 25676, len(island.Spawns))
 }

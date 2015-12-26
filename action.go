@@ -18,12 +18,13 @@ type actionList struct {
 }
 
 type actionSpec struct {
-	Name      string   `json:"name"`
-	Type      string   `json:"type"`
-	Result    []string `json:"result"`
-	Duration  int      `json:"duration"`
-	Energy    int      `json:"energy"`
-	TimeSpent int
+	Name        string   `json:"name"`
+	Type        string   `json:"type"`
+	Result      []string `json:"result"`
+	Duration    int      `json:"duration"`
+	Energy      int      `json:"energy"`
+	TimeSpent   int
+	Destination Point
 }
 
 func parseActionsDefinition(defFileName string) []actionSpec {
