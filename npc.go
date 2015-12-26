@@ -48,12 +48,12 @@ type npcSpec struct {
 	Type  string     `json:"type"`
 	Class string     `json:"class"`
 	Race  string     `json:"race"`
-	Name  []string   `json:"name"`
+	Name  string     `json:"name"`
 	Drops []dropSpec `json:"drops"`
 }
 
 type dropSpec struct {
-	Item   string  `json:"item"`
+	Name   string  `json:"name"`
 	Chance float64 `json:"chance"`
 }
 

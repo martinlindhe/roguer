@@ -90,7 +90,7 @@ func (i *Island) fillWithCritters() {
 
 func (i *Island) getNpcSpecFromName(n string) npcSpec {
 	for _, npcSpec := range island.npcSpecs {
-		if len(npcSpec.Name) > 0 && npcSpec.Name[0] == n {
+		if npcSpec.Name == n {
 			return npcSpec
 		}
 	}
@@ -127,13 +127,11 @@ func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
 	o.Class = spec.Class
 	o.Position = pos
 
-	if len(spec.Name) == 0 {
-		// if name field is unset, run a generator based on npc type
+	if spec.Name == "" {
+		// if name field is unset, let the npc generate a name
 		o.Name = o.generateName()
-
 	} else {
-		// pick one name by random
-		o.Name = spec.Name[rand.Intn(len(spec.Name))]
+		o.Name = spec.Name
 	}
 
 	i.addSpawn(o)

@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -360,7 +359,7 @@ func TestTree(t *testing.T) {
 		island.Tick()
 	}
 
-	spew.Dump(island.Spawns)
+	//spew.Dump(island.Spawns)
 
 	//assert.Equal(t, true, len(island.Spawns) > 1) // XXX need tick tree to spawn stuff
 

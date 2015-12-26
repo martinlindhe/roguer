@@ -6,33 +6,33 @@ all:
   - type: plant eater
     class: npc
     race: rabbit
-    name: [a rabbit, a small rabbit, a white rabbit, a brown rabbit]
+    name: a rabbit
 
   - type: fireplace
     class: object
-    name: [small fireplace]
+    name: small fireplace
 
   - type: shelter
     class: object
-    name: [small hole]
+    name: small hole
 
   - type: shelter
     class: object
-    name: [small shelter]
+    name: small shelter
 
   - type: food producer
     class: object
-    name: [farmland]
+    name: farmland
 
   - type: tree
     class: object
-    name: [apple tree]
+    name: apple tree
 
   - type: tree
     class: object
-    name: [oak tree]
+    name: oak tree
     drops:
-      - item: small branch
+      - name: small branch
         chance: 5.1
-      - item: oak seed
+      - name: oak seed
         chance: 1.0

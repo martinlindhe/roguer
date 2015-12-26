@@ -5,6 +5,7 @@ import (
 	"math/rand"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/davecgh/go-spew/spew"
 )
 
 // Tick npc ticks until it returns false
@@ -20,6 +21,12 @@ func (n *Npc) Tick() bool {
 
 	if n.Type == "tree" {
 		// XXX tick for tree
+
+		treeSpec := island.getNpcSpecFromName(n.Name)
+
+		// XXX
+		//spew.Dump(n)
+		spew.Dump(treeSpec.Drops)
 	}
 
 	if n.Class != "npc" {

@@ -3,7 +3,19 @@ package rogue
 import (
 	"image"
 	"image/color"
+	"os"
+
+	"github.com/davecgh/go-spew/spew"
 )
+
+func d(params ...interface{}) {
+	spew.Dump(params)
+}
+
+func dd(params ...interface{}) {
+	d(params)
+	os.Exit(1)
+}
 
 // returns a 2d slice in [height][width]
 func make2DByteSlice(width int, height int) [][]byte {
