@@ -291,16 +291,20 @@ func TestBuildShelter(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 
+	// add nessecities nearby, so they dont need to be built
+	nextTo := island.Spawns[0].Position
+	nextTo.Y++
+
 	// add nessecities, so they dont need to be built
-	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
-	island.addNpcFromName("farmland", island.Spawns[0].Position)
-	island.addNpcFromName("apple tree", island.Spawns[0].Position)
+	island.addNpcFromName("small fireplace", nextTo)
+	island.addNpcFromName("farmland", nextTo)
+	island.addNpcFromName("apple tree", nextTo)
 	assert.Equal(t, 4, len(island.Spawns))
 
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
 
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, dw.Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 1, dw.Position)))
 
 	island.Tick()
 	assert.Equal(t, false, dw.CurrentAction == nil)
@@ -322,10 +326,14 @@ func TestBuildFarmland(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 
+	// add nessecities nearby, so they dont need to be built
+	nextTo := island.Spawns[0].Position
+	nextTo.Y++
+
 	// add nessecities, so they dont need to be built
-	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
-	island.addNpcFromName("small shelter", island.Spawns[0].Position)
-	island.addNpcFromName("apple tree", island.Spawns[0].Position)
+	island.addNpcFromName("small fireplace", nextTo)
+	island.addNpcFromName("small shelter", nextTo)
+	island.addNpcFromName("apple tree", nextTo)
 	assert.Equal(t, 4, len(island.Spawns))
 
 	dw := island.Spawns[0]

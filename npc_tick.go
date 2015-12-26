@@ -48,7 +48,6 @@ func (n *Obj) npcTick() bool {
 
 	if n.isSleeping() {
 		if n.CurrentAction.Name != "sleep" {
-			// XXX this should never happen
 			panic(fmt.Errorf("sleeping and doing something that requires being awake: %s", n.CurrentAction.Name))
 		}
 		n.performCurrentAction()
@@ -126,22 +125,22 @@ func (n *Obj) npcTick() bool {
 				n.planAction("find fire wood")
 			}
 
-			//if island.canBuildAt(n.Position) {
-			if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
-				n.planAction("build small fireplace")
-				// XXX if more than 1 humanoid nearby, instead build a larger fireplace
+			if island.canBuildAt(n.Position) {
+				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
+					n.planAction("build small fireplace")
+					// XXX if more than 1 humanoid nearby, instead build a larger fireplace
+				}
+				if len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
+					// XXX if more than 1 humanoid nearby, instead build a small hut
+					n.planAction("build small shelter")
+				}
+				if len(island.withinRadiusOfName("farmland", 1, n.Position)) == 0 {
+					n.planAction("build farmland")
+				}
+				if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
+					n.planAction("plant apple tree")
+				}
 			}
-			if len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
-				// XXX if more than 1 humanoid nearby, instead build a small hut
-				n.planAction("build small shelter")
-			}
-			if len(island.withinRadiusOfName("farmland", 1, n.Position)) == 0 {
-				n.planAction("build farmland")
-			}
-			if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
-				n.planAction("plant apple tree")
-			}
-			//}
 		}
 	}
 
