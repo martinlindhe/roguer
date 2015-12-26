@@ -45,42 +45,45 @@ type npcList struct {
 }
 
 type npcSpec struct {
-	Type  string   `json:"type"`
-	Class string   `json:"class"`
-	Race  string   `json:"race"`
-	Name  []string `json:"name"`
+	Type  string     `json:"type"`
+	Class string     `json:"class"`
+	Race  string     `json:"race"`
+	Name  []string   `json:"name"`
+	Drops []dropSpec `json:"drops"`
+}
+
+type dropSpec struct {
+	Item   string  `json:"item"`
+	Chance float64 `json:"chance"`
 }
 
 func (n *Npc) distanceTo(pos Point) float64 {
 
 	xd := float64(n.Position.X - pos.X)
 	yd := float64(n.Position.Y - pos.Y)
-
 	return math.Hypot(xd, yd)
 }
 
 func (i *Island) withinRadiusOfName(n string, radius float64, pos Point) []Npc {
-	var res []Npc
 
+	var res []Npc
 	for _, npc := range i.Spawns {
 		if npc.Name == n && npc.distanceTo(pos) <= radius {
 			res = append(res, *npc)
 		}
 	}
-
 	return res
 }
 
 func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []Npc {
-	var res []Npc
 
+	var res []Npc
 	for _, npc := range i.Spawns {
 
 		if npc.Type == t && npc.distanceTo(pos) <= radius {
 			res = append(res, *npc)
 		}
 	}
-
 	return res
 }
 

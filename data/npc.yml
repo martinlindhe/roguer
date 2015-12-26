@@ -31,5 +31,8 @@ all:
   - type: tree
     class: object
     name: [oak tree]
-    # XXXX should be pct -> item
-    drops: [5.1: small branch, 1.0: oak seed]
+    drops:
+      - item: small branch
+        chance: 5.1
+      - item: oak seed
+        chance: 1.0

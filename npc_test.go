@@ -362,6 +362,8 @@ func TestTree(t *testing.T) {
 
 	spew.Dump(island.Spawns)
 
+	//assert.Equal(t, true, len(island.Spawns) > 1) // XXX need tick tree to spawn stuff
+
 	// XXXX for 1000 ticks, at least some branch should have dropped!
 	//	assert.Equal(t, 1, tr.Inventory)
 
