@@ -17,13 +17,9 @@
 - forage
     move around, dont revisit same place
 
-- trees
-    spawn trees over island
-    tick tree: chance of dropping tree branches for firewood, chance of dropping seed
+- tree
     humanoid: able to chop down tree, using an axe
     seed: develop into a new tree
-
-
 
 
 

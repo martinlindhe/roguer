@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -353,9 +354,19 @@ func TestTree(t *testing.T) {
 	island.addNpcFromName("oak tree", island.randomPointAboveWater())
 
 	assert.Equal(t, 1, len(island.Spawns))
-	//	tr := island.Spawns[0]
+	tr := island.Spawns[0]
 
-	// XXX
+	// XXX tick tree: chance of dropping tree branches for firewood, chance of dropping seed
+	for i := 0; i <= 1000; i++ {
+		//	island.Tick()
+	}
+
+	spew.Dump(tr.Inventory)
+
+	// XXXX for 1000 ticks, at least some branch should have dropped!
+	//	assert.Equal(t, 1, tr.Inventory)
+
+	// XXX spawnForest() function = creates woods in all empty spots in a radius `rad` around `pos`
 }
 
 func TestNpcDiesOfOldAge(t *testing.T) {

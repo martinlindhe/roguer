@@ -11,16 +11,25 @@ import (
 func (n *Npc) Tick() bool {
 	n.Age++
 
-	n.Hunger++
-	n.Tiredness++
-	n.Thirst++
-
 	log.Debug("[tick]", n.Name, n.Age)
 
 	if n.isAboveMaxAge() {
 		log.Infof("%s dies of old age", n.Name)
 		return false
 	}
+
+	if n.Type == "tree" {
+		// XXX tick for tree
+	}
+
+	if n.Class != "npc" {
+		log.Debugf("aborting tick for non-npc: %s", n.Name)
+		return true
+	}
+
+	n.Hunger++
+	n.Thirst++
+	n.Tiredness++
 
 	if n.isSleeping() {
 		if n.CurrentAction.Name != "sleep" {
@@ -120,9 +129,6 @@ func (n *Npc) Tick() bool {
 			//}
 		}
 
-		if n.Type == "tree" {
-			// XXX tick for tree
-		}
 	}
 
 	// select one action to be doing next

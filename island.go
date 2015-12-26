@@ -120,6 +120,7 @@ func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
 	o.Level = 1
 	o.Race = spec.Race
 	o.Type = spec.Type
+	o.Class = spec.Class
 	o.Position = pos
 
 	if len(spec.Name) == 0 {

@@ -1,29 +1,39 @@
+# XXXX remove qty from here, instead specify qty's in a special "islandCreateCritters()"
+
 all:
   - type: humanoid
+    class: npc
     race: dwarf
     qty: 2
 
   - type: plant eater
+    class: npc
     race: rabbit
     name: [a rabbit, a small rabbit, a white rabbit, a brown rabbit]
     qty: 2
 
-  - type: shelter
-    name: [small hole]
-    qty: 0
-
   - type: fireplace
+    class: object
     name: [small fireplace]
-    qty: 0
 
   - type: shelter
+    class: object
+    name: [small hole]
+
+  - type: shelter
+    class: object
     name: [small shelter]
 
   - type: food producer
+    class: object
     name: [farmland]
 
   - type: tree
+    class: object
     name: [apple tree]
 
   - type: tree
+    class: object
     name: [oak tree]
+    # XXXX should be pct -> item
+    drops: [5.1: small branch, 1.0: oak seed]
