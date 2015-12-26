@@ -13,6 +13,10 @@ func (n *Obj) thirstCap() int {
 	return 100 + (n.Level * 5)
 }
 
+func (n *Obj) coldnessCap() int {
+	return 100 + (n.Level * 5)
+}
+
 func (n *Obj) tirednessCap() int {
 	return 10000 + (n.Level * 100)
 }
@@ -26,6 +30,13 @@ func (n *Obj) isHungry() bool {
 
 func (n *Obj) isThirsty() bool {
 	if n.Thirst >= n.thirstCap() {
+		return true
+	}
+	return false
+}
+
+func (n *Obj) isCold() bool {
+	if n.Coldness >= n.coldnessCap() {
 		return true
 	}
 	return false

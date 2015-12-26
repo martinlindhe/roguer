@@ -23,7 +23,10 @@
     
     
     spawnForest() function = creates woods in all empty spots in a radius `rad` around `pos`
-    
+
+- death
+    when npc dies, corpse should stay. need dead state
+
 
 - fire
     collect firewood from ground = MOVE AROUND...

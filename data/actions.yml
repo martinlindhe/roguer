@@ -43,3 +43,6 @@ all:
     type: build
     result: [apple tree]
     duration: 10
+    
+  - name: travel by foot
+    type: travel

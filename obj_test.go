@@ -388,6 +388,30 @@ func TestNpcDiesOfOldAge(t *testing.T) {
 	assert.Equal(t, 0, len(island.Spawns))
 }
 
+func TestNpcMovesToFireplace(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	assert.Equal(t, 1, len(island.Spawns))
+
+	dw := island.Spawns[0]
+
+	// add nessecities nearby, so they dont need to be built
+	nextTo := island.Spawns[0].Position
+	nextTo.Y++
+
+	// add nessecities, so they dont need to be built
+	island.addNpcFromName("small fireplace", nextTo)
+	assert.Equal(t, 2, len(island.Spawns))
+
+	// XXX make dwarf wanna move to shelter
+	dw.Coldness = dw.coldnessCap() + 1
+
+	island.Tick()
+
+}
+
 func TestSpawnGravel(t *testing.T) {
 
 	prepareIsland()

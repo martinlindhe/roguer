@@ -28,6 +28,7 @@ type Obj struct {
 	Hunger    int
 	Thirst    int
 	Tiredness int
+	Coldness  int
 }
 
 type objList struct {
