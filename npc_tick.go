@@ -19,7 +19,7 @@ func (n *Npc) Tick() {
 
 	if n.isSleeping() {
 		if n.CurrentAction.Name != "sleep" {
-			// XXX not sure this can happen
+			// XXX this should never happen
 			panic(fmt.Errorf("sleeping and doing something that requires being awake: %s", n.CurrentAction.Name))
 		}
 		n.performCurrentAction()
