@@ -350,23 +350,18 @@ func TestTree(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromName("oak tree", island.randomPointAboveWater())
+	pos := island.randomPointAboveWater()
+	island.addNpcFromName("oak tree", pos)
 
 	assert.Equal(t, 1, len(island.Spawns))
 
-	// XXX tick tree: chance of dropping tree branches for firewood, chance of dropping seed
+	// let tree drop some spawns
 	for i := 0; i <= 100; i++ {
 		island.Tick()
 	}
 
-	//spew.Dump(island.Spawns)
-
-	//assert.Equal(t, true, len(island.Spawns) > 1) // XXX need tick tree to spawn stuff
-
-	// XXXX for 1000 ticks, at least some branch should have dropped!
-	//	assert.Equal(t, 1, tr.Inventory)
-
-	// XXX spawnForest() function = creates woods in all empty spots in a radius `rad` around `pos`
+	assert.Equal(t, true, len(island.Spawns) > 1)
+	assert.Equal(t, true, len(island.withinRadiusOfType("wood", 0, pos)) > 0)
 }
 
 func TestNpcDiesOfOldAge(t *testing.T) {
@@ -381,6 +376,6 @@ func TestNpcDiesOfOldAge(t *testing.T) {
 
 	island.Tick()
 
-	// XXX dwarf should have died of old age
+	// dwarf should have died of old age
 	assert.Equal(t, 0, len(island.Spawns))
 }

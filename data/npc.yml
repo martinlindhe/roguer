@@ -33,9 +33,9 @@ all:
     name: oak tree
     drops:
       - name: small branch
-        chance: 15.5
+        chance: 8
       - name: branch
-        chance: 10
+        chance: 4
       - name: oak seed
         chance: 1
 
@@ -63,3 +63,7 @@ all:
     class: object
     name: branch
     energy: 100
+
+  - type: seed
+    class: object
+    name: oak seed

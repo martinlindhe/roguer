@@ -26,10 +26,11 @@ func (n *Npc) Tick() bool {
 		for _, drop := range treeSpec.Drops {
 
 			roll := float64(rand.Intn(100)) // between 0-99
-			log.Printf("Rolled %f for check if %s is spawned, %f chance", roll, drop.Name, drop.Chance)
+			//log.Debugf("Rolled %f for check if %s is spawned, %f chance", roll, drop.Name, drop.Chance)
 
 			if roll <= drop.Chance {
-				log.Printf("XXXX spawn a %s", drop.Name)
+				log.Printf("%s drops a %s", n.Name, drop.Name)
+				island.addNpcFromName(drop.Name, n.Position)
 			}
 		}
 	}
@@ -140,7 +141,6 @@ func (n *Npc) Tick() bool {
 			}
 			//}
 		}
-
 	}
 
 	// select one action to be doing next

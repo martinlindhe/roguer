@@ -20,6 +20,7 @@
 - tree
     humanoid: able to chop down tree, using an axe
     seed: develop into a new tree
+    spawnForest() function = creates woods in all empty spots in a radius `rad` around `pos`
 
 
 
