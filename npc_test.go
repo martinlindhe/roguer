@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -188,19 +189,33 @@ func TestBuildFireplace(t *testing.T) {
 	assert.Equal(t, true, len(island.withinRadiusOfType("fireplace", 0, dw.Position)) == 1)
 }
 
+func TestWithinRadiusOfType(t *testing.T) {
+
+	prepareIsland()
+	assert.Equal(t, true, len(island.Spawns) == 0)
+
+	island.addNpcFromName("small fireplace", island.randomPointAboveWater())
+	assert.Equal(t, true, len(island.Spawns) == 1)
+
+	spew.Dump(island.Spawns[0])
+	// XXX fails:
+	assert.Equal(t, true, len(island.withinRadiusOfType("small fireplace", 30, island.Spawns[0].Position)) == 1)
+}
+
 /*
 func TestBuildShelter(t *testing.T) {
 
 	prepareIsland()
 
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	// add fireplace here, so dwarf dont need to build one
 	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
 
 	assert.Equal(t, true, len(island.Spawns) == 2)
 	dw := island.Spawns[0]
 
 	island.Tick()
-	assert.Equal(t, "build-shelter", dw.CurrentAction)
+	assert.Equal(t, "build small shelter", dw.CurrentAction.Name)
 
 	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)

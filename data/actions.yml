@@ -1,12 +1,4 @@
 all:
-  - name: eat
-    type: consume
-    duration: 1
-
-  - name: drink
-    type: consume
-    duration: 1
-
   - name: sleep
     type: sleep
     duration: 30
