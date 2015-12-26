@@ -67,3 +67,18 @@ all:
   - type: seed
     class: object
     name: oak seed
+
+  - type: rock
+    class: object
+    name: small rock
+    weight: 10
+
+  - type: rock
+    class: object
+    name: medium rock
+    weight: 50
+
+  - type: rock
+    class: object
+    name: large rock
+    weight: 100

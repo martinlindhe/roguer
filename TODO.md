@@ -20,8 +20,16 @@
 - tree
     humanoid: able to chop down tree, using an axe
     seed: develop into a new tree
+    
+    
     spawnForest() function = creates woods in all empty spots in a radius `rad` around `pos`
+    
 
+- fire
+    collect firewood from ground = MOVE AROUND...
+    put firewood in fire, + energy to fire (need a max val so not unlimited wood can fit it)
+    light fire = burn each tick, generate warmth
+    
 
 
     generated islands is ugly

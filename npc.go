@@ -29,6 +29,7 @@ type Npc struct {
 	Class    string
 	Position Point
 	Energy   int
+	Weight   int
 
 	XP             int
 	CurrentAction  *actionSpec
@@ -51,6 +52,7 @@ type npcSpec struct {
 	Race   string     `json:"race"`
 	Name   string     `json:"name"`
 	Energy int        `json:"energy"`
+	Weight int        `json:"weight"`
 	Drops  []dropSpec `json:"drops"`
 }
 
@@ -131,18 +133,4 @@ func (n *Npc) planAction(actionName string) {
 	log.Printf("%s decided to %s", n.Name, a.Name)
 
 	n.PlannedActions = append(n.PlannedActions, a)
-}
-
-// return false if there is some construction at pos
-func (i *Island) canBuildAt(pos Point) bool {
-
-	for _, sp := range i.Spawns {
-		if sp.Position == pos {
-			if sp.Type == "tree" || sp.Type == "food producer" || sp.Type == "shelter" || sp.Type == "fireplace" {
-				return false
-			}
-		}
-	}
-
-	return true
 }

@@ -19,8 +19,6 @@ func (n *Npc) Tick() bool {
 	}
 
 	if n.Type == "tree" {
-		// XXX tick for tree
-
 		treeSpec := island.getNpcSpecFromName(n.Name)
 
 		for _, drop := range treeSpec.Drops {

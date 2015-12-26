@@ -379,3 +379,12 @@ func TestNpcDiesOfOldAge(t *testing.T) {
 	// dwarf should have died of old age
 	assert.Equal(t, 0, len(island.Spawns))
 }
+
+func TestSpawnGravel(t *testing.T) {
+
+	prepareIsland()
+
+	assert.Equal(t, 0, len(island.Spawns))
+	island.spawnGravel()
+	assert.Equal(t, 25676, len(island.Spawns))
+}
