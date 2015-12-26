@@ -16,7 +16,7 @@ type Island struct {
 	Seed      int64
 	Age       int64
 	HeightMap [][]uint
-	Spawns    []*Npc
+	Spawns    []*Obj
 
 	// lookup lists:
 	npcSpecs    []npcSpec
@@ -34,7 +34,7 @@ const (
 )
 
 // Add ...
-func (i *Island) addSpawn(o *Npc) {
+func (i *Island) addSpawn(o *Obj) {
 	i.Spawns = append(i.Spawns, o)
 }
 
@@ -83,8 +83,8 @@ func (i *Island) addNpcFromRace(n string, pos Point) {
 	island.addNpcFromSpec(island.getNpcSpecFromRace(n), pos)
 }
 
-func (i *Island) getNpcFromSpec(spec npcSpec) *Npc {
-	o := new(Npc)
+func (i *Island) getNpcFromSpec(spec npcSpec) *Obj {
+	o := new(Obj)
 
 	o.Level = 1
 	o.Race = spec.Race

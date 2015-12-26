@@ -3,7 +3,7 @@ package rogue
 import "fmt"
 
 // returns index in inventory of something edible
-func (n *Npc) tryFindItemTypeInInventory(t string) (int, error) {
+func (n *Obj) tryFindItemTypeInInventory(t string) (int, error) {
 
 	if len(n.Inventory) == 0 {
 		return -1, fmt.Errorf("Inventory is empty")
@@ -18,7 +18,7 @@ func (n *Npc) tryFindItemTypeInInventory(t string) (int, error) {
 	return -1, fmt.Errorf("%s has no items of %s in inventory", n.Name, t)
 }
 
-func (n *Npc) addToInventory(itemName string) {
+func (n *Obj) addToInventory(itemName string) {
 
 	spec := island.getNpcSpecFromName(itemName)
 	o := island.getNpcFromSpec(spec)
@@ -26,18 +26,18 @@ func (n *Npc) addToInventory(itemName string) {
 	n.Inventory = append(n.Inventory, *o)
 }
 
-func (n *Npc) removeFromInventory(index int) Npc {
+func (n *Obj) removeFromInventory(index int) Obj {
 
 	val := n.Inventory[index]
 
 	copy(n.Inventory[index:], n.Inventory[index+1:])
-	n.Inventory[len(n.Inventory)-1] = Npc{}
+	n.Inventory[len(n.Inventory)-1] = Obj{}
 	n.Inventory = n.Inventory[:len(n.Inventory)-1]
 
 	return val
 }
 
-func (n *Npc) hasItemTypeInInventory(t string) bool {
+func (n *Obj) hasItemTypeInInventory(t string) bool {
 
 	_, err := n.tryFindItemTypeInInventory(t)
 	if err != nil {
@@ -46,7 +46,7 @@ func (n *Npc) hasItemTypeInInventory(t string) bool {
 	return true
 }
 
-func (n *Npc) hasItemInInventory(itemName string) bool {
+func (n *Obj) hasItemInInventory(itemName string) bool {
 
 	if len(n.Inventory) == 0 {
 		return false

@@ -13,7 +13,7 @@ import (
 // Action ...
 type Action interface {
 	// returns true when finished performing action
-	Perform(npc *Npc) bool
+	Perform(npc *Obj) bool
 }
 
 type actionList struct {
@@ -29,7 +29,7 @@ type actionSpec struct {
 	TimeSpent int
 }
 
-func (n *Npc) performCurrentAction() {
+func (n *Obj) performCurrentAction() {
 	if n.CurrentAction == nil {
 		return
 	}
@@ -66,7 +66,7 @@ func (i *Island) findActionByName(n string) actionSpec {
 	panic(fmt.Errorf("cant find action: %s", n))
 }
 
-func (n *Npc) performSleep() bool {
+func (n *Obj) performSleep() bool {
 
 	mult := 1
 	if len(island.withinRadiusOfType("shelter", 0, n.Position)) > 0 {
@@ -96,7 +96,7 @@ func (n *Npc) performSleep() bool {
 	return false
 }
 
-func (n *Npc) performForage() bool {
+func (n *Obj) performForage() bool {
 
 	log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
 
@@ -114,7 +114,7 @@ func (n *Npc) performForage() bool {
 	return false
 }
 
-func (n *Npc) performBuild() bool {
+func (n *Obj) performBuild() bool {
 
 	log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
 

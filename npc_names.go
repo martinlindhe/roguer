@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (n *Npc) generateName() string {
+func (n *Obj) generateName() string {
 	if n.Race == "" {
 		return n.Name
 	}

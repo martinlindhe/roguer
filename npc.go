@@ -19,8 +19,8 @@ type WorldObject interface {
 	Tick()
 }
 
-// Npc ...
-type Npc struct {
+// Obj is a in-game object, such as a npc or a item
+type Obj struct {
 	Level    int
 	Age      int
 	Name     string
@@ -34,7 +34,7 @@ type Npc struct {
 	XP             int
 	CurrentAction  *actionSpec
 	PlannedActions []actionSpec
-	Inventory      []Npc
+	Inventory      []Obj
 
 	// the lower value, the less hungry npc is
 	Hunger    int
@@ -61,16 +61,16 @@ type dropSpec struct {
 	Chance float64 `json:"chance"`
 }
 
-func (n *Npc) distanceTo(pos Point) float64 {
+func (n *Obj) distanceTo(pos Point) float64 {
 
 	xd := float64(n.Position.X - pos.X)
 	yd := float64(n.Position.Y - pos.Y)
 	return math.Hypot(xd, yd)
 }
 
-func (i *Island) withinRadiusOfName(n string, radius float64, pos Point) []Npc {
+func (i *Island) withinRadiusOfName(n string, radius float64, pos Point) []Obj {
 
-	var res []Npc
+	var res []Obj
 	for _, npc := range i.Spawns {
 		if npc.Name == n && npc.distanceTo(pos) <= radius {
 			res = append(res, *npc)
@@ -79,9 +79,9 @@ func (i *Island) withinRadiusOfName(n string, radius float64, pos Point) []Npc {
 	return res
 }
 
-func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []Npc {
+func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []Obj {
 
-	var res []Npc
+	var res []Obj
 	for _, npc := range i.Spawns {
 
 		if npc.Type == t && npc.distanceTo(pos) <= radius {
@@ -109,7 +109,7 @@ func parseNpcsDefinition(defFileName string) []npcSpec {
 }
 
 // check if npc already has planned to do a
-func (n *Npc) hasPlanned(t string) bool {
+func (n *Obj) hasPlanned(t string) bool {
 
 	if n.CurrentAction != nil && n.CurrentAction.Name == t {
 		return true
@@ -123,7 +123,7 @@ func (n *Npc) hasPlanned(t string) bool {
 	return false
 }
 
-func (n *Npc) planAction(actionName string) {
+func (n *Obj) planAction(actionName string) {
 
 	if n.hasPlanned(actionName) {
 		return

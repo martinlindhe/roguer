@@ -8,7 +8,7 @@ import (
 )
 
 // Tick npc ticks until it returns false
-func (n *Npc) Tick() bool {
+func (n *Obj) Tick() bool {
 	n.Age++
 
 	log.Debug("[tick]", n.Name, n.Age)
