@@ -358,7 +358,6 @@ func TestTree(t *testing.T) {
 	// XXX
 }
 
-/*
 func TestNpcDiesOfOldAge(t *testing.T) {
 
 	prepareIsland()
@@ -374,4 +373,3 @@ func TestNpcDiesOfOldAge(t *testing.T) {
 	// XXX dwarf should have died of old age
 	assert.Equal(t, 0, len(island.Spawns))
 }
-*/

@@ -44,3 +44,10 @@ func (n *Npc) isSleeping() bool {
 	}
 	return false
 }
+
+func (n *Npc) isAboveMaxAge() bool {
+	if n.Age >= n.ageCap() {
+		return true
+	}
+	return false
+}

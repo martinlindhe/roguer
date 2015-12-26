@@ -7,8 +7,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-// Tick ...
-func (n *Npc) Tick() {
+// Tick npc ticks until it returns false
+func (n *Npc) Tick() bool {
 	n.Age++
 
 	n.Hunger++
@@ -17,13 +17,18 @@ func (n *Npc) Tick() {
 
 	log.Debug("[tick]", n.Name, n.Age)
 
+	if n.isAboveMaxAge() {
+		log.Infof("%s dies of old age", n.Name)
+		return false
+	}
+
 	if n.isSleeping() {
 		if n.CurrentAction.Name != "sleep" {
 			// XXX this should never happen
 			panic(fmt.Errorf("sleeping and doing something that requires being awake: %s", n.CurrentAction.Name))
 		}
 		n.performCurrentAction()
-		return
+		return true
 	}
 
 	if n.isTired() && !n.hasPlanned("sleep") {
@@ -48,7 +53,7 @@ func (n *Npc) Tick() {
 
 			energyDiff := prevHunger - n.Hunger
 			log.Printf("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
-			return
+			return true
 		}
 
 		if n.isHungry() && !n.hasPlanned("find food") {
@@ -74,7 +79,7 @@ func (n *Npc) Tick() {
 
 			energyDiff := prevThirst - n.Thirst
 			log.Printf("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
-			return
+			return true
 		}
 		if n.isThirsty() && !n.hasPlanned("find water") {
 			log.Printf("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
@@ -135,6 +140,7 @@ func (n *Npc) Tick() {
 	}
 
 	n.performCurrentAction()
+	return true
 }
 
 // shuffle slice, without allocations
