@@ -22,6 +22,7 @@ type actionList struct {
 type actionSpec struct {
 	Name      string `json:"name"`
 	Type      string `json:"type"`
+	Result    string `json:"result"`
 	Duration  int    `json:"duration"`
 	Energy    int    `json:"energy"`
 	TimeSpent int
@@ -32,25 +33,23 @@ func (n *Npc) performCurrentAction() {
 		return
 	}
 
-	// XXX react on TYPE, be more generic:
 	status := false
-	switch n.CurrentAction.Name {
-	case "find food":
-		status = n.performFindFood()
-	case "find water":
-		status = n.performFindWater()
+	switch n.CurrentAction.Type {
 	case "sleep":
 		status = n.performSleep()
-	case "dig small hole":
-		status = n.performDigHole()
-	case "build small fireplace":
-		status = n.performBuildFireplace()
+
+	case "forage":
+		status = n.performForage()
+
+	case "build":
+		status = n.performBuild()
+
 	default:
-		panic(fmt.Errorf("Cant perform unknown action: %s", n.CurrentAction))
+		panic(fmt.Errorf("Unknown action type: %s", n.CurrentAction.Type))
 	}
 
 	if status == true {
-		log.Println(n.Name, "finished performing", n.CurrentAction)
+		log.Println(n.Name, "finished", n.CurrentAction.Name)
 		n.CurrentAction = nil
 	}
 }
@@ -96,15 +95,23 @@ func (n *Npc) performSleep() bool {
 	return false
 }
 
-func (n *Npc) performFindFood() bool {
+func (n *Npc) performForage() bool {
 
-	log.Println(n.Name, "is looking for food")
+	log.Println(n.Name, "is performing", n.CurrentAction.Name)
 
 	// TODO something more advanced for looking for food
 	n.CurrentAction.Duration--
 	if n.CurrentAction.Duration < 0 {
 
-		item := island.randomItemOfType("food")
+		var item Item
+		if n.CurrentAction.Name == "find food" {
+			item = island.randomItemOfType("food")
+		} else if n.CurrentAction.Name == "find water" {
+			item = island.randomItemOfType("drink")
+		} else {
+			panic(fmt.Errorf("Unknown forage: %s", n.CurrentAction.Name))
+		}
+
 		log.Printf("%s found a %s", n.Name, item.Name)
 		n.Inventory = append(n.Inventory, item)
 		return true
@@ -113,44 +120,13 @@ func (n *Npc) performFindFood() bool {
 	return false
 }
 
-func (n *Npc) performFindWater() bool {
+func (n *Npc) performBuild() bool {
 
-	log.Println(n.Name, "is looking for water")
-
-	// TODO something more advanced for looking for water
-	n.CurrentAction.Duration--
-	if n.CurrentAction.Duration < 0 {
-
-		item := island.randomItemOfType("drink")
-		log.Printf("%s found a %s", n.Name, item.Name)
-		n.Inventory = append(n.Inventory, item)
-
-		return true
-	}
-
-	return false
-}
-
-func (n *Npc) performDigHole() bool {
-
-	log.Println(n.Name, "is digging a hole")
+	log.Println(n.Name, "is performing", n.CurrentAction.Name)
 
 	n.CurrentAction.Duration--
 	if n.CurrentAction.Duration < 0 {
-		island.addNpcFromName("rabbit hole", n.Position)
-		return true
-	}
-
-	return false
-}
-
-func (n *Npc) performBuildFireplace() bool {
-
-	log.Println(n.Name, "is building a fireplace")
-
-	n.CurrentAction.Duration--
-	if n.CurrentAction.Duration < 0 {
-		island.addNpcFromName("small fireplace", n.Position)
+		island.addNpcFromName(n.CurrentAction.Result, n.Position)
 		return true
 	}
 

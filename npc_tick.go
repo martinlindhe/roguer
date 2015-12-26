@@ -107,7 +107,7 @@ func (n *Npc) Tick() {
 		n.CurrentAction = &n.PlannedActions[0]
 		n.PlannedActions = n.PlannedActions[1:]
 
-		log.Println(n.Name, "started to", n.CurrentAction)
+		log.Println(n.Name, "started to", n.CurrentAction.Name)
 	}
 
 	n.performCurrentAction()
