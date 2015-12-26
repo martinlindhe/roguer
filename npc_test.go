@@ -126,7 +126,6 @@ func TestFindWaterAndDrink(t *testing.T) {
 	assert.Equal(t, false, dw.isThirsty())
 }
 
-/*
 func TestFindFirewood(t *testing.T) {
 
 	prepareIsland()
@@ -155,7 +154,7 @@ func TestFindFirewood(t *testing.T) {
 
 	assert.Equal(t, true, dw.hasItemTypeInInventory("wood"))
 }
-*/
+
 func TestSleep(t *testing.T) {
 
 	prepareIsland()
