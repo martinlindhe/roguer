@@ -93,11 +93,11 @@ func (n *Npc) Tick() {
 
 		if n.Type == "humanoid" {
 
-			// XXX if dont have firewood in inventory
 			if !n.hasItemInInventory("firewood") {
 				n.planAction("find firewood")
 			}
 
+			//if island.canBuildAt(n.Position) {
 			if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
 				n.planAction("build small fireplace")
 				// XXX if more than 1 humanoid nearby, instead build a larger fireplace
@@ -106,12 +106,17 @@ func (n *Npc) Tick() {
 				// XXX if more than 1 humanoid nearby, instead build a small hut
 				n.planAction("build small shelter")
 			}
-			if len(island.withinRadiusOfName("farmland", 0, n.Position)) == 0 {
+			if len(island.withinRadiusOfName("farmland", 1, n.Position)) == 0 {
 				n.planAction("build farmland")
 			}
 			if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
 				n.planAction("plant apple tree")
 			}
+			//}
+		}
+
+		if n.Type == "tree" {
+			// XXX tick for tree
 		}
 	}
 

@@ -33,13 +33,41 @@ func TestWithinRadiusOfType(t *testing.T) {
 	prepareIsland()
 	assert.Equal(t, true, len(island.Spawns) == 0)
 
-	island.addNpcFromName("small fireplace", island.randomPointAboveWater())
+	pos := island.randomPointAboveWater()
+
+	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 0, pos)))
+	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 30, pos)))
+	assert.Equal(t, 0, len(island.withinRadiusOfType("fireplace", 0, pos)))
+	assert.Equal(t, 0, len(island.withinRadiusOfType("fireplace", 30, pos)))
+
+	island.addNpcFromName("small fireplace", pos)
 	assert.Equal(t, true, len(island.Spawns) == 1)
 
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 0, island.Spawns[0].Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, island.Spawns[0].Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, island.Spawns[0].Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, island.Spawns[0].Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 0, pos)))
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, pos)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, pos)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, pos)))
+
+	pos2 := pos
+	pos2.Y++
+
+	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 0, pos2)))
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 1, pos2)))
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, pos2)))
+	assert.Equal(t, 0, len(island.withinRadiusOfType("fireplace", 0, pos2)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 1, pos2)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, pos2)))
+}
+
+func TestCanBuildAt(t *testing.T) {
+
+	prepareIsland()
+	assert.Equal(t, true, len(island.Spawns) == 0)
+
+	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	assert.Equal(t, true, len(island.Spawns) == 1)
+
+	assert.Equal(t, true, island.canBuildAt(island.Spawns[0].Position))
 }
 
 func TestFindFoodAndEat(t *testing.T) {
@@ -219,16 +247,22 @@ func TestBuildFireplace(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 
-	// add nessecities, so they dont need to be built
-	island.addNpcFromName("small shelter", island.Spawns[0].Position)
-	island.addNpcFromName("farmland", island.Spawns[0].Position)
-	island.addNpcFromName("apple tree", island.Spawns[0].Position)
+	// add nessecities nearby, so they dont need to be built
+	nextTo := island.Spawns[0].Position
+	//nextTo.Y++
+	// make sure nextTo is changed
+	//assert.Equal(t, false, island.Spawns[0].Position.Y == nextTo.Y)
+
+	island.addNpcFromName("small shelter", nextTo)
+	island.addNpcFromName("farmland", nextTo)
+	island.addNpcFromName("apple tree", nextTo)
 
 	assert.Equal(t, true, len(island.Spawns) == 4)
 	dw := island.Spawns[0]
 	dw.addToInventory("firewood")
 
 	island.Tick()
+	assert.Equal(t, false, dw.CurrentAction == nil)
 	assert.Equal(t, "build small fireplace", dw.CurrentAction.Name)
 
 	duration := dw.CurrentAction.Duration
@@ -301,4 +335,16 @@ func TestBuildFarmland(t *testing.T) {
 
 	assert.Equal(t, 1, len(island.withinRadiusOfName("farmland", 0, dw.Position)))
 	assert.Equal(t, 1, len(island.withinRadiusOfType("food producer", 0, dw.Position)))
+}
+
+func TestTree(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromName("oak tree", island.randomPointAboveWater())
+
+	assert.Equal(t, true, len(island.Spawns) == 1)
+	//	tr := island.Spawns[0]
+
+	// XXX
 }

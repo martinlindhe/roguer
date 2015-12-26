@@ -120,7 +120,7 @@ func (i *Island) addNpcFromSpec(spec npcSpec, pos Point) {
 
 	if len(spec.Name) == 0 {
 		// if name field is unset, run a generator based on npc type
-		o.Name = o.generatRandomName()
+		o.Name = o.generateName()
 
 	} else {
 		// pick one name by random

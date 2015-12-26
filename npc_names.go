@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (n *Npc) generatRandomName() string {
+func (n *Npc) generateName() string {
 	if n.Race == "" {
 		return n.Name
 	}
