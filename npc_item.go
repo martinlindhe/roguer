@@ -18,6 +18,12 @@ func (n *Npc) tryFindItemTypeInInventory(t string) (int, error) {
 	return -1, fmt.Errorf("%s has no items of %s in inventory", n.Name, t)
 }
 
+func (n *Npc) addToInventory(itemName string) {
+
+	item := island.itemOfName(itemName)
+	n.Inventory = append(n.Inventory, item)
+}
+
 func (n *Npc) removeFromInventory(index int) Item {
 
 	val := n.Inventory[index]
@@ -36,4 +42,18 @@ func (n *Npc) hasItemTypeInInventory(t string) bool {
 		return false
 	}
 	return true
+}
+
+func (n *Npc) hasItemInInventory(itemName string) bool {
+
+	if len(n.Inventory) == 0 {
+		return false
+	}
+
+	for _, it := range n.Inventory {
+		if it.Name == itemName {
+			return true
+		}
+	}
+	return false
 }

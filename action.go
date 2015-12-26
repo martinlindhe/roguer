@@ -105,10 +105,9 @@ func (n *Npc) performForage() bool {
 	if n.CurrentAction.Duration < 0 {
 
 		rnd := n.CurrentAction.Result[rand.Intn(len(n.CurrentAction.Result))]
-		item := island.itemOfName(rnd)
 
-		log.Printf("%s found a %s", n.Name, item.Name)
-		n.Inventory = append(n.Inventory, item)
+		log.Printf("%s found a %s", n.Name, rnd)
+		n.addToInventory(rnd)
 		return true
 	}
 
