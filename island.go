@@ -76,12 +76,16 @@ func (i *Island) Tick() {
 // generate critters based on data file
 func (i *Island) fillWithCritters() {
 
-	for _, npcSpec := range island.npcSpecs {
-		log.Infof("Adding %d %s", npcSpec.Quantity, npcSpec.Type)
-		for n := 0; n < npcSpec.Quantity; n++ {
-			i.addNpcFromSpec(npcSpec, i.randomPointAboveWater())
-		}
+	dwarf := i.getNpcSpecFromName("dwarf")
+	for n := 0; n < 5; n++ {
+		i.addNpcFromSpec(dwarf, i.randomPointAboveWater())
 	}
+
+	rabbit := i.getNpcSpecFromName("rabbit")
+	for n := 0; n < 5; n++ {
+		i.addNpcFromSpec(rabbit, i.randomPointAboveWater())
+	}
+
 }
 
 func (i *Island) getNpcSpecFromName(n string) npcSpec {

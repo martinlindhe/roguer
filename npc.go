@@ -45,11 +45,10 @@ type npcList struct {
 }
 
 type npcSpec struct {
-	Type     string   `json:"type"`
-	Class    string   `json:"class"`
-	Race     string   `json:"race"`
-	Name     []string `json:"name"`
-	Quantity int      `json:"qty"`
+	Type  string   `json:"type"`
+	Class string   `json:"class"`
+	Race  string   `json:"race"`
+	Name  []string `json:"name"`
 }
 
 func (n *Npc) distanceTo(pos Point) float64 {

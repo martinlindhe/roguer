@@ -354,14 +354,13 @@ func TestTree(t *testing.T) {
 	island.addNpcFromName("oak tree", island.randomPointAboveWater())
 
 	assert.Equal(t, 1, len(island.Spawns))
-	tr := island.Spawns[0]
 
 	// XXX tick tree: chance of dropping tree branches for firewood, chance of dropping seed
-	for i := 0; i <= 1000; i++ {
-		//	island.Tick()
+	for i := 0; i <= 100; i++ {
+		island.Tick()
 	}
 
-	spew.Dump(tr.Inventory)
+	spew.Dump(island.Spawns)
 
 	// XXXX for 1000 ticks, at least some branch should have dropped!
 	//	assert.Equal(t, 1, tr.Inventory)

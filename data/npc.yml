@@ -1,16 +1,12 @@
-# XXXX remove qty from here, instead specify qty's in a special "islandCreateCritters()"
-
 all:
   - type: humanoid
     class: npc
     race: dwarf
-    qty: 2
 
   - type: plant eater
     class: npc
     race: rabbit
     name: [a rabbit, a small rabbit, a white rabbit, a brown rabbit]
-    qty: 2
 
   - type: fireplace
     class: object
