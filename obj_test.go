@@ -529,7 +529,7 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	// NOTE: similar to TestNpcMovesToFireplace, but now also make sure dwarf finds a firewood
 
-	nextTo := island.Spawns[0].Position
+	nextTo := dw.Position
 	nextTo.X -= 3
 	nextTo.Y += 3
 
@@ -542,7 +542,7 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	island.addNpcFromName("apple tree", nextTo)
 	assert.Equal(t, 6, len(island.Spawns))
 
-	nextTo2 := island.Spawns[0].Position
+	nextTo2 := dw.Position
 	nextTo2.X += 2
 	island.addNpcFromName("branch", nextTo)
 	assert.Equal(t, 7, len(island.Spawns))

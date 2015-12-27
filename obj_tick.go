@@ -117,12 +117,14 @@ func (n *Obj) npcTick() bool {
 			}
 		}
 
-		fireplaces := island.withinRadiusOfType("fireplace", 30, n.Position)
+		if !n.hasPlannedType("travel") {
+			fireplaces := island.withinRadiusOfType("fireplace", 30, n.Position)
 
-		if len(fireplaces) > 0 {
-			if n.distanceTo(fireplaces[0].Position) > 1 {
-				log.Printf("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
-				n.planAction("walk", fireplaces[0].Position)
+			if len(fireplaces) > 0 {
+				if n.distanceTo(fireplaces[0].Position) > 1 {
+					log.Printf("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
+					n.planAction("walk", fireplaces[0].Position)
+				}
 			}
 		}
 	}
