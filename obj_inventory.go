@@ -18,6 +18,11 @@ func (n *Obj) tryFindItemTypeInInventory(t string) (int, error) {
 	return -1, fmt.Errorf("%s has no items of %s in inventory", n.Name, t)
 }
 
+func (n *Obj) addItemToInventory(item Obj) {
+
+	n.Inventory = append(n.Inventory, item)
+}
+
 func (n *Obj) addToInventory(itemName string) {
 
 	spec := island.getNpcSpecFromName(itemName)

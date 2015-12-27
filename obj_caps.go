@@ -1,5 +1,7 @@
 package rogue
 
+import "fmt"
+
 func (n *Obj) ageCap() int {
 	// XXX what is a sane age?
 	return 100000
@@ -61,4 +63,17 @@ func (n *Obj) isAboveMaxAge() bool {
 		return true
 	}
 	return false
+}
+
+// used by eg. fireplace. if it is activated = it is burning
+func (n *Obj) isActivated() bool {
+	return n.Activated
+}
+
+func (n *Obj) Activate() {
+	if n.Activated == true {
+		panic(fmt.Errorf("obj %s is already activated", n.Name))
+	}
+
+	n.Activated = true
 }

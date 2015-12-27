@@ -29,6 +29,9 @@ type Obj struct {
 	Thirst    int
 	Tiredness int
 	Coldness  int
+
+	// for objects
+	Activated bool
 }
 
 type objList struct {

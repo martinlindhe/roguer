@@ -33,6 +33,10 @@ func (n *Obj) Tick() bool {
 		}
 	}
 
+	if n.Type == "fireplace" && n.Activated {
+		log.Printf("XXX %s is burning ...", n.Name)
+	}
+
 	return n.npcTick()
 }
 
@@ -55,9 +59,31 @@ func (n *Obj) npcTick() bool {
 	}
 
 	if n.isCold() && !n.hasPlannedType("travel") {
-		// XXX change coldness, depending on if we are close to a fireplace or if its cold
-		if len(island.withinRadiusOfType("fireplace", 1, n.Position)) > 0 {
-			//panic("XXXX next to fireplace, light it!!!")
+		nearbyFireplaces := island.withinRadiusOfType("fireplace", 1, n.Position)
+		if len(nearbyFireplaces) > 0 {
+
+			fireplace := nearbyFireplaces[0]
+			if fireplace.isActivated() {
+				// XXX
+				// XXX change coldness, depending on if we are close to a fireplace or if its cold
+				fmt.Printf("XXXX fireplace is activated, so now get warm!!!")
+			} else {
+
+				itemIdx, err := n.tryFindItemTypeInInventory("wood")
+				if err != nil {
+					// XXX also, is fire already burning???
+					log.Errorf("XXX no fire wood in inventory, cannot light fire")
+					return true
+				}
+
+				item := n.removeFromInventory(itemIdx)
+
+				log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
+				fireplace.addItemToInventory(item)
+
+				log.Printf("%s lights the fireplace", n.Name)
+				fireplace.Activate()
+			}
 
 			return true
 		}

@@ -405,6 +405,7 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	assert.Equal(t, 1, len(island.Spawns))
 
 	dw := island.Spawns[0]
+	dw.addToInventory("small branch")
 
 	nextTo := island.Spawns[0].Position
 	nextTo.X -= 8
@@ -428,6 +429,12 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	}
 
 	assert.Equal(t, true, dw.Position.intMatches(nextTo))
+
+	// let npc start the fire
+	island.Tick()
+
+	// let fire burn
+	island.Tick()
 
 	// XXX let them get warm by the fire
 	//assert.Equal(t, false, dw.isCold())
