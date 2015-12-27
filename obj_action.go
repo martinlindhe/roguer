@@ -23,6 +23,21 @@ func (n *Obj) hasPlanned(actionName string) bool {
 	return false
 }
 
+// check if npc already has planned to do a
+func (n *Obj) hasPlannedType(actionType string) bool {
+
+	if n.CurrentAction != nil && n.CurrentAction.Type == actionType {
+		return true
+	}
+
+	for _, v := range n.PlannedActions {
+		if v.Type == actionType {
+			return true
+		}
+	}
+	return false
+}
+
 func (n *Obj) planAction(params ...interface{}) {
 
 	actionName := ""

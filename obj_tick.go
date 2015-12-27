@@ -54,12 +54,18 @@ func (n *Obj) npcTick() bool {
 		return true
 	}
 
-	fireplaces := island.withinRadiusOfType("fireplace", 30, n.Position)
-	if n.isCold() && len(fireplaces) > 0 {
-		// XXX move to most nearby fireplace
+	if n.isCold() && !n.hasPlannedType("travel") {
+		// XXX change coldness, depending on if we are close to a fireplace or if its cold
+		if len(island.withinRadiusOfType("fireplace", 0, n.Position)) > 0 {
+			panic("XXXX next to fireplace, light it!!!")
+		}
 
-		fmt.Printf("XXXX move to pos %v", fireplaces[0].Position)
-		n.planAction("travel by foot", fireplaces[0].Position)
+		fireplaces := island.withinRadiusOfType("fireplace", 30, n.Position)
+
+		if len(fireplaces) > 0 {
+			log.Printf("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
+			n.planAction("walk", fireplaces[0].Position)
+		}
 	}
 
 	if n.isTired() && !n.hasPlanned("sleep") {

@@ -44,5 +44,6 @@ all:
     result: [apple tree]
     duration: 10
     
-  - name: travel by foot
+  - name: walk
     type: travel
+    energy: 1
