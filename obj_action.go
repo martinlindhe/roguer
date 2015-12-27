@@ -155,16 +155,21 @@ func (n *Obj) performTravel(energy int) bool {
 
 func (n *Obj) performSleep() bool {
 
+	shelterType := n.preferredShelterType()
+
 	mult := 1
+	energy := mult
 
-	shelters := island.withinRadiusOfType("shelter", 0, n.Position)
-	if len(shelters) > 0 {
-		// give bonus from nearby shelter
-		mult = shelters[0].Energy
+	if shelterType != "" {
+		shelters := island.withinRadiusOfType(shelterType, 0, n.Position)
+		if len(shelters) > 0 {
+			// give bonus from nearby shelter
+			mult = shelters[0].Energy
 
-		log.Printf("%s gets sleeping bonus %d from %s", n.Name, mult, shelters[0].Name)
+			log.Printf("%s gets sleeping bonus %d from %s", n.Name, mult, shelters[0].Name)
+		}
+		energy = mult * n.CurrentAction.Energy
 	}
-	energy := mult * n.CurrentAction.Energy
 
 	log.Printf("%s is sleeping (tiredness = %d, energy gain = %d)", n.Name, n.Tiredness, energy)
 	n.CurrentAction.Duration--

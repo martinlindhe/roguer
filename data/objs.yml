@@ -3,7 +3,7 @@ all:
     class: npc
     race: dwarf
 
-  - type: plant eater
+  - type: rodent
     class: npc
     race: rabbit
     name: a rabbit
@@ -15,6 +15,7 @@ all:
   - type: burrow
     class: object
     name: small hole
+    energy: 5
 
   - type: shelter
     class: object

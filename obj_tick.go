@@ -171,18 +171,37 @@ func (n *Obj) npcTick() bool {
 	return true
 }
 
+func (n *Obj) preferredShelterType() string {
+	shelterType := ""
+	if n.Type == "humanoid" {
+		shelterType = "shelter"
+	} else if n.Type == "rodent" {
+		shelterType = "burrow"
+	}
+	return shelterType
+}
+
 func (n *Obj) tiredTick() bool {
+
+	shelterType := n.preferredShelterType()
 
 	// if next to shelter, sleep. if shelter nearby, go there and then sleep
 	if n.isTired() && !n.hasPlannedType("sleep") && !n.hasPlannedType("travel") {
-		nearbyShelters := island.withinRadiusOfType("shelter", 0, n.Position)
+
+		if shelterType == "" {
+			log.Printf("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
+			n.planAction("sleep")
+			return true
+		}
+
+		nearbyShelters := island.withinRadiusOfType(shelterType, 0, n.Position)
 		if len(nearbyShelters) > 0 {
 			log.Printf("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", n.Name, nearbyShelters[0].Name, n.Tiredness, n.tirednessCap())
 			n.planAction("sleep")
 			return true
 		}
 
-		shelters := island.withinRadiusOfType("shelter", 30, n.Position)
+		shelters := island.withinRadiusOfType(shelterType, 30, n.Position)
 		if len(shelters) == 0 {
 			log.Printf("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
 			n.planAction("sleep")
