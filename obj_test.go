@@ -339,6 +339,8 @@ func TestBuildShelter(t *testing.T) {
 	}
 
 	assert.Equal(t, 1, len(island.withinRadiusOfType("shelter", 0, dw.Position)))
+
+	// XXX make npc tired, and make sure they use the shelter!
 }
 
 func TestBuildFarmland(t *testing.T) {
