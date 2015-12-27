@@ -66,7 +66,7 @@ func (n *Obj) npcTick() bool {
 
 	if n.isCold() && !n.hasPlannedType("travel") && n.Type == "humanoid" {
 
-		if !n.hasItemTypeInInventory("wood") {
+		if !n.hasItemTypeInInventory("wood") && !n.hasPlannedType("wait") {
 			n.planAction("find fire wood")
 		}
 
@@ -91,13 +91,15 @@ func (n *Obj) npcTick() bool {
 						log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
 						// NOTE: to simplify, we just get the energy from the wood directly
 						fireplace.Energy += item.Energy
-						return true
 					}
 				}
 
 				if fireplace.Energy > 0 {
 					log.Printf("%s lights the fireplace", n.Name)
 					fireplace.Activate()
+
+					// stay here for a bit
+					n.planAction("wait")
 				}
 			}
 		}

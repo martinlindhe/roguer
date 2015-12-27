@@ -83,6 +83,9 @@ func (n *Obj) performCurrentAction() {
 	case "travel":
 		status = n.performTravel(n.CurrentAction.Energy)
 
+	case "wait":
+		status = n.performWait()
+
 	default:
 		panic(fmt.Errorf("Unknown action type: %s", n.CurrentAction.Type))
 	}
@@ -102,6 +105,19 @@ func (i *Island) findActionByName(n string) actionSpec {
 	}
 
 	panic(fmt.Errorf("cant find action: %s", n))
+}
+
+func (n *Obj) performWait() bool {
+
+	log.Debugln("%s is waiting", n.Name)
+	n.CurrentAction.Duration--
+
+	if n.CurrentAction.Duration < 0 {
+		log.Printf("%s finished waiting", n.Name)
+		return true
+	}
+
+	return false
 }
 
 func (n *Obj) performTravel(energy int) bool {
