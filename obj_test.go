@@ -486,13 +486,14 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	island.addNpcFromName("farmland", island.Spawns[0].Position)
 	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("small shelter", nextTo)
+	island.addNpcFromName("farmland", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
-	assert.Equal(t, 5, len(island.Spawns))
+	assert.Equal(t, 6, len(island.Spawns))
 
 	nextTo2 := island.Spawns[0].Position
 	nextTo2.X += 2
 	island.addNpcFromName("branch", nextTo)
-	assert.Equal(t, 6, len(island.Spawns))
+	assert.Equal(t, 7, len(island.Spawns))
 
 	// make dwarf wanna move to shelter
 	dw.Coldness = dw.coldnessCap() + 1
@@ -519,10 +520,7 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	assert.Equal(t, true, dw.Position.intMatches(&nextTo))
 
-	// let npc start the fire
-	island.Tick()
-
-	// let fire burn
+	// let npc start the fire, wait and get warmed up
 	island.Tick()
 
 	// let them get warm by the fire

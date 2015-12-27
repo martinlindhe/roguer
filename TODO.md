@@ -2,36 +2,35 @@
 # TODO
 
 
-- forage
+forage:
     later: some other "roam" mode, now we finds item of
         type X and moves straight towards it
 
 
 
-- sleeping
+sleep:
     if shelter is nearby, travel to it and then sleep there to get bonus
     
 
-- tree
+tree:
     humanoid: able to chop down tree, using an axe
     seed: develop into a new tree
     
     
     spawnForest() function = creates woods in all empty spots in a radius `rad` around `pos`
 
-- death
+death:
     when npc dies, corpse should stay. need dead state
-    
-
-
-    generated islands is ugly
 
 
 
-generate island ui
+
+
+
+generate island:
 
     - tweak rolling particle length, default to 8
-
+    - generated islands is ugly
 
 
 
