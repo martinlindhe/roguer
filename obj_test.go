@@ -439,3 +439,48 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	// let them get warm by the fire
 	assert.Equal(t, false, dw.isCold())
 }
+
+func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	assert.Equal(t, 1, len(island.Spawns))
+
+	dw := island.Spawns[0]
+	//dw.addToInventory("small branch")
+
+	// NOTE: similar to TestNpcMovesToFireplace, but now also make sure dwarf finds a firewood
+
+	nextTo := island.Spawns[0].Position
+	nextTo.X -= 3
+	nextTo.Y += 3
+
+	assert.Equal(t, false, dw.Position == nextTo)
+
+	island.addNpcFromName("small fireplace", nextTo)
+	assert.Equal(t, 2, len(island.Spawns))
+
+	// make dwarf wanna move to shelter
+	dw.Coldness = dw.coldnessCap() + 1
+	assert.Equal(t, true, dw.isCold())
+
+	// let them travel to destination
+	for {
+		island.Tick()
+		if dw.Position.intMatches(nextTo) {
+			break
+		}
+	}
+
+	assert.Equal(t, true, dw.Position.intMatches(nextTo))
+
+	// let npc start the fire
+	island.Tick()
+
+	// let fire burn
+	island.Tick()
+
+	// let them get warm by the fire
+	//	assert.Equal(t, false, dw.isCold())
+}

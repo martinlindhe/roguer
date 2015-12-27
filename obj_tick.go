@@ -65,6 +65,7 @@ func (n *Obj) npcTick() bool {
 	}
 
 	if n.isCold() && !n.hasPlannedType("travel") {
+
 		nearbyFireplaces := island.withinRadiusOfType("fireplace", 1, n.Position)
 		if len(nearbyFireplaces) > 0 {
 
@@ -77,21 +78,22 @@ func (n *Obj) npcTick() bool {
 				log.Printf("%s is getting warmed up by the fireplace (coldness %d)", n.Name, n.Coldness)
 			} else {
 
-				itemIdx, err := n.tryFindItemTypeInInventory("wood")
-				if err != nil {
-					// XXX also, is fire already burning???
-					log.Errorf("XXX no fire wood in inventory, cannot light fire")
-					return true
+				if !n.hasItemTypeInInventory("wood") {
+					log.Printf("XXX plan to forage for wood first, then get to a fireplace")
+				} else {
+
+					itemIdx, _ := n.tryFindItemTypeInInventory("wood")
+					item := n.removeFromInventory(itemIdx)
+
+					log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
+					// NOTE: to simplify, we just get the energy from the wood directly
+					fireplace.Energy += item.Energy
 				}
 
-				item := n.removeFromInventory(itemIdx)
-
-				log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
-				// NOTE: to simplify, we just get the energy from the wood directly
-				fireplace.Energy += item.Energy
-
-				log.Printf("%s lights the fireplace", n.Name)
-				fireplace.Activate()
+				if fireplace.Energy > 0 {
+					log.Printf("%s lights the fireplace", n.Name)
+					fireplace.Activate()
+				}
 			}
 
 			return true
