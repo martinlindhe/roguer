@@ -130,12 +130,12 @@ func (n *Obj) npcTick() bool {
 		// XXX if next to sheltr, sleep. if shelter nearby, go there and sleep there
 		shelters := island.withinRadiusOfType("shelter", 30, n.Position)
 		if len(shelters) == 0 {
-			log.Printf("%s is feeling tired (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
+			log.Printf("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
 			n.planAction("sleep")
 			return true
 		}
 
-		log.Printf("%s is feeling tired, decided to go to sleep at %s", n.Name, shelters[0].Name)
+		log.Printf("%s is feeling tired, decided to go to %s for sleeping", n.Name, shelters[0].Name)
 		n.planAction("walk", shelters[0].Position)
 	}
 

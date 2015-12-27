@@ -363,12 +363,17 @@ func TestBuildShelter(t *testing.T) {
 
 	// make npc tired
 	dw.Tiredness = dw.tirednessCap() + 1
-
 	prevTiredness := dw.Tiredness
 	island.Tick()
 
+	// make sure npc planned action: sleep
+	assert.Equal(t, true, dw.hasPlanned("sleep"))
+
+	// make npc fall asleep
+	island.Tick()
+
 	// make sure they get the shelter bonus
-	assert.Equal(t, 49, prevTiredness-dw.Tiredness) // 50 for the bonus, -1 for the tick before starting to sleep
+	assert.Equal(t, 48, prevTiredness-dw.Tiredness) // 50 for the bonus, -2 for the ticks before starting to sleep
 }
 
 func TestBuildFarmland(t *testing.T) {
