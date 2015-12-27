@@ -142,7 +142,7 @@ func (n *Obj) npcTick() bool {
 		// something that would help improve situation for the npc
 		if n.Race == "rabbit" {
 			if len(island.withinRadiusOfName("small hole", 30, n.Position)) == 0 {
-				n.planAction("dig small hole")
+				n.planAction("dig small hole", n.Position)
 			}
 		}
 
@@ -151,17 +151,19 @@ func (n *Obj) npcTick() bool {
 			if island.canBuildAt(n.Position) && !n.hasPlannedType("build") {
 				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a larger fireplace
-					n.planAction("build small fireplace")
+					n.planAction("build small fireplace", n.Position)
 				}
 				if len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a small hut
-					n.planAction("build small shelter")
+					n.planAction("build small shelter", n.Position)
 				}
 				if len(island.withinRadiusOfName("farmland", 1, n.Position)) == 0 {
-					n.planAction("build farmland")
+					n.planAction("build farmland", n.Position)
 				}
 				if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
-					n.planAction("plant apple tree")
+					// XXX require having a apple seed
+					// XXX require having a garden, plant there
+					n.planAction("plant apple tree", n.Position)
 				}
 			}
 		}

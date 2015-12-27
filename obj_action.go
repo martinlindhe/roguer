@@ -61,7 +61,7 @@ func (n *Obj) planAction(params ...interface{}) {
 	a.Destination = &dst
 	n.PlannedActions = append(n.PlannedActions, a)
 
-	if a.Destination == nil {
+	if a.Destination.empty() {
 		log.Printf("%s decided to %s", n, a.Name)
 	} else {
 		log.Printf("%s decided to %s (%s)", n, a.Name, a.Destination)
@@ -253,12 +253,17 @@ func (n *Obj) performForage() bool {
 
 func (n *Obj) performBuild() bool {
 
-	log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
+	// if not at destination, move there
+	// XXX 1=walking speed
+	if n.performTravel(1) {
 
-	n.CurrentAction.Duration--
-	if n.CurrentAction.Duration < 0 {
-		island.addNpcFromName(n.CurrentAction.Result, n.Position)
-		return true
+		log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
+
+		n.CurrentAction.Duration--
+		if n.CurrentAction.Duration < 0 {
+			island.addNpcFromName(n.CurrentAction.Result, *n.CurrentAction.Destination)
+			return true
+		}
 	}
 
 	return false
