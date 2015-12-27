@@ -52,9 +52,7 @@ func TestWithinRadiusOfType(t *testing.T) {
 	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, pos)))
 	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, pos)))
 
-	pos2 := pos
-	pos2.Y++
-
+	pos2, _ := pos.randomNearby()
 	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 0, pos2)))
 	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 1, pos2)))
 	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, pos2)))
@@ -350,19 +348,18 @@ func TestBuildShelter(t *testing.T) {
 	nextTo, _ := island.Spawns[0].Position.randomNearby()
 
 	// add nessecities, so they dont need to be built
-	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("farmland", nextTo)
+	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
 	assert.Equal(t, 4, len(island.Spawns))
 
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
 
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 1, dw.Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 2, dw.Position)))
 
 	island.Tick()
-	assert.Equal(t, false, dw.CurrentAction == nil)
-	assert.Equal(t, "build small shelter", dw.CurrentAction.Name)
+	assert.Equal(t, true, dw.hasPlanned("build small shelter"))
 
 	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
@@ -401,7 +398,9 @@ func TestBuildFarmland(t *testing.T) {
 	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
-	assert.Equal(t, 4, len(island.Spawns))
+	island.addNpcFromName("cooking pit", nextTo)
+	island.addNpcFromName("small hut", nextTo)
+	assert.Equal(t, 6, len(island.Spawns))
 
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
@@ -521,23 +520,23 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	// NOTE: similar to TestNpcMovesToFireplace, but now also make sure dwarf finds a firewood
 
-	nextTo := dw.Position
-	nextTo.X -= 3
-	nextTo.Y += 3
+	nextTo, _ := dw.Position.randomNearby()
 
 	assert.Equal(t, false, dw.Position == nextTo)
 
 	island.addNpcFromName("farmland", island.Spawns[0].Position)
 	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("small shelter", nextTo)
+	island.addNpcFromName("cooking pit", nextTo)
 	island.addNpcFromName("farmland", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
-	assert.Equal(t, 6, len(island.Spawns))
-
-	nextTo2 := dw.Position
-	nextTo2.X += 2
-	island.addNpcFromName("branch", nextTo)
 	assert.Equal(t, 7, len(island.Spawns))
+
+	nextTo2, _ := dw.Position.randomNearby()
+	assert.Equal(t, false, nextTo == nextTo2)
+
+	island.addNpcFromName("branch", nextTo)
+	assert.Equal(t, 8, len(island.Spawns))
 
 	// make dwarf wanna move to shelter
 	dw.Coldness = dw.coldnessCap() + 1
@@ -561,13 +560,12 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	}
 
 	assert.Equal(t, true, dw.hasItemTypeInInventory("wood"))
-	assert.Equal(t, false, dw.Position.intMatches(&nextTo))
 
 	// make dwarf plan to get warm by fireplace
 	island.Tick()
 	assert.Equal(t, true, dw.hasPlannedType("wait"))
 
-	// let npc start the fire, wait and get warmed up
+	// let dwarf get warm
 	island.Tick()
 
 	// let them get warm by the fire
@@ -583,8 +581,7 @@ func TestBuildCookingPit(t *testing.T) {
 	dw := island.Spawns[0]
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo := dw.Position
-	nextTo.X--
+	nextTo, _ := dw.Position.randomNearby()
 	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
@@ -616,8 +613,7 @@ func TestBuildSmallHut(t *testing.T) {
 	dw := island.Spawns[0]
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo := dw.Position
-	nextTo.X--
+	nextTo, _ := dw.Position.randomNearby()
 	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("apple tree", nextTo)

@@ -142,50 +142,7 @@ func (n *Obj) npcTick() bool {
 		return true
 	}
 
-	if !n.isTired() && !n.isHungry() && !n.isThirsty() && !n.isCold() && !n.hasPlannedType("travel") {
-		// when basic needs is resolved, randomly decide to do
-		// something that would help improve situation for the npc
-		if n.Race == "rabbit" {
-			if len(island.withinRadiusOfName("small hole", 30, n.Position)) == 0 {
-				n.planAction("dig small hole", n.Position)
-			}
-		}
-
-		if n.Type == "humanoid" {
-
-			if island.canBuildAt(n.Position) && !n.hasPlannedType("build") {
-				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
-					// XXX if more than 1 humanoid nearby, instead build a larger fireplace
-					n.planAction("build small fireplace", n.Position)
-				}
-				if len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
-					// XXX if more than 1 humanoid nearby, instead build a small hut
-					n.planAction("build small shelter", n.Position)
-				}
-
-				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) > 0 &&
-					len(island.withinRadiusOfType("shelter", 30, n.Position)) > 0 {
-					// basic survival is satisifed, lets build a cooking pit
-					if len(island.withinRadiusOfType("cooking", 30, n.Position)) == 0 {
-						n.planAction("build cooking pit", n.Position)
-					} else {
-						// XXX let npc remember this is their "home", when it has been built
-						n.planAction("build small hut", n.Position)
-					}
-				}
-
-				if len(island.withinRadiusOfName("farmland", 1, n.Position)) == 0 {
-					n.planAction("build farmland", n.Position)
-				}
-
-				if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
-					// XXX require having a apple seed
-					// XXX require having a garden, plant there
-					n.planAction("plant apple tree", n.Position)
-				}
-			}
-		}
-	}
+	n.survivalPlanningTick()
 
 	// select one action to be doing next
 	if n.CurrentAction == nil && len(n.PlannedActions) > 0 {
@@ -203,6 +160,64 @@ func (n *Obj) npcTick() bool {
 
 	n.performCurrentAction()
 	return true
+}
+
+func (n *Obj) survivalPlanningTick() {
+
+	if !n.isTired() && !n.isHungry() && !n.isThirsty() && !n.isCold() && !n.hasPlannedType("travel") {
+		// when basic needs is resolved, randomly decide to do
+		// something that would help improve situation for the npc
+		if n.Race == "rabbit" {
+			if len(island.withinRadiusOfName("small hole", 30, n.Position)) == 0 {
+				n.planAction("dig small hole", n.Position)
+				return
+			}
+		}
+
+		if n.Type == "humanoid" {
+
+			if island.canBuildAt(n.Position) && !n.hasPlannedType("build") {
+				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
+					// XXX if more than 1 humanoid nearby, instead build a larger fireplace
+					n.planAction("build small fireplace", n.Position)
+					return
+				}
+				if len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
+					// XXX if more than 1 humanoid nearby, instead build a small hut
+					n.planAction("build small shelter", n.Position)
+					return
+				}
+
+				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) > 0 &&
+					len(island.withinRadiusOfType("shelter", 30, n.Position)) > 0 {
+
+					// basic survival is satisifed, lets build a cooking pit
+					if len(island.withinRadiusOfType("cooking", 30, n.Position)) == 0 {
+						n.planAction("build cooking pit", n.Position)
+						return
+					}
+
+					// XXX let npc remember this is their "home", when it has been buil
+					if len(island.withinRadiusOfName("small hut", 30, n.Position)) == 0 {
+						n.planAction("build small hut", n.Position)
+						return
+					}
+				}
+
+				if len(island.withinRadiusOfName("farmland", 1, n.Position)) == 0 {
+					n.planAction("build farmland", n.Position)
+					return
+				}
+
+				if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
+					// XXX require having a apple seed
+					// XXX require having a garden, plant there
+					n.planAction("plant apple tree", n.Position)
+					return
+				}
+			}
+		}
+	}
 }
 
 func (n *Obj) preferredShelterType() string {

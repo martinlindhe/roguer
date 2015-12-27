@@ -3,4 +3,6 @@
 XXX
 
 
-STATUS: private
+# License
+
+Under [MIT](LICENSE)
