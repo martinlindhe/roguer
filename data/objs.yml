@@ -29,6 +29,15 @@ all:
   - type: tree
     class: object
     name: apple tree
+    drops:
+      - name: apple
+        chance: 10
+      - name: small branch
+        chance: 8
+      - name: branch
+        chance: 4
+      - name: apple seed
+        chance: 1
 
   - type: tree
     class: object
@@ -41,6 +50,17 @@ all:
       - name: oak seed
         chance: 1
 
+  - type: tree
+    class: object
+    name: birch tree
+    drops:
+      - name: small branch
+        chance: 8
+      - name: branch
+        chance: 4
+      - name: birch seed
+        chance: 1
+
   - type: food
     class: object
     name: sweet potato
@@ -49,6 +69,11 @@ all:
   - type: food
     class: object
     name: carrot
+    energy: 50
+
+  - type: food
+    class: object
+    name: apple
     energy: 50
 
   - type: drink
@@ -69,6 +94,14 @@ all:
   - type: seed
     class: object
     name: oak seed
+
+  - type: seed
+    class: object
+    name: apple seed
+
+  - type: seed
+    class: object
+    name: birch seed
 
   - type: rock
     class: object

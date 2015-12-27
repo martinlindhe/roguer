@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +19,9 @@ func BenchmarkGenerateIsland(b *testing.B) {
 func prepareIsland() {
 	if island == nil {
 		seed := int64(123)
+		log.Printf("Creating island with seed %d", seed)
 		island = generateIsland(seed, 200, 100)
+		island.spawnTrees()
 
 		islandColImgFile, _ := os.Create("island_test.png")
 		png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
@@ -195,7 +198,7 @@ func TestFindFirewood(t *testing.T) {
 
 	// place firewood nearby
 	nextTo := dw.Position
-	nextTo.Y += 1
+	nextTo.Y++
 	island.addNpcFromName("small branch", nextTo)
 
 	// tick so npc decides to pick firewood
@@ -569,6 +572,7 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	assert.Equal(t, true, dw.Position.intMatches(&nextTo))
 
 	// let npc start the fire, wait and get warmed up
+	island.Tick()
 	island.Tick()
 
 	// let them get warm by the fire

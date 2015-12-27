@@ -7,9 +7,9 @@ import (
 	"math/rand"
 	"os"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/martinlindhe/rogue/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
-	"github.com/qiniu/log"
 )
 
 var island *Island // singelton
@@ -57,6 +57,34 @@ func (i *Island) spawnGravel() {
 						name = "medium rock"
 					case 2:
 						name = "large rock"
+					default:
+						panic("")
+					}
+					island.addNpcFromName(name, pos)
+				}
+			}
+		}
+	}
+}
+
+// create trees all over the island
+func (i *Island) spawnTrees() {
+	for y := 0; y < i.Height; y++ {
+		for x := 0; x < i.Width; x++ {
+			pos := Point{X: float64(x), Y: float64(y)}
+			if i.isAboveWater(pos) {
+				// add 0-1 items
+				cnt := rand.Intn(2)
+				for i := 0; i < cnt; i++ {
+					name := ""
+					// XXX make it less likely to place oak trees ?
+					switch rand.Intn(3) {
+					case 0:
+						name = "oak tree"
+					case 1:
+						name = "apple tree"
+					case 2:
+						name = "birch tree"
 					default:
 						panic("")
 					}
