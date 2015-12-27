@@ -163,7 +163,9 @@ func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []*Obj 
 	var res []*Obj
 	for _, npc := range i.Spawns {
 
+		// log.Printf("XXX %s at dist %f (radius %f)", npc, npc.distanceTo(pos), radius)
 		if npc.Type == t && npc.distanceTo(pos) <= radius {
+
 			res = append(res, npc)
 		}
 	}

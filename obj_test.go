@@ -436,7 +436,7 @@ func TestTree(t *testing.T) {
 	}
 
 	assert.Equal(t, true, len(island.Spawns) > 1)
-	assert.Equal(t, true, len(island.withinRadiusOfType("wood", 0, pos)) > 0)
+	assert.Equal(t, true, len(island.withinRadiusOfType("wood", 1, pos)) > 0)
 }
 
 func TestNpcDiesOfOldAge(t *testing.T) {
