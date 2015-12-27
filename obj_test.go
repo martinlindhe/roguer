@@ -21,6 +21,7 @@ func prepareIsland() {
 		seed := int64(123)
 		log.Printf("Creating island with seed %d", seed)
 		island = generateIsland(seed, 200, 100)
+		island.spawnGravel()
 		island.spawnTrees()
 
 		islandColImgFile, _ := os.Create("island_test.png")
@@ -550,6 +551,13 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	dw.Coldness = dw.coldnessCap() + 1
 	assert.Equal(t, true, dw.isCold())
 
+	assert.Equal(t, false, dw.hasItemTypeInInventory("wood"))
+
+	// make dwarf plan to get firewood
+	island.Tick()
+
+	assert.Equal(t, true, dw.hasPlanned("find fire wood"))
+
 	for {
 		island.Tick()
 
@@ -559,6 +567,7 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 		}
 	}
 
+	assert.Equal(t, false, dw.Position.intMatches(&nextTo))
 	// let them travel to destination
 	for {
 		island.Tick()

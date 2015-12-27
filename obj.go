@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"fmt"
 	"io/ioutil"
 
 	log "github.com/Sirupsen/logrus"
@@ -32,6 +33,11 @@ type Obj struct {
 
 	// for objects
 	Activated bool
+}
+
+func (o Obj) String() string {
+	// XXX
+	return fmt.Sprintf("%s (%s)", o.Name, o.Position)
 }
 
 type objList struct {

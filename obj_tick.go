@@ -18,20 +18,7 @@ func (n *Obj) Tick() bool {
 		return false
 	}
 
-	if n.Type == "tree" {
-		treeSpec := island.getNpcSpecFromName(n.Name)
-
-		for _, drop := range treeSpec.Drops {
-
-			roll := float64(rand.Intn(100)) // between 0-99
-			//log.Debugf("Rolled %f for check if %s is spawned, %f chance", roll, drop.Name, drop.Chance)
-
-			if roll <= drop.Chance {
-				log.Printf("%s drops a %s", n.Name, drop.Name)
-				island.addNpcFromName(drop.Name, n.Position)
-			}
-		}
-	}
+	n.treeTick()
 
 	if n.Type == "fireplace" && n.Activated {
 		log.Printf("%s is burning (%d energy left)", n.Name, n.Energy)
@@ -44,6 +31,31 @@ func (n *Obj) Tick() bool {
 	}
 
 	return n.npcTick()
+}
+
+func (n *Obj) treeTick() {
+	if n.Type != "tree" {
+		return
+	}
+
+	treeSpec := island.getNpcSpecFromName(n.Name)
+
+	for _, drop := range treeSpec.Drops {
+
+		roll := float64(rand.Intn(100)) // between 0-99
+		//log.Debugf("Rolled %f for check if %s is spawned, %f chance", roll, drop.Name, drop.Chance)
+
+		if roll <= drop.Chance {
+			log.Printf("%s drops a %s", n.Name, drop.Name)
+
+			spawnPos := n.Position.randomNearby()
+			if n.Position != spawnPos {
+				log.Debugf("%s lands at %s, tree is at %s", drop.Name, spawnPos, n.Position)
+			}
+
+			island.addNpcFromName(drop.Name, spawnPos)
+		}
+	}
 }
 
 func (n *Obj) npcTick() bool {
@@ -80,7 +92,7 @@ func (n *Obj) npcTick() bool {
 				if n.Coldness < 0 {
 					n.Coldness = 0
 				}
-				log.Printf("%s is getting warmed up by the fireplace (coldness %d)", n.Name, n.Coldness)
+				log.Printf("%s is getting warmed up by the %s (coldness %d)", n, fireplace, n.Coldness)
 			} else {
 
 				// NOTE: some max capacity for the fireplace is required
@@ -89,7 +101,7 @@ func (n *Obj) npcTick() bool {
 					if err == nil {
 						item := n.removeFromInventory(itemIdx)
 
-						log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
+						log.Printf("%s is putting %s in the %s", n, item.Name, fireplace)
 						// NOTE: to simplify, we just get the energy from the wood directly
 						fireplace.Energy += item.Energy
 					}
