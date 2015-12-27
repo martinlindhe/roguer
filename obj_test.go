@@ -435,7 +435,12 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	assert.Equal(t, false, dw.Position == nextTo)
 
 	island.addNpcFromName("small fireplace", nextTo)
-	assert.Equal(t, 2, len(island.Spawns))
+
+	// add nessecities, so they dont need to be built
+	island.addNpcFromName("small shelter", nextTo)
+	island.addNpcFromName("apple tree", nextTo)
+	island.addNpcFromName("farmland", nextTo)
+	assert.Equal(t, 5, len(island.Spawns))
 
 	// make dwarf wanna move to shelter
 	dw.Coldness = dw.coldnessCap() + 1
