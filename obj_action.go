@@ -143,14 +143,19 @@ func (n *Obj) performTravel(energy int) bool {
 
 	oldPos := n.Position
 
+	moved := false
 	if math.Floor(n.Position.X) != math.Floor(n.CurrentAction.Destination.X) {
 		n.Position.X = newX
+		moved = true
 	}
 	if math.Floor(n.Position.Y) != math.Floor(n.CurrentAction.Destination.Y) {
 		n.Position.Y = newY
+		moved = true
 	}
 
-	log.Printf("%s is performing %s from %v to %v  with step %f dst= %v", n.Name, n.CurrentAction.Name, oldPos, n.Position, distance, n.CurrentAction.Destination)
+	if moved {
+		log.Printf("%s is performing %s from %v to %v  with step %f dst= %v", n.Name, n.CurrentAction.Name, oldPos, n.Position, distance, n.CurrentAction.Destination)
+	}
 
 	if n.Position.intMatches(n.CurrentAction.Destination) {
 		return true
