@@ -42,7 +42,7 @@ func NewIsland() {
 func (i *Island) spawnGravel() {
 	for y := 0; y < i.Height; y++ {
 		for x := 0; x < i.Width; x++ {
-			pos := Point{X: x, Y: y}
+			pos := Point{X: float64(x), Y: float64(y)}
 			if i.isAboveWater(pos) {
 				// add 1-3 items
 				cnt := 1 + rand.Intn(3)

@@ -4,13 +4,13 @@ import "math"
 
 // Point ...
 type Point struct {
-	X int
-	Y int
+	X float64
+	Y float64
 }
 
 func (n *Obj) distanceTo(pos Point) float64 {
 
-	xd := float64(n.Position.X - pos.X)
-	yd := float64(n.Position.Y - pos.Y)
+	xd := n.Position.X - pos.X
+	yd := n.Position.Y - pos.Y
 	return math.Hypot(xd, yd)
 }

@@ -112,7 +112,7 @@ func (i *Island) addNpcFromSpec(spec objSpec, pos Point) {
 
 func (i *Island) randomPointAboveWater() Point {
 
-	p := Point{rand.Intn(i.Width), rand.Intn(i.Height)}
+	p := Point{float64(rand.Intn(i.Width)), float64(rand.Intn(i.Height))}
 
 	// above ground
 	if i.isAboveWater(p) {
@@ -123,7 +123,7 @@ func (i *Island) randomPointAboveWater() Point {
 }
 
 func (i *Island) isAboveWater(p Point) bool {
-	if i.HeightMap[p.Y][p.X] > shallowWater {
+	if i.HeightMap[int(p.Y)][int(p.X)] > shallowWater {
 		return true
 	}
 	return false

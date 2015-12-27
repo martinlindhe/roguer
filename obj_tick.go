@@ -75,7 +75,7 @@ func (n *Obj) npcTick() bool {
 
 	n.hungerThirstTick()
 
-	if !n.isTired() && !n.isHungry() && !n.isThirsty() {
+	if !n.isTired() && !n.isHungry() && !n.isThirsty() && !n.hasPlannedType("travel") {
 		// when basic needs is resolved, randomly decide to do
 		// something that would help improve situation for the npc
 		if n.Race == "rabbit" {

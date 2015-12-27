@@ -6,6 +6,7 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/davecgh/go-spew/spew"
 )
 
 // check if npc already has planned to do a
@@ -79,6 +80,9 @@ func (n *Obj) performCurrentAction() {
 	case "build":
 		status = n.performBuild()
 
+	case "travel":
+		status = n.performTravel()
+
 	default:
 		panic(fmt.Errorf("Unknown action type: %s", n.CurrentAction.Type))
 	}
@@ -98,6 +102,22 @@ func (i *Island) findActionByName(n string) actionSpec {
 	}
 
 	panic(fmt.Errorf("cant find action: %s", n))
+}
+
+func (n *Obj) performTravel() bool {
+	// XXX move closer to dst
+	spew.Dump(n.CurrentAction)
+
+	distanceTravelled := float64(n.CurrentAction.Energy / 100)
+
+	deltaX := n.Position.X - n.CurrentAction.Destination.X
+	deltaY := n.Position.Y - n.CurrentAction.Destination.Y
+
+	newX := n.Position.X + distanceTravelled*deltaX
+	newY := n.Position.Y + distanceTravelled*deltaY
+
+	log.Printf("XXXX %s is performing %s from %v to %f,%f  with step %f dst= %v", n.Name, n.CurrentAction.Name, n.Position, newX, newY, distanceTravelled, n.CurrentAction.Destination)
+	return true
 }
 
 func (n *Obj) performSleep() bool {
