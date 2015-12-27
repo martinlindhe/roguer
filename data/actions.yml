@@ -46,4 +46,5 @@ all:
     
   - name: walk
     type: travel
+    duration: 9999
     energy: 1

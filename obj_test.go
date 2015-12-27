@@ -407,6 +407,7 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	dw := island.Spawns[0]
 
 	nextTo := island.Spawns[0].Position
+	nextTo.X++
 	nextTo.Y++
 
 	assert.Equal(t, false, dw.Position == nextTo)
@@ -418,10 +419,11 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	dw.Coldness = dw.coldnessCap() + 1
 	assert.Equal(t, true, dw.isCold())
 
+	// let them travel to destination
+	island.Tick()
 	island.Tick()
 
-	// XXX let them travel to destination
-	//assert.Equal(t, true, dw.Position == nextTo)
+	assert.Equal(t, true, dw.Position.intMatches(nextTo))
 
 	// XXX let them get warm by the fire
 	//assert.Equal(t, false, dw.isCold())

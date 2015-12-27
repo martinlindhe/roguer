@@ -56,8 +56,10 @@ func (n *Obj) npcTick() bool {
 
 	if n.isCold() && !n.hasPlannedType("travel") {
 		// XXX change coldness, depending on if we are close to a fireplace or if its cold
-		if len(island.withinRadiusOfType("fireplace", 0, n.Position)) > 0 {
-			panic("XXXX next to fireplace, light it!!!")
+		if len(island.withinRadiusOfType("fireplace", 1, n.Position)) > 0 {
+			//panic("XXXX next to fireplace, light it!!!")
+
+			return true
 		}
 
 		fireplaces := island.withinRadiusOfType("fireplace", 30, n.Position)

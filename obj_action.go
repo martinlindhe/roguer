@@ -2,11 +2,11 @@ package rogue
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 )
 
 // check if npc already has planned to do a
@@ -105,19 +105,24 @@ func (i *Island) findActionByName(n string) actionSpec {
 }
 
 func (n *Obj) performTravel() bool {
-	// XXX move closer to dst
-	spew.Dump(n.CurrentAction)
+	// move closer to dst
+	deltaX := n.CurrentAction.Destination.X - n.Position.X
+	deltaY := n.CurrentAction.Destination.Y - n.Position.Y
 
-	distanceTravelled := float64(n.CurrentAction.Energy / 100)
+	angle := math.Atan2(deltaY, deltaX)
+	distance := float64(n.CurrentAction.Energy)
 
-	deltaX := n.Position.X - n.CurrentAction.Destination.X
-	deltaY := n.Position.Y - n.CurrentAction.Destination.Y
+	newX := n.Position.X + math.Cos(angle)*distance
+	newY := n.Position.Y + math.Sin(angle)*distance
 
-	newX := n.Position.X + distanceTravelled*deltaX
-	newY := n.Position.Y + distanceTravelled*deltaY
+	log.Printf("%s is performing %s from %v to %f,%f  with step %f dst= %v", n.Name, n.CurrentAction.Name, n.Position, newX, newY, distance, n.CurrentAction.Destination)
+	n.Position.X = newX
+	n.Position.Y = newY
+	if n.Position.intMatches(n.CurrentAction.Destination) {
+		return true
+	}
 
-	log.Printf("XXXX %s is performing %s from %v to %f,%f  with step %f dst= %v", n.Name, n.CurrentAction.Name, n.Position, newX, newY, distanceTravelled, n.CurrentAction.Destination)
-	return true
+	return false
 }
 
 func (n *Obj) performSleep() bool {
