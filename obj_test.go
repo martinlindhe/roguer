@@ -244,6 +244,27 @@ func TestSleep(t *testing.T) {
 	assert.Equal(t, false, dw.isSleeping())
 }
 
+func TestSleepAtShelter(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	assert.Equal(t, 1, len(island.Spawns))
+	dw := island.Spawns[0]
+
+	// add nessecities nearby
+	nextTo := island.Spawns[0].Position
+	nextTo.Y += 2
+	island.addNpcFromName("small shelter", nextTo)
+
+	// make npc tired
+	dw.Tiredness = dw.tirednessCap() + 1
+	island.Tick()
+
+	// XXXXXxxx make sure npc moves to shelter and sleeps there
+	assert.Equal(t, false, dw.isSleeping())
+}
+
 func TestRabbitDigHole(t *testing.T) {
 
 	prepareIsland()
