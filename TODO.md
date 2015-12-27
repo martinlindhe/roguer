@@ -12,6 +12,7 @@ tree:
     humanoid: able to chop down tree, using an axe
     seed: develop into a new tree
     drops: land nearby tree, not in same spot
+    plant trees: require "apple seed", etc...
 
 
 death:
@@ -19,9 +20,21 @@ death:
     when npc dies, corpse should stay. need dead state
 
 
-plant trees:
-    require "apple seed", etc...
+
+cooking place:
+    decide to build cooking place
+
     
+hut building:
+    if basic needs are satisfied (shelter, cooking and fireplace is nearby),
+        decide to build a small hut
+       
+    
+
+farming:
+    find wild fruits and berries
+    create garden spots around a hut
+    plant seeds in garden, to have them nearby housing
 
 
 

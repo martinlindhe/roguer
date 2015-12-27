@@ -148,7 +148,7 @@ func (n *Obj) npcTick() bool {
 
 		if n.Type == "humanoid" {
 
-			if island.canBuildAt(n.Position) {
+			if island.canBuildAt(n.Position) && !n.hasPlannedType("build") {
 				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a larger fireplace
 					n.planAction("build small fireplace")
