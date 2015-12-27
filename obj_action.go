@@ -205,8 +205,7 @@ func (n *Obj) performForage() bool {
 			rnd := list[rand.Intn(len(list))]
 
 			n.CurrentAction.Destination = &rnd.Position
-			log.Printf("%s decided to go pick up %s at %v", n.Name, rnd.Name, rnd.Position)
-
+			log.Printf("%s decided to go pick up %s", n, rnd)
 		}
 	} else {
 		// progress towards target

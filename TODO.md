@@ -15,8 +15,13 @@ tree:
 
 
 death:
+    die from hunger, thirst, coldness
     when npc dies, corpse should stay. need dead state
 
+
+plant trees:
+    require "apple seed", etc...
+    
 
 
 

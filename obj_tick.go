@@ -50,7 +50,7 @@ func (n *Obj) treeTick() {
 
 			spawnPos := n.Position.randomNearby()
 			if n.Position != spawnPos {
-				log.Debugf("%s lands at %s, tree is at %s", drop.Name, spawnPos, n.Position)
+				log.Debugf("%s lands at %s, from %s", drop.Name, spawnPos, n)
 			}
 
 			island.addNpcFromName(drop.Name, spawnPos)
