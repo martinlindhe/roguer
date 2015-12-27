@@ -407,8 +407,8 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	dw := island.Spawns[0]
 
 	nextTo := island.Spawns[0].Position
-	nextTo.X++
-	nextTo.Y++
+	nextTo.X -= 8
+	nextTo.Y += 20
 
 	assert.Equal(t, false, dw.Position == nextTo)
 
@@ -420,8 +420,12 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	assert.Equal(t, true, dw.isCold())
 
 	// let them travel to destination
-	island.Tick()
-	island.Tick()
+	for {
+		island.Tick()
+		if dw.Position.intMatches(nextTo) {
+			break
+		}
+	}
 
 	assert.Equal(t, true, dw.Position.intMatches(nextTo))
 

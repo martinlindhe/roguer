@@ -116,8 +116,14 @@ func (n *Obj) performTravel() bool {
 	newY := n.Position.Y + math.Sin(angle)*distance
 
 	log.Printf("%s is performing %s from %v to %f,%f  with step %f dst= %v", n.Name, n.CurrentAction.Name, n.Position, newX, newY, distance, n.CurrentAction.Destination)
-	n.Position.X = newX
-	n.Position.Y = newY
+
+	if int(n.Position.X) != int(n.CurrentAction.Destination.X) {
+		n.Position.X = newX
+	}
+	if int(n.Position.Y) != int(n.CurrentAction.Destination.Y) {
+		n.Position.Y = newY
+	}
+
 	if n.Position.intMatches(n.CurrentAction.Destination) {
 		return true
 	}
