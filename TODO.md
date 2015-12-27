@@ -2,20 +2,14 @@
 # TODO
 
 
-- freezing Level
-    to decide to light a fire
-    requires fireplace (if not next to it, move to fireplace)
-    put firewood in fireplace
-    light fire
-    each fire tick, consume energy until fire is burned out
-    generate heat. warm up nearby npc (npc can "crouch next to the fire" to get more heat)
+- forage
+    move around, dont revisit same place
+
 
 
 - sleeping
     if shelter is nearby, travel to it and then sleep there to get bonus
     
-- forage
-    move around, dont revisit same place
 
 - tree
     humanoid: able to chop down tree, using an axe
@@ -30,7 +24,6 @@
 
 - fire
     collect firewood from ground = MOVE AROUND...
-    put firewood in fire, + energy to fire (need a max val so not unlimited wood can fit it)
     light fire = burn each tick, generate warmth
     
 

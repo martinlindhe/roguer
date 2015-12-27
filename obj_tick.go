@@ -82,12 +82,16 @@ func (n *Obj) npcTick() bool {
 					log.Printf("XXX plan to forage for wood first, then get to a fireplace")
 				} else {
 
-					itemIdx, _ := n.tryFindItemTypeInInventory("wood")
-					item := n.removeFromInventory(itemIdx)
+					// NOTE: some max capacity for the fireplace is required
+					if fireplace.Energy < 1000 {
 
-					log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
-					// NOTE: to simplify, we just get the energy from the wood directly
-					fireplace.Energy += item.Energy
+						itemIdx, _ := n.tryFindItemTypeInInventory("wood")
+						item := n.removeFromInventory(itemIdx)
+
+						log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
+						// NOTE: to simplify, we just get the energy from the wood directly
+						fireplace.Energy += item.Energy
+					}
 				}
 
 				if fireplace.Energy > 0 {
