@@ -11,7 +11,7 @@ import (
 // check if npc already has planned to do a
 func (n *Obj) hasPlanned(actionName string) bool {
 
-	if n.CurrentAction != nil && n.CurrentAction.Name == actionName {
+	if n.isPerforming(actionName) {
 		return true
 	}
 
@@ -19,6 +19,13 @@ func (n *Obj) hasPlanned(actionName string) bool {
 		if v.Name == actionName {
 			return true
 		}
+	}
+	return false
+}
+
+func (n *Obj) isPerforming(actionName string) bool {
+	if n.CurrentAction != nil && n.CurrentAction.Name == actionName {
+		return true
 	}
 	return false
 }

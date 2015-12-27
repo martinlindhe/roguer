@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -588,22 +587,30 @@ func TestBuildCookingPit(t *testing.T) {
 	prepareIsland()
 
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
-
-	// add nessecities, so they dont need to be built
-	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
-	island.addNpcFromName("small shelter", island.Spawns[0].Position)
-	island.addNpcFromName("apple tree", island.Spawns[0].Position)
-	island.addNpcFromName("farmland", island.Spawns[0].Position)
-
-	assert.Equal(t, 5, len(island.Spawns))
+	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
-	dw.Coldness = 0
-	assert.Equal(t, false, dw.isCold())
 
-	// tick so npc decides to pick firewood
-	island.Tick()
-	island.Tick()
-	island.Tick()
+	// add nessecities nearby, so they dont need to be built
+	nextTo := dw.Position
+	nextTo.X -= 1
+	island.addNpcFromName("small fireplace", nextTo)
+	island.addNpcFromName("small shelter", nextTo)
+	island.addNpcFromName("apple tree", nextTo)
+	island.addNpcFromName("farmland", nextTo)
+	assert.Equal(t, 5, len(island.Spawns))
 
-	spew.Dump(island.Spawns)
+	// make sure npc decides to build cooking pit
+	island.Tick()
+	assert.Equal(t, true, dw.hasPlanned("build cooking pit"))
+
+	// wait until done
+	for {
+		island.Tick()
+
+		if !dw.isPerforming("build cooking pit") {
+			break
+		}
+	}
+
+	assert.Equal(t, 1, len(island.withinRadiusOfName("cooking pit", 0, dw.Position)))
 }

@@ -159,14 +159,10 @@ func (n *Obj) npcTick() bool {
 					n.planAction("build small shelter", n.Position)
 				}
 
-				fmt.Println("x1")
-
 				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) > 0 &&
 					len(island.withinRadiusOfType("shelter", 30, n.Position)) > 0 {
 					// basic survival is satisifed, lets build a cooking pit
-					fmt.Println("x2")
 					if len(island.withinRadiusOfType("cooking", 30, n.Position)) == 0 {
-						fmt.Println("x3")
 						n.planAction("build cooking pit", n.Position)
 					}
 				}
