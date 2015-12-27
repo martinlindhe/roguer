@@ -436,6 +436,6 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	// let fire burn
 	island.Tick()
 
-	// XXX let them get warm by the fire
-	//assert.Equal(t, false, dw.isCold())
+	// let them get warm by the fire
+	assert.Equal(t, false, dw.isCold())
 }

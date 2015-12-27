@@ -34,7 +34,13 @@ func (n *Obj) Tick() bool {
 	}
 
 	if n.Type == "fireplace" && n.Activated {
-		log.Printf("XXX %s is burning ...", n.Name)
+		log.Printf("%s is burning (%d energy left)", n.Name, n.Energy)
+		n.Energy--
+		if n.Energy <= 0 {
+			n.Energy = 0
+			n.Activated = false
+			log.Printf("%s burned out", n.Name)
+		}
 	}
 
 	return n.npcTick()
@@ -64,9 +70,11 @@ func (n *Obj) npcTick() bool {
 
 			fireplace := nearbyFireplaces[0]
 			if fireplace.isActivated() {
-				// XXX
-				// XXX change coldness, depending on if we are close to a fireplace or if its cold
-				fmt.Printf("XXXX fireplace is activated, so now get warm!!!")
+				n.Coldness -= 100
+				if n.Coldness < 0 {
+					n.Coldness = 0
+				}
+				log.Printf("%s is getting warmed up by the fireplace (coldness %d)", n.Name, n.Coldness)
 			} else {
 
 				itemIdx, err := n.tryFindItemTypeInInventory("wood")
@@ -79,7 +87,8 @@ func (n *Obj) npcTick() bool {
 				item := n.removeFromInventory(itemIdx)
 
 				log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
-				fireplace.addItemToInventory(item)
+				// NOTE: to simplify, we just get the energy from the wood directly
+				fireplace.Energy += item.Energy
 
 				log.Printf("%s lights the fireplace", n.Name)
 				fireplace.Activate()

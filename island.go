@@ -140,13 +140,13 @@ func (i *Island) withinRadiusOfName(n string, radius float64, pos Point) []Obj {
 	return res
 }
 
-func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []Obj {
+func (i *Island) withinRadiusOfType(t string, radius float64, pos Point) []*Obj {
 
-	var res []Obj
+	var res []*Obj
 	for _, npc := range i.Spawns {
 
 		if npc.Type == t && npc.distanceTo(pos) <= radius {
-			res = append(res, *npc)
+			res = append(res, npc)
 		}
 	}
 	return res
