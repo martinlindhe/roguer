@@ -3,7 +3,8 @@
 
 
 - forage
-    move around, dont revisit same place
+    later: some other "roam" mode, now we finds item of
+        type X and moves straight towards it
 
 
 
@@ -20,11 +21,6 @@
 
 - death
     when npc dies, corpse should stay. need dead state
-
-
-- fire
-    collect firewood from ground = MOVE AROUND...
-    light fire = burn each tick, generate warmth
     
 
 

@@ -7,17 +7,17 @@ all:
   - name: find food
     type: forage
     result: food
-    duration: 10
+    duration: 20
 
   - name: find water
     type: forage
     result: drink
-    duration: 10
+    duration: 20
   
   - name: find fire wood
     type: forage
     result: wood   # forage: picks up all objects of type "wood" it sees
-    duration: 10
+    duration: 20
 
   - name: dig small hole
     type: build

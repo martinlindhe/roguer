@@ -191,7 +191,7 @@ func (n *Obj) performForage() bool {
 		check := n.performTravel(1) // XXX 1=walking speed
 
 		// look for food at current spot
-		list := island.withinRadiusOfType(n.CurrentAction.Result, 0, n.Position)
+		list := island.withinRadiusOfType(n.CurrentAction.Result, 0.9, n.Position)
 
 		for _, it := range list {
 			log.Printf("%s picked up %s", n.Name, it.Name)
@@ -199,6 +199,12 @@ func (n *Obj) performForage() bool {
 
 			// remove spawn from world
 			island.removeSpawn(it)
+		}
+
+		// if nothing left on dst point, consider it a success!
+		dstList := island.withinRadiusOfType(n.CurrentAction.Result, 0.9, *n.CurrentAction.Destination)
+		if len(dstList) == 0 {
+			return true
 		}
 
 		if check {

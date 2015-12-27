@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"fmt"
 	"image/png"
 	"os"
 	"testing"
@@ -460,7 +461,6 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	assert.Equal(t, false, dw.isCold())
 }
 
-/*
 func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	prepareIsland()
@@ -469,7 +469,6 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	assert.Equal(t, 1, len(island.Spawns))
 
 	dw := island.Spawns[0]
-	//dw.addToInventory("small branch")
 
 	// NOTE: similar to TestNpcMovesToFireplace, but now also make sure dwarf finds a firewood
 
@@ -479,22 +478,43 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	assert.Equal(t, false, dw.Position == nextTo)
 
+	island.addNpcFromName("farmland", island.Spawns[0].Position)
 	island.addNpcFromName("small fireplace", nextTo)
-	assert.Equal(t, 2, len(island.Spawns))
+	island.addNpcFromName("small shelter", nextTo)
+	island.addNpcFromName("apple tree", nextTo)
+	assert.Equal(t, 5, len(island.Spawns))
+
+	nextTo2 := island.Spawns[0].Position
+	nextTo2.X += 2
+	island.addNpcFromName("branch", nextTo)
+	assert.Equal(t, 6, len(island.Spawns))
 
 	// make dwarf wanna move to shelter
 	dw.Coldness = dw.coldnessCap() + 1
 	assert.Equal(t, true, dw.isCold())
 
-	// let them travel to destination
 	for {
 		island.Tick()
-		if dw.Position.intMatches(nextTo) {
+
+		// have dwarf find branch
+		if dw.hasItemTypeInInventory("wood") {
 			break
 		}
 	}
 
-	assert.Equal(t, true, dw.Position.intMatches(nextTo))
+	fmt.Println("XXX dwarf got wood")
+
+	// let them travel to destination
+	for {
+		island.Tick()
+
+		// have dwarf find branch
+		if dw.Position.intMatches(&nextTo) {
+			break
+		}
+	}
+
+	assert.Equal(t, true, dw.Position.intMatches(&nextTo))
 
 	// let npc start the fire
 	island.Tick()
@@ -503,6 +523,5 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	island.Tick()
 
 	// let them get warm by the fire
-	//	assert.Equal(t, false, dw.isCold())
+	assert.Equal(t, false, dw.isCold())
 }
-*/

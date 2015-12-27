@@ -64,7 +64,7 @@ func (n *Obj) npcTick() bool {
 		return true
 	}
 
-	if n.isCold() && !n.hasPlannedType("travel") {
+	if n.isCold() && !n.hasPlannedType("travel") && n.Type == "humanoid" {
 
 		nearbyFireplaces := island.withinRadiusOfType("fireplace", 1, n.Position)
 		if len(nearbyFireplaces) > 0 {
@@ -79,7 +79,8 @@ func (n *Obj) npcTick() bool {
 			} else {
 
 				if !n.hasItemTypeInInventory("wood") {
-					log.Printf("XXX plan to forage for wood first, then get to a fireplace")
+
+					n.planAction("find fire wood")
 				} else {
 
 					// NOTE: some max capacity for the fireplace is required
@@ -130,10 +131,6 @@ func (n *Obj) npcTick() bool {
 		}
 
 		if n.Type == "humanoid" {
-
-			if !n.hasItemTypeInInventory("wood") {
-				n.planAction("find fire wood")
-			}
 
 			if island.canBuildAt(n.Position) {
 				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
