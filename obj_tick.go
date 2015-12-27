@@ -119,7 +119,7 @@ func (n *Obj) npcTick() bool {
 		return true
 	}
 
-	if n.isTired() && !n.hasPlanned("sleep") {
+	if n.isTired() && !n.hasPlannedType("sleep") && !n.hasPlannedType("travel") {
 		nearbyShelters := island.withinRadiusOfType("shelter", 0, n.Position)
 		if len(nearbyShelters) > 0 {
 			log.Printf("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", n.Name, nearbyShelters[0].Name, n.Tiredness, n.tirednessCap())

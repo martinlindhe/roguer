@@ -6,10 +6,6 @@ forage:
     later: some other "roam" mode, now we finds item of
         type X and moves straight towards it
 
-
-
-sleep:
-    if shelter is nearby, travel to it and then sleep there
     
 
 tree:
@@ -18,6 +14,7 @@ tree:
     
     
     spawnForest() function = creates woods in all empty spots in a radius `rad` around `pos`
+
 
 death:
     when npc dies, corpse should stay. need dead state
