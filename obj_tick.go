@@ -119,24 +119,8 @@ func (n *Obj) npcTick() bool {
 		return true
 	}
 
-	if n.isTired() && !n.hasPlannedType("sleep") && !n.hasPlannedType("travel") {
-		nearbyShelters := island.withinRadiusOfType("shelter", 0, n.Position)
-		if len(nearbyShelters) > 0 {
-			log.Printf("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", n.Name, nearbyShelters[0].Name, n.Tiredness, n.tirednessCap())
-			n.planAction("sleep")
-			return true
-		}
-
-		// XXX if next to sheltr, sleep. if shelter nearby, go there and sleep there
-		shelters := island.withinRadiusOfType("shelter", 30, n.Position)
-		if len(shelters) == 0 {
-			log.Printf("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
-			n.planAction("sleep")
-			return true
-		}
-
-		log.Printf("%s is feeling tired, decided to go to %s for sleeping", n.Name, shelters[0].Name)
-		n.planAction("walk", shelters[0].Position)
+	if n.tiredTick() {
+		return true
 	}
 
 	if !n.isTired() && !n.isHungry() && !n.isThirsty() && !n.hasPlannedType("travel") {
@@ -152,8 +136,8 @@ func (n *Obj) npcTick() bool {
 
 			if island.canBuildAt(n.Position) {
 				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
-					n.planAction("build small fireplace")
 					// XXX if more than 1 humanoid nearby, instead build a larger fireplace
+					n.planAction("build small fireplace")
 				}
 				if len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a small hut
@@ -185,6 +169,31 @@ func (n *Obj) npcTick() bool {
 
 	n.performCurrentAction()
 	return true
+}
+
+func (n *Obj) tiredTick() bool {
+
+	// if next to shelter, sleep. if shelter nearby, go there and then sleep
+	if n.isTired() && !n.hasPlannedType("sleep") && !n.hasPlannedType("travel") {
+		nearbyShelters := island.withinRadiusOfType("shelter", 0, n.Position)
+		if len(nearbyShelters) > 0 {
+			log.Printf("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", n.Name, nearbyShelters[0].Name, n.Tiredness, n.tirednessCap())
+			n.planAction("sleep")
+			return true
+		}
+
+		shelters := island.withinRadiusOfType("shelter", 30, n.Position)
+		if len(shelters) == 0 {
+			log.Printf("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
+			n.planAction("sleep")
+			return true
+		}
+
+		log.Printf("%s is feeling tired, decided to go to %s for sleeping", n.Name, shelters[0].Name)
+		n.planAction("walk", shelters[0].Position)
+	}
+
+	return false
 }
 
 func (n *Obj) hungerThirstTick() bool {

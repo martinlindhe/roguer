@@ -261,8 +261,10 @@ func TestSleepAtShelter(t *testing.T) {
 	dw.Tiredness = dw.tirednessCap() + 1
 	island.Tick()
 
-	// XXXXXxxx make sure npc moves to shelter and sleeps there
 	assert.Equal(t, false, dw.isSleeping())
+
+	// XXXXXxxx make sure npc moves to shelter and sleeps there
+
 }
 
 func TestRabbitDigHole(t *testing.T) {
@@ -271,21 +273,32 @@ func TestRabbitDigHole(t *testing.T) {
 
 	island.addNpcFromRace("rabbit", island.randomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
-	dw := island.Spawns[0]
-	dw.addToInventory("small branch")
+	ra := island.Spawns[0]
 
 	island.Tick()
-	assert.Equal(t, "dig small hole", dw.CurrentAction.Name)
+	assert.Equal(t, "dig small hole", ra.CurrentAction.Name)
 
-	duration := dw.CurrentAction.Duration
+	duration := ra.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small hole", 0, dw.Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("shelter", 0, dw.Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small hole", 0, ra.Position)))
+	assert.Equal(t, 1, len(island.withinRadiusOfType("burrow", 0, ra.Position)))
+
+	// XXX make sure rabbit uses the burrow to sleep
+
+	// make npc tired
+	ra.Tiredness = ra.tirednessCap() + 1
+	island.Tick()
+
+	assert.Equal(t, false, ra.isSleeping())
+	assert.Equal(t, true, ra.hasPlanned("sleep"))
+
+	// make npc sleep
+	island.Tick()
 }
 
 func TestBuildFireplace(t *testing.T) {

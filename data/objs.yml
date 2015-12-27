@@ -12,7 +12,7 @@ all:
     class: object
     name: small fireplace
 
-  - type: shelter
+  - type: burrow
     class: object
     name: small hole
 
