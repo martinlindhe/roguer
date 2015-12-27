@@ -57,10 +57,16 @@ func (n *Obj) planAction(params ...interface{}) {
 	}
 
 	a := island.findActionByName(actionName)
-	log.Printf("%s decided to %s", n.Name, a.Name)
 
 	a.Destination = &dst
 	n.PlannedActions = append(n.PlannedActions, a)
+
+	if a.Destination == nil {
+		log.Printf("%s decided to %s", n, a.Name)
+	} else {
+		log.Printf("%s decided to %s (%s)", n, a.Name, a.Destination)
+	}
+
 }
 
 func (n *Obj) performCurrentAction() {
