@@ -19,6 +19,7 @@ all:
   - type: shelter
     class: object
     name: small shelter
+    energy: 5
 
   - type: food producer
     class: object

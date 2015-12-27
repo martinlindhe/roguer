@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-	"os"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -157,15 +156,17 @@ func (n *Obj) performTravel(energy int) bool {
 func (n *Obj) performSleep() bool {
 
 	mult := 1
-	if len(island.withinRadiusOfType("shelter", 0, n.Position)) > 0 {
-		// XXX make use of sleeping bag or other shelter, and gain energy bonus
-		log.Printf("XXX %s get sleeping bonus from nearby shelter", n.Name)
-		os.Exit(0)
-		mult = 3
+
+	shelters := island.withinRadiusOfType("shelter", 0, n.Position)
+	if len(shelters) > 0 {
+		// give bonus from nearby shelter
+		mult = shelters[0].Energy
+
+		log.Printf("%s gets sleeping bonus %d from %s", n.Name, mult, shelters[0].Name)
 	}
 	energy := mult * n.CurrentAction.Energy
 
-	log.Debugln("%s is sleeping. tiredness = %d. energy gain = %d", n.Name, n.Tiredness, energy)
+	log.Printf("%s is sleeping (tiredness = %d, energy gain = %d)", n.Name, n.Tiredness, energy)
 	n.CurrentAction.Duration--
 	n.Tiredness -= energy
 

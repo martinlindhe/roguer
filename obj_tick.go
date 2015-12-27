@@ -54,7 +54,6 @@ func (n *Obj) npcTick() bool {
 
 	n.Hunger++
 	n.Thirst++
-	n.Tiredness++
 
 	if n.isSleeping() {
 		if n.CurrentAction.Name != "sleep" {
@@ -62,6 +61,8 @@ func (n *Obj) npcTick() bool {
 		}
 		n.performCurrentAction()
 		return true
+	} else {
+		n.Tiredness++
 	}
 
 	if n.isCold() && !n.hasPlannedType("travel") && n.Type == "humanoid" {

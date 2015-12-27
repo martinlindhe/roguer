@@ -9,7 +9,7 @@ forage:
 
 
 sleep:
-    if shelter is nearby, travel to it and then sleep there to get bonus
+    if shelter is nearby, travel to it and then sleep there
     
 
 tree:
