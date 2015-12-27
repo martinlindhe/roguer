@@ -394,7 +394,7 @@ func TestSpawnGravel(t *testing.T) {
 
 	assert.Equal(t, 0, len(island.Spawns))
 	island.spawnGravel()
-	assert.Equal(t, 25676, len(island.Spawns))
+	assert.Equal(t, true, len(island.Spawns) > 10000)
 }
 
 func TestNpcMovesToFireplace(t *testing.T) {

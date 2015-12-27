@@ -7,6 +7,7 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/davecgh/go-spew/spew"
 )
 
 // check if npc already has planned to do a
@@ -171,11 +172,19 @@ func (n *Obj) performForage() bool {
 	n.CurrentAction.Duration--
 	if n.CurrentAction.Duration < 0 {
 
-		rnd := n.CurrentAction.Result[rand.Intn(len(n.CurrentAction.Result))]
+		// XXX
 
-		log.Printf("%s found a %s", n.Name, rnd)
-		n.addToInventory(rnd)
-		return true
+		list := island.withinRadiusOfType("food", 30, n.Position)
+		if len(list) > 0 {
+			spew.Dump(list)
+
+			rnd := list[rand.Intn(len(list))]
+
+			log.Printf("%s found a %s", n.Name, rnd)
+			n.addItemToInventory(*rnd)
+
+			return true
+		}
 	}
 
 	return false
@@ -187,8 +196,7 @@ func (n *Obj) performBuild() bool {
 
 	n.CurrentAction.Duration--
 	if n.CurrentAction.Duration < 0 {
-		rnd := n.CurrentAction.Result[rand.Intn(len(n.CurrentAction.Result))]
-		island.addNpcFromName(rnd, n.Position)
+		island.addNpcFromName(n.CurrentAction.Result, n.Position)
 		return true
 	}
 
