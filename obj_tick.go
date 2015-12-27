@@ -48,12 +48,16 @@ func (n *Obj) treeTick() {
 		if roll <= drop.Chance {
 			log.Printf("%s drops a %s", n.Name, drop.Name)
 
-			spawnPos := n.Position.randomNearby()
-			if n.Position != spawnPos {
-				log.Debugf("%s lands at %s, from %s", drop.Name, spawnPos, n)
-			}
+			spawnPos, err := n.Position.randomNearby()
+			if err == nil {
+				if n.Position != spawnPos {
+					log.Debugf("%s lands at %s, from %s", drop.Name, spawnPos, n)
+				}
 
-			island.addNpcFromName(drop.Name, spawnPos)
+				island.addNpcFromName(drop.Name, spawnPos)
+			} else {
+				log.Errorf("XXX failed to find pos nearby %s", n)
+			}
 		}
 	}
 }

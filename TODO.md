@@ -24,15 +24,18 @@ death:
 cooking place:
     should be usable to cook food
 
-    
-hut building:
-    if basic needs are satisfied (shelter, cooking and fireplace is nearby),
-        decide to build a small hut
-       
-    
+ 
+hut:
+     npc should learn this is their "home" (XXX: should be same with a basic shelter first),
+     also build-hut should check if npc has a "home" at all, no matter how far it is
+
 
 farming:
     find wild fruits and berries
+
+
+garden:
+    when we have a hut:
     create garden spots around a hut
     plant seeds in garden, to have them nearby housing
 

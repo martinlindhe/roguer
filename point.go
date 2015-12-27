@@ -38,19 +38,24 @@ func (p *Point) intMatches(t *Point) bool {
 	return false
 }
 
-func (p *Point) randomNearby() Point {
-	// select 3x3 square of positions around n.pos, pick one at random
+func (p *Point) randomNearby() (Point, error) {
+	// select 3x3 square of positions around n.pos, pick one at random (never p)
 	var m []Point
 
 	for y := p.Y - 1; y <= p.Y+1; y++ {
 		for x := p.X - 1; x <= p.X+1; x++ {
 			pp := Point{x, y}
-			if island.isAboveWater(pp) {
+			if pp != *p && island.isAboveWater(pp) {
 				m = append(m, pp)
 			}
 		}
 	}
 
+	if len(m) == 0 {
+		empty := Point{}
+		return empty, fmt.Errorf("Cant find nearby points to %s", p)
+	}
+
 	// select something by random
-	return m[rand.Intn(len(m))]
+	return m[rand.Intn(len(m))], nil
 }

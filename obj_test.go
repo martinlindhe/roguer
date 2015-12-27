@@ -18,7 +18,7 @@ func BenchmarkGenerateIsland(b *testing.B) {
 
 func prepareIsland() {
 	if island == nil {
-		seed := int64(123)
+		seed := int64(779)
 		log.Printf("Creating island with seed %d", seed)
 		island = generateIsland(seed, 200, 100)
 		island.spawnGravel()
@@ -89,8 +89,7 @@ func TestFindFoodAndEat(t *testing.T) {
 	assert.Equal(t, 1, len(dw.Inventory))
 
 	// place food nearby
-	nextTo := dw.Position
-	nextTo.Y += 2
+	nextTo, _ := dw.Position.randomNearby()
 	island.addNpcFromName("carrot", nextTo)
 
 	// make npc hungry
@@ -141,8 +140,7 @@ func TestFindWaterAndDrink(t *testing.T) {
 	assert.Equal(t, 1, len(dw.Inventory)) // firewood
 
 	// place water nearby
-	nextTo := dw.Position
-	nextTo.Y -= 2
+	nextTo, _ := dw.Position.randomNearby()
 	island.addNpcFromName("pouch of water", nextTo)
 
 	// make npc thirsty
@@ -198,8 +196,7 @@ func TestFindFirewood(t *testing.T) {
 	assert.Equal(t, true, dw.isCold())
 
 	// place firewood nearby
-	nextTo := dw.Position
-	nextTo.Y++
+	nextTo, _ := dw.Position.randomNearby()
 	island.addNpcFromName("small branch", nextTo)
 
 	// tick so npc decides to pick firewood
@@ -257,8 +254,7 @@ func TestSleepAtShelter(t *testing.T) {
 	dw := island.Spawns[0]
 
 	// add nessecities nearby
-	nextTo := island.Spawns[0].Position
-	nextTo.Y += 2
+	nextTo, _ := island.Spawns[0].Position.randomNearby()
 	island.addNpcFromName("small shelter", nextTo)
 
 	// make npc tired
@@ -315,10 +311,10 @@ func TestBuildFireplace(t *testing.T) {
 	dw.addToInventory("small branch")
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo := island.Spawns[0].Position
-	nextTo.Y++
+	nextTo, _ := island.Spawns[0].Position.randomNearby()
+
 	// make sure nextTo is changed
-	assert.Equal(t, false, island.Spawns[0].Position.Y == nextTo.Y)
+	assert.Equal(t, false, island.Spawns[0].Position == nextTo)
 
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("farmland", nextTo)
@@ -351,8 +347,7 @@ func TestBuildShelter(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo := island.Spawns[0].Position
-	nextTo.Y++
+	nextTo, _ := island.Spawns[0].Position.randomNearby()
 
 	// add nessecities, so they dont need to be built
 	island.addNpcFromName("small fireplace", nextTo)
@@ -400,8 +395,7 @@ func TestBuildFarmland(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo := island.Spawns[0].Position
-	nextTo.Y++
+	nextTo, _ := island.Spawns[0].Position.randomNearby()
 
 	// add nessecities, so they dont need to be built
 	island.addNpcFromName("small fireplace", nextTo)
@@ -467,7 +461,7 @@ func TestSpawnGravel(t *testing.T) {
 
 	assert.Equal(t, 0, len(island.Spawns))
 	island.spawnGravel()
-	assert.Equal(t, true, len(island.Spawns) > 10000)
+	assert.Equal(t, true, len(island.Spawns) > 1000)
 }
 
 func TestNpcMovesToFireplace(t *testing.T) {
@@ -480,9 +474,7 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
 
-	nextTo := island.Spawns[0].Position
-	nextTo.X -= 8
-	nextTo.Y += 20
+	nextTo, _ := island.Spawns[0].Position.randomNearby()
 
 	assert.Equal(t, false, dw.Position == nextTo)
 
@@ -592,7 +584,7 @@ func TestBuildCookingPit(t *testing.T) {
 
 	// add nessecities nearby, so they dont need to be built
 	nextTo := dw.Position
-	nextTo.X -= 1
+	nextTo.X--
 	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
@@ -625,7 +617,7 @@ func TestBuildSmallHut(t *testing.T) {
 
 	// add nessecities nearby, so they dont need to be built
 	nextTo := dw.Position
-	nextTo.X -= 1
+	nextTo.X--
 	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
