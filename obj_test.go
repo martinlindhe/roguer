@@ -223,7 +223,7 @@ func TestSleep(t *testing.T) {
 	island.Tick()
 
 	// make sure npc planned action: sleep
-	assert.Equal(t, "sleep", dw.CurrentAction.Name)
+	assert.Equal(t, true, dw.hasPlanned("sleep"))
 
 	oldTiredness := dw.Tiredness
 
