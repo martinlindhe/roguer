@@ -12,6 +12,10 @@ all:
     class: object
     name: small fireplace
 
+  - type: cooking
+    class: object
+    name: cooking pit
+
   - type: burrow
     class: object
     name: small hole

@@ -34,6 +34,11 @@ all:
     result: small shelter
     duration: 10
 
+  - name: build cooking pit
+    type: build
+    result: cooking pit
+    duration: 10
+
   - name: build farmland
     type: build
     result: farmland

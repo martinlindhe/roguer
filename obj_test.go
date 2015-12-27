@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -580,4 +581,29 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	// let them get warm by the fire
 	assert.Equal(t, false, dw.isCold())
+}
+
+func TestBuildCookingPit(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+
+	// add nessecities, so they dont need to be built
+	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
+	island.addNpcFromName("small shelter", island.Spawns[0].Position)
+	island.addNpcFromName("apple tree", island.Spawns[0].Position)
+	island.addNpcFromName("farmland", island.Spawns[0].Position)
+
+	assert.Equal(t, 5, len(island.Spawns))
+	dw := island.Spawns[0]
+	dw.Coldness = 0
+	assert.Equal(t, false, dw.isCold())
+
+	// tick so npc decides to pick firewood
+	island.Tick()
+	island.Tick()
+	island.Tick()
+
+	spew.Dump(island.Spawns)
 }

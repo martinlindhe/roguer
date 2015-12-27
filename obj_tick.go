@@ -88,11 +88,12 @@ func (n *Obj) npcTick() bool {
 
 			fireplace := nearbyFireplaces[0]
 			if fireplace.isActivated() {
+				prevColdness := n.Coldness
 				n.Coldness -= 100
 				if n.Coldness < 0 {
 					n.Coldness = 0
 				}
-				log.Printf("%s is getting warmed up by the %s (coldness %d)", n, fireplace, n.Coldness)
+				log.Printf("%s is getting warmed up by the %s (coldness -%d)", n, fireplace, prevColdness-n.Coldness)
 			} else {
 
 				// NOTE: some max capacity for the fireplace is required
@@ -108,7 +109,7 @@ func (n *Obj) npcTick() bool {
 				}
 
 				if fireplace.Energy > 0 {
-					log.Printf("%s lights the fireplace", n.Name)
+					log.Printf("%s lights the %s", n, fireplace)
 					fireplace.Activate()
 
 					// stay here for a bit
@@ -157,9 +158,23 @@ func (n *Obj) npcTick() bool {
 					// XXX if more than 1 humanoid nearby, instead build a small hut
 					n.planAction("build small shelter", n.Position)
 				}
+
+				fmt.Println("x1")
+
+				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) > 0 &&
+					len(island.withinRadiusOfType("shelter", 30, n.Position)) > 0 {
+					// basic survival is satisifed, lets build a cooking pit
+					fmt.Println("x2")
+					if len(island.withinRadiusOfType("cooking", 30, n.Position)) == 0 {
+						fmt.Println("x3")
+						n.planAction("build cooking pit", n.Position)
+					}
+				}
+
 				if len(island.withinRadiusOfName("farmland", 1, n.Position)) == 0 {
 					n.planAction("build farmland", n.Position)
 				}
+
 				if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
 					// XXX require having a apple seed
 					// XXX require having a garden, plant there
