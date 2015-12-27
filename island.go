@@ -38,17 +38,35 @@ func (i *Island) addSpawn(o *Obj) {
 	i.Spawns = append(i.Spawns, o)
 }
 
+func (i *Island) removeSpawn(o *Obj) {
+
+	removeIdx := -1
+
+	for idx, sp := range i.Spawns {
+		if sp == o {
+			removeIdx = idx
+			break
+		}
+	}
+
+	if removeIdx == -1 {
+		panic("removeSpawn failed")
+	}
+
+	i.Spawns = append(i.Spawns[:removeIdx], i.Spawns[removeIdx+1:]...)
+}
+
 // Tick executes one tick on each spawn in the zone
 func (i *Island) Tick() {
 
 	i.Age++
 	log.Debugf("World tick %d", i.Age)
 
-	for idx, o := range i.Spawns {
+	for _, o := range i.Spawns {
 		check := o.Tick()
 		if check == false {
 			log.Infof("Removing spawn %s", o.Name)
-			i.Spawns = append(i.Spawns[:idx], i.Spawns[idx+1:]...)
+			i.removeSpawn(o)
 		}
 	}
 }

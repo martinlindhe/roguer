@@ -22,7 +22,7 @@ func (n *Obj) distanceTo(pos Point) float64 {
 	return math.Hypot(xd, yd)
 }
 
-func (p *Point) intMatches(t Point) bool {
+func (p *Point) intMatches(t *Point) bool {
 	if math.Floor(p.X) == math.Floor(t.X) && math.Floor(p.Y) == math.Floor(t.Y) {
 		return true
 	}

@@ -24,7 +24,7 @@ type actionSpec struct {
 	Duration    int    `json:"duration"`
 	Energy      int    `json:"energy"`
 	TimeSpent   int
-	Destination Point
+	Destination *Point
 }
 
 func parseActionsDefinition(defFileName string) []actionSpec {

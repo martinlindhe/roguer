@@ -7,12 +7,12 @@ all:
   - name: find food
     type: forage
     result: food
-    duration: 5
+    duration: 10
 
   - name: find water
     type: forage
     result: drink
-    duration: 5
+    duration: 10
   
   - name: find fire wood
     type: forage

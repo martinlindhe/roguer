@@ -3,8 +3,8 @@ package rogue
 import (
 	"io/ioutil"
 
-	"github.com/qiniu/log"
-	"gopkg.in/yaml.v2"
+	log "github.com/Sirupsen/logrus"
+	"github.com/ghodss/yaml"
 )
 
 // Obj is a in-game object, such as a npc or a item

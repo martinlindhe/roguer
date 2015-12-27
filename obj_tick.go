@@ -116,7 +116,9 @@ func (n *Obj) npcTick() bool {
 		n.planAction("sleep")
 	}
 
-	n.hungerThirstTick()
+	if n.hungerThirstTick() {
+		return true
+	}
 
 	if !n.isTired() && !n.isHungry() && !n.isThirsty() && !n.hasPlannedType("travel") {
 		// when basic needs is resolved, randomly decide to do
@@ -170,7 +172,7 @@ func (n *Obj) npcTick() bool {
 	return true
 }
 
-func (n *Obj) hungerThirstTick() {
+func (n *Obj) hungerThirstTick() bool {
 
 	if n.isHungry() {
 
@@ -189,7 +191,7 @@ func (n *Obj) hungerThirstTick() {
 
 			energyDiff := prevHunger - n.Hunger
 			log.Printf("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
-			return
+			return true
 		}
 
 		if n.isHungry() && !n.hasPlanned("find food") {
@@ -215,14 +217,14 @@ func (n *Obj) hungerThirstTick() {
 
 			energyDiff := prevThirst - n.Thirst
 			log.Printf("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
-			return
+			return true
 		}
 		if n.isThirsty() && !n.hasPlanned("find water") {
 			log.Printf("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
 			n.planAction("find water")
 		}
 	}
-
+	return false
 }
 
 // shuffle slice, without allocations

@@ -7,7 +7,6 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/davecgh/go-spew/spew"
 )
 
 // check if npc already has planned to do a
@@ -61,7 +60,7 @@ func (n *Obj) planAction(params ...interface{}) {
 	a := island.findActionByName(actionName)
 	log.Printf("%s decided to %s", n.Name, a.Name)
 
-	a.Destination = dst
+	a.Destination = &dst
 	n.PlannedActions = append(n.PlannedActions, a)
 }
 
@@ -82,7 +81,7 @@ func (n *Obj) performCurrentAction() {
 		status = n.performBuild()
 
 	case "travel":
-		status = n.performTravel()
+		status = n.performTravel(n.CurrentAction.Energy)
 
 	default:
 		panic(fmt.Errorf("Unknown action type: %s", n.CurrentAction.Type))
@@ -105,13 +104,18 @@ func (i *Island) findActionByName(n string) actionSpec {
 	panic(fmt.Errorf("cant find action: %s", n))
 }
 
-func (n *Obj) performTravel() bool {
+func (n *Obj) performTravel(energy int) bool {
+
+	if energy == 0 {
+		panic("travel: energy is 0")
+	}
+
 	// move closer to dst
 	deltaX := n.CurrentAction.Destination.X - n.Position.X
 	deltaY := n.CurrentAction.Destination.Y - n.Position.Y
 
 	angle := math.Atan2(deltaY, deltaX)
-	distance := float64(n.CurrentAction.Energy)
+	distance := float64(energy)
 
 	newX := n.Position.X + math.Cos(angle)*distance
 	newY := n.Position.Y + math.Sin(angle)*distance
@@ -168,23 +172,47 @@ func (n *Obj) performForage() bool {
 
 	log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
 
-	// TODO actually move around, and dont re-visit previously foraged places
-	n.CurrentAction.Duration--
-	if n.CurrentAction.Duration < 0 {
+	p := Point{0, 0}
 
+	if *n.CurrentAction.Destination == p {
 		// XXX
 
-		list := island.withinRadiusOfType("food", 30, n.Position)
+		list := island.withinRadiusOfType(n.CurrentAction.Result, 30, n.Position)
 		if len(list) > 0 {
-			spew.Dump(list)
 
 			rnd := list[rand.Intn(len(list))]
 
-			log.Printf("%s found a %s", n.Name, rnd)
-			n.addItemToInventory(*rnd)
+			n.CurrentAction.Destination = &rnd.Position
+			log.Printf("%s decided to go pick up %s at %v", n.Name, rnd.Name, rnd.Position)
 
+		}
+	} else {
+		// progress towards target
+		check := n.performTravel(1) // XXX 1=walking speed
+
+		// look for food at current spot
+		list := island.withinRadiusOfType(n.CurrentAction.Result, 0, n.Position)
+
+		for _, it := range list {
+			log.Printf("%s picked up %s", n.Name, it.Name)
+			n.addItemToInventory(*it)
+
+			// remove spawn from world
+			island.removeSpawn(it)
+		}
+
+		if check {
+			// destination reached
 			return true
 		}
+	}
+
+	// TODO dont re-visit previously foraged places
+
+	n.CurrentAction.Duration--
+	if n.CurrentAction.Duration < 0 {
+		log.Errorf("%s gave up foraging before dst reached!", n.Name)
+		return true
 	}
 
 	return false

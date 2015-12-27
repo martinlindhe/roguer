@@ -82,7 +82,12 @@ func TestFindFoodAndEat(t *testing.T) {
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
-	assert.Equal(t, 1, len(dw.Inventory)) // firewood
+	assert.Equal(t, 1, len(dw.Inventory))
+
+	// place food nearby
+	nextTo := dw.Position
+	nextTo.Y += 2
+	island.addNpcFromName("carrot", nextTo)
 
 	// make npc hungry
 	dw.Hunger = dw.hungerCap() + 1
@@ -96,15 +101,17 @@ func TestFindFoodAndEat(t *testing.T) {
 	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
-	for i := 0; i <= duration; i++ {
+	for {
 		island.Tick()
+		if len(dw.Inventory) == 2 {
+			// food + small branch
+			break
+		}
 	}
 
 	// make sure that npc has aged
 	assert.Equal(t, true, dw.Age > 0)
-
 	// make sure food was found
-	assert.Equal(t, 2, len(dw.Inventory)) // food + firewood
 	assert.Equal(t, true, dw.hasItemTypeInInventory("food"))
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
 
@@ -129,6 +136,11 @@ func TestFindWaterAndDrink(t *testing.T) {
 	dw.addToInventory("small branch")
 	assert.Equal(t, 1, len(dw.Inventory)) // firewood
 
+	// place water nearby
+	nextTo := dw.Position
+	nextTo.Y -= 2
+	island.addNpcFromName("pouch of water", nextTo)
+
 	// make npc thirsty
 	dw.Thirst = dw.thirstCap() + 1
 	island.Tick()
@@ -140,9 +152,12 @@ func TestFindWaterAndDrink(t *testing.T) {
 	duration := dw.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
-	// progress until npc found food
-	for i := 0; i <= duration; i++ {
+	for {
 		island.Tick()
+		if len(dw.Inventory) == 2 {
+			// water + small branch
+			break
+		}
 	}
 
 	assert.Equal(t, 2, len(dw.Inventory)) // water + firewood
@@ -173,6 +188,11 @@ func TestFindFirewood(t *testing.T) {
 
 	assert.Equal(t, 5, len(island.Spawns))
 	dw := island.Spawns[0]
+
+	// place firewood nearby
+	nextTo := dw.Position
+	nextTo.Y += 1
+	island.addNpcFromName("small branch", nextTo)
 
 	island.Tick()
 	assert.Equal(t, false, dw.CurrentAction == nil)
@@ -423,12 +443,12 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	// let them travel to destination
 	for {
 		island.Tick()
-		if dw.Position.intMatches(nextTo) {
+		if dw.Position.intMatches(&nextTo) {
 			break
 		}
 	}
 
-	assert.Equal(t, true, dw.Position.intMatches(nextTo))
+	assert.Equal(t, true, dw.Position.intMatches(&nextTo))
 
 	// let npc start the fire
 	island.Tick()
@@ -440,6 +460,7 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	assert.Equal(t, false, dw.isCold())
 }
 
+/*
 func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	prepareIsland()
@@ -484,3 +505,4 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	// let them get warm by the fire
 	//	assert.Equal(t, false, dw.isCold())
 }
+*/
