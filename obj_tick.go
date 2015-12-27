@@ -66,6 +66,10 @@ func (n *Obj) npcTick() bool {
 
 	if n.isCold() && !n.hasPlannedType("travel") && n.Type == "humanoid" {
 
+		if !n.hasItemTypeInInventory("wood") {
+			n.planAction("find fire wood")
+		}
+
 		nearbyFireplaces := island.withinRadiusOfType("fireplace", 1, n.Position)
 		if len(nearbyFireplaces) > 0 {
 
@@ -78,20 +82,16 @@ func (n *Obj) npcTick() bool {
 				log.Printf("%s is getting warmed up by the fireplace (coldness %d)", n.Name, n.Coldness)
 			} else {
 
-				if !n.hasItemTypeInInventory("wood") {
-
-					n.planAction("find fire wood")
-				} else {
-
-					// NOTE: some max capacity for the fireplace is required
-					if fireplace.Energy < 1000 {
-
-						itemIdx, _ := n.tryFindItemTypeInInventory("wood")
+				// NOTE: some max capacity for the fireplace is required
+				if fireplace.Energy < 1000 {
+					itemIdx, err := n.tryFindItemTypeInInventory("wood")
+					if err == nil {
 						item := n.removeFromInventory(itemIdx)
 
 						log.Printf("%s is putting %s in the fireplace", n.Name, item.Name)
 						// NOTE: to simplify, we just get the energy from the wood directly
 						fireplace.Energy += item.Energy
+						return true
 					}
 				}
 
@@ -100,15 +100,15 @@ func (n *Obj) npcTick() bool {
 					fireplace.Activate()
 				}
 			}
-
-			return true
 		}
 
 		fireplaces := island.withinRadiusOfType("fireplace", 30, n.Position)
 
 		if len(fireplaces) > 0 {
-			log.Printf("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
-			n.planAction("walk", fireplaces[0].Position)
+			if n.distanceTo(fireplaces[0].Position) > 1 {
+				log.Printf("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
+				n.planAction("walk", fireplaces[0].Position)
+			}
 		}
 	}
 

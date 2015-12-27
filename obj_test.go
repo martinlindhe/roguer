@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"fmt"
 	"image/png"
 	"os"
 	"testing"
@@ -190,22 +189,23 @@ func TestFindFirewood(t *testing.T) {
 	assert.Equal(t, 5, len(island.Spawns))
 	dw := island.Spawns[0]
 
+	// make dwarf wanna find firewood
+	dw.Coldness = dw.coldnessCap() + 1
+	assert.Equal(t, true, dw.isCold())
+
 	// place firewood nearby
 	nextTo := dw.Position
 	nextTo.Y += 1
 	island.addNpcFromName("small branch", nextTo)
 
+	// tick so npc decides to pick firewood
 	island.Tick()
-	assert.Equal(t, false, dw.CurrentAction == nil)
-	assert.Equal(t, "find fire wood", dw.CurrentAction.Name)
 
-	duration := dw.CurrentAction.Duration
-	assert.Equal(t, true, duration > 0)
+	assert.Equal(t, true, dw.hasPlanned("find fire wood"))
+	// tick so fire wood is picked up
+	island.Tick()
 
-	for i := 0; i <= duration; i++ {
-		island.Tick()
-	}
-
+	// make sure it was picked up
 	assert.Equal(t, true, dw.hasItemTypeInInventory("wood"))
 }
 
@@ -501,8 +501,6 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 			break
 		}
 	}
-
-	fmt.Println("XXX dwarf got wood")
 
 	// let them travel to destination
 	for {
