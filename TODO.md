@@ -22,7 +22,7 @@ death:
 
 
 cooking place:
-    decide to build cooking place
+    should be usable to cook food
 
     
 hut building:

@@ -164,6 +164,9 @@ func (n *Obj) npcTick() bool {
 					// basic survival is satisifed, lets build a cooking pit
 					if len(island.withinRadiusOfType("cooking", 30, n.Position)) == 0 {
 						n.planAction("build cooking pit", n.Position)
+					} else {
+						// XXX let npc remember this is their "home", when it has been built
+						n.planAction("build small hut", n.Position)
 					}
 				}
 

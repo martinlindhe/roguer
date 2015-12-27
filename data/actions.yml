@@ -39,6 +39,11 @@ all:
     result: cooking pit
     duration: 10
 
+  - name: build small hut
+    type: build
+    result: small hut
+    duration: 100
+
   - name: build farmland
     type: build
     result: farmland

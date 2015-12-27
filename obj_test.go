@@ -614,3 +614,37 @@ func TestBuildCookingPit(t *testing.T) {
 
 	assert.Equal(t, 1, len(island.withinRadiusOfName("cooking pit", 0, dw.Position)))
 }
+
+func TestBuildSmallHut(t *testing.T) {
+
+	prepareIsland()
+
+	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	assert.Equal(t, 1, len(island.Spawns))
+	dw := island.Spawns[0]
+
+	// add nessecities nearby, so they dont need to be built
+	nextTo := dw.Position
+	nextTo.X -= 1
+	island.addNpcFromName("small fireplace", nextTo)
+	island.addNpcFromName("small shelter", nextTo)
+	island.addNpcFromName("apple tree", nextTo)
+	island.addNpcFromName("farmland", nextTo)
+	island.addNpcFromName("cooking pit", nextTo)
+	assert.Equal(t, 6, len(island.Spawns))
+
+	// make sure npc decides to build cooking pit
+	island.Tick()
+	assert.Equal(t, true, dw.hasPlanned("build small hut"))
+
+	// wait until done
+	for {
+		island.Tick()
+
+		if !dw.isPerforming("build small hut") {
+			break
+		}
+	}
+
+	assert.Equal(t, 1, len(island.withinRadiusOfName("small hut", 0, dw.Position)))
+}

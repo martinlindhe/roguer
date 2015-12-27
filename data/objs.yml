@@ -26,6 +26,11 @@ all:
     name: small shelter
     energy: 5
 
+  - type: shelter
+    class: object
+    name: small hut
+    energy: 20
+
   - type: food producer
     class: object
     name: farmland
