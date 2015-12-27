@@ -556,6 +556,7 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	// make dwarf plan to get firewood
 	island.Tick()
 
+	assert.Equal(t, false, dw.hasItemTypeInInventory("wood"))
 	assert.Equal(t, true, dw.hasPlanned("find fire wood"))
 
 	for {
@@ -567,21 +568,14 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 		}
 	}
 
+	assert.Equal(t, true, dw.hasItemTypeInInventory("wood"))
 	assert.Equal(t, false, dw.Position.intMatches(&nextTo))
-	// let them travel to destination
-	for {
-		island.Tick()
 
-		// have dwarf find branch
-		if dw.Position.intMatches(&nextTo) {
-			break
-		}
-	}
-
-	assert.Equal(t, true, dw.Position.intMatches(&nextTo))
+	// make dwarf plan to get warm by fireplace
+	island.Tick()
+	assert.Equal(t, true, dw.hasPlannedType("wait"))
 
 	// let npc start the fire, wait and get warmed up
-	island.Tick()
 	island.Tick()
 
 	// let them get warm by the fire

@@ -11,7 +11,7 @@ import (
 func (n *Obj) Tick() bool {
 	n.Age++
 
-	log.Debug("[tick]", n.Name, n.Age)
+	// log.Println("[tick]", n.Name, n.Age)
 
 	if n.isAboveMaxAge() {
 		log.Infof("%s dies of old age", n.Name)
@@ -117,7 +117,7 @@ func (n *Obj) npcTick() bool {
 			}
 		}
 
-		if !n.hasPlannedType("travel") {
+		if !n.hasPlannedType("travel") && n.hasItemTypeInInventory("wood") {
 			fireplaces := island.withinRadiusOfType("fireplace", 30, n.Position)
 
 			if len(fireplaces) > 0 {
@@ -137,7 +137,7 @@ func (n *Obj) npcTick() bool {
 		return true
 	}
 
-	if !n.isTired() && !n.isHungry() && !n.isThirsty() && !n.hasPlannedType("travel") {
+	if !n.isTired() && !n.isHungry() && !n.isThirsty() && !n.isCold() && !n.hasPlannedType("travel") {
 		// when basic needs is resolved, randomly decide to do
 		// something that would help improve situation for the npc
 		if n.Race == "rabbit" {
