@@ -1,11 +1,18 @@
 package rogue
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 // Point ...
 type Point struct {
 	X float64
 	Y float64
+}
+
+func (n Point) String() string {
+	return fmt.Sprintf("%f,%f", n.X, n.Y)
 }
 
 func (n *Obj) distanceTo(pos Point) float64 {
@@ -16,7 +23,7 @@ func (n *Obj) distanceTo(pos Point) float64 {
 }
 
 func (p *Point) intMatches(t Point) bool {
-	if int(p.X) == int(t.X) && int(p.Y) == int(t.Y) {
+	if math.Floor(p.X) == math.Floor(t.X) && math.Floor(p.Y) == math.Floor(t.Y) {
 		return true
 	}
 	return false
