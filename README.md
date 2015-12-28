@@ -6,7 +6,7 @@ rogue-like with go and phaser.io
 # Install
 
 ```
-go get -u github.com/martinlindhe/rogue
+go get github.com/martinlindhe/rogue
 ```
 
 ```
