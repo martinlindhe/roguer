@@ -37,19 +37,48 @@ var cursors;
 var logo1;
 var logo2;
 
+
 function create()
 {
+    var island = game.cache.getJSON('island');
+
     //  Modify the world and camera bounds
-    game.world.setBounds(-1000, -1000, 2000, 2000);
+    //game.world.setBounds(-1000, -1000, 1000, 1000);
+    game.world.setBounds(0, 0, island.Width * 16, island.Height * 16);
 
-    for (var i = 0; i < 200; i++) {
-        game.add.sprite(
-            game.world.randomX,
-            game.world.randomY,
-            'mushroom'
-        );
+    // height constants
+    const deepWater    = 80;
+    const shallowWater = 90;
+    const beach        = 95;
+    const grass        = 150;
+    const forest       = 230;
+    const hills        = 240;
+
+
+    for (var y = 0; y < island.Height; y++) {
+        for (var x = 0; x < island.Width; x++) {
+            var b = island.HeightMap[y][x];
+            var sprite = ""
+
+            if (b <= deepWater) {
+                continue;
+            } else if (b <= shallowWater) {
+                sprite = "gr_shallow_water";
+            } else if (b <= beach) {
+                sprite = "gr_beach";
+            } else if (b <= grass) {
+                sprite = "gr_grass";
+            } else if (b <= forest) {
+                sprite = "gr_forest";
+            } else if (b <= hills) {
+                sprite = "gr_hills";
+            } else {
+                sprite = "gr_mountains";
+            }
+
+            game.add.sprite(x * 16, y * 16, sprite);
+        }
     }
-
 
     logo1 = game.add.sprite(0, 0, 'phaser');
     logo1.fixedToCamera = true;
@@ -59,14 +88,6 @@ function create()
     logo2.fixedToCamera = true;
     logo2.cameraOffset.setTo(500, 100);
 
-
-    var t = game.add.text(0, 0,
-        "this text is fixed to the camera",
-        { font: "32px Arial", fill: "#ffffff", align: "center" }
-    );
-
-    t.fixedToCamera = true;
-    t.cameraOffset.setTo(200, 500);
 
     game.add.tween(logo2.cameraOffset).to(
         { y: 400 },
