@@ -4,9 +4,12 @@ import (
 	"fmt"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
 	"github.com/plimble/ace"
 )
+
+var island *rogue.Island
 
 func main() {
 
@@ -14,11 +17,8 @@ func main() {
 
 	log.Info("rogue started")
 
-	log.Debug("debug msg")
-
 	r := getRouter()
-	initIsland()
-	island.PrintSpawns()
+	island = rogue.NewIsland()
 
 	r.GET("/", func(c *ace.C) {
 		c.String(200, views.Index())

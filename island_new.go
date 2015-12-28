@@ -15,13 +15,14 @@ import (
 var island *Island // singelton
 
 // NewIsland inits the singelton
-func NewIsland() {
+func NewIsland() *Island {
 	// XXX load existing world from disk
 	seed := int64(666666)
 	log.Infof("Generating island with seed %d ...", seed)
 	island = generateIsland(seed, 220, 140)
 
 	island.spawnGravel()
+	island.spawnTrees()
 
 	island.fillWithCritters()
 	log.Info("Done generating island")
@@ -36,6 +37,7 @@ func NewIsland() {
 		islandImgFile, _ := os.Create("island.png")
 		png.Encode(islandImgFile, islandImage)
 	*/
+	return island
 }
 
 // create some small rocks spread out over surface
@@ -98,12 +100,12 @@ func (i *Island) spawnTrees() {
 // generate critters based on data file
 func (i *Island) fillWithCritters() {
 
-	dwarf := i.getNpcSpecFromName("dwarf")
+	dwarf := i.getNpcSpecFromRace("dwarf")
 	for n := 0; n < 5; n++ {
 		i.addNpcFromSpec(dwarf, i.randomPointAboveWater())
 	}
 
-	rabbit := i.getNpcSpecFromName("rabbit")
+	rabbit := i.getNpcSpecFromRace("rabbit")
 	for n := 0; n < 5; n++ {
 		i.addNpcFromSpec(rabbit, i.randomPointAboveWater())
 	}
