@@ -46,7 +46,7 @@ function create() {
     //  You can add your own data or manipulate the data (swap tiles around, etc) but in order to display it you need to create a TilemapLayer.
     map = game.add.tilemap('island');
 
-    map.addTilesetImage('islandTiles.png', 'tiles');
+    map.addTilesetImage('island_tiles', 'tiles');
 
     layer = map.createLayer(0);
 

@@ -126,8 +126,9 @@ func getFullIslandController(c *ace.C) {
 
 	var tileset phaserTileSet
 	tileset.FirstGid = 1
-	tileset.Name = "islandTiles.png"
-	tileset.Image = "islandTiles.png"
+	// need to specify a tile in phaser later, .Name and .Image must be the same value (phaser 2.4.4, dec 2015)
+	tileset.Name = "island_tiles"
+	tileset.Image = "island_tiles"
 	tileset.ImageHeight = 256
 	tileset.ImageWidth = 256
 	tileset.TileWidth = 32
