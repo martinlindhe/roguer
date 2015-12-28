@@ -7063,10 +7063,7 @@ function create() {
 
     game.camera.follow(sprite);
 
-    socket = _socketIoClient2['default'].connect();
-
-    // Start listening for events
-    setEventHandlers();
+    initWebsockets();
 }
 
 function particleBurst() {
@@ -7107,12 +7104,16 @@ function render() {
     //game.debug.soundInfo(music, 20, 32);
 }
 
-var setEventHandlers = function setEventHandlers() {
+function initWebsockets() {
+    socket = (0, _socketIoClient2['default'])('ws://localhost', { path: '/ws' });
+
     // Socket connection successful
     socket.on('connect', onSocketConnected);
 
     // Socket disconnection
     socket.on('disconnect', onSocketDisconnect);
+
+    // socket.on('event', function(data){});
 
     // New player message received
     socket.on('new player', onNewPlayer);
@@ -7122,7 +7123,7 @@ var setEventHandlers = function setEventHandlers() {
 
     // Player removed message received
     socket.on('remove player', onRemovePlayer);
-};
+}
 
 // Socket connected
 function onSocketConnected() {
@@ -7142,7 +7143,7 @@ function onNewPlayer(data) {
     console.log('New player connected:', data.id);
 
     // Add new player to the remote players array
-    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y));
+    // enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y));
 }
 
 // Move player

@@ -46,6 +46,9 @@ var wsUpgrader = websocket.Upgrader{
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
+
+	log.Printf("ws handler")
+
 	conn, err := wsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatalf("Failed to set websocket upgrade: %+v", err)
@@ -72,7 +75,7 @@ func getRouter() *ace.Ace {
 
 	r.POST("/player/new", postNewPlayerController)
 
-	r.GET("/echo", func(c *ace.C) {
+	r.GET("/ws", func(c *ace.C) {
 		wsHandler(c.Writer, c.Request)
 	})
 

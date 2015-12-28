@@ -87,11 +87,7 @@ function create()
     game.camera.follow(sprite);
 
 
-    socket = io.connect();
-
-
-    // Start listening for events
-    setEventHandlers()
+    initWebsockets()
 }
 
 function particleBurst()
@@ -139,28 +135,32 @@ function render()
 
 
 
-var setEventHandlers = function()
+function initWebsockets()
 {
+    socket = io('ws://localhost', {path: '/ws'});
+
     // Socket connection successful
-    socket.on('connect', onSocketConnected)
+    socket.on('connect', onSocketConnected);
 
     // Socket disconnection
-    socket.on('disconnect', onSocketDisconnect)
+    socket.on('disconnect', onSocketDisconnect);
+
+    // socket.on('event', function(data){});
 
     // New player message received
-    socket.on('new player', onNewPlayer)
+    socket.on('new player', onNewPlayer);
 
     // Player move message received
-    socket.on('move player', onMovePlayer)
+    socket.on('move player', onMovePlayer);
 
     // Player removed message received
-    socket.on('remove player', onRemovePlayer)
+    socket.on('remove player', onRemovePlayer);
 }
 
 // Socket connected
 function onSocketConnected()
 {
-    console.log('Connected to socket server')
+    console.log('Connected to socket server');
 
     // Send local player data to the game server
     socket.emit('new player', { x: player.x, y: player.y })
@@ -169,47 +169,47 @@ function onSocketConnected()
 // Socket disconnected
 function onSocketDisconnect()
 {
-    console.log('Disconnected from socket server')
+    console.log('Disconnected from socket server');
 }
 
 // New player
 function onNewPlayer(data)
 {
-    console.log('New player connected:', data.id)
+    console.log('New player connected:', data.id);
 
     // Add new player to the remote players array
-    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y))
+    // enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y));
 }
 
 // Move player
 function onMovePlayer(data)
 {
-    var movePlayer = playerById(data.id)
+    var movePlayer = playerById(data.id);
 
     // Player not found
     if (!movePlayer) {
-        console.log('Player not found: ', data.id)
-        return
+        console.log('Player not found: ', data.id);
+        return;
     }
 
     // Update player position
-    movePlayer.player.x = data.x
-    movePlayer.player.y = data.y
+    movePlayer.player.x = data.x;
+    movePlayer.player.y = data.y;
 }
 
 // Remove player
 function onRemovePlayer(data)
 {
-    var removePlayer = playerById(data.id)
+    var removePlayer = playerById(data.id);
 
     // Player not found
     if (!removePlayer) {
-        console.log('Player not found: ', data.id)
-        return
+        console.log('Player not found: ', data.id);
+        return;
     }
 
-    removePlayer.player.kill()
+    removePlayer.player.kill();
 
     // Remove player from array
-    enemies.splice(enemies.indexOf(removePlayer), 1)
+    enemies.splice(enemies.indexOf(removePlayer), 1);
 }
