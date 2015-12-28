@@ -10,6 +10,8 @@ import (
 	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
 	"github.com/plimble/ace"
+
+	"github.com/gorilla/websocket"
 )
 
 var island *rogue.Island
@@ -38,6 +40,27 @@ func main() {
 	r.Run(listenAt)
 }
 
+var wsUpgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := wsUpgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Fatalf("Failed to set websocket upgrade: %+v", err)
+		return
+	}
+
+	for {
+		t, msg, err := conn.ReadMessage()
+		if err != nil {
+			break
+		}
+		conn.WriteMessage(t, msg)
+	}
+}
+
 func getRouter() *ace.Ace {
 
 	// ace with Logger, Recovery
@@ -48,6 +71,10 @@ func getRouter() *ace.Ace {
 	r.GET("/island/full", getFullIslandController)
 
 	r.POST("/player/new", postNewPlayerController)
+
+	r.GET("/echo", func(c *ace.C) {
+		wsHandler(c.Writer, c.Request)
+	})
 
 	r.Static("/js", "./public/js")
 	r.Static("/css", "./public/css")

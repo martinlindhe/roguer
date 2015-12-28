@@ -1,3 +1,5 @@
+import io from 'socket.io-client';
+
 var game = new Phaser.Game(
     800,
     600,
@@ -13,6 +15,11 @@ var game = new Phaser.Game(
 
 function preload()
 {
+    // XXX post to new player backend, get initial coordinates
+
+
+
+
     game.stage.backgroundColor = '#262f71';  // deep water
 
     // load world
@@ -27,6 +34,7 @@ function preload()
 }
 
 
+var socket;
 var map;
 var layer;
 var cursors;
@@ -77,6 +85,13 @@ function create()
     sprite.body.tilePadding.set(32, 32);
 
     game.camera.follow(sprite);
+
+
+    socket = io.connect();
+
+
+    // Start listening for events
+    setEventHandlers()
 }
 
 function particleBurst()
@@ -118,4 +133,83 @@ function render()
     //game.debug.cameraInfo(game.camera, 32, 32);
 
     //game.debug.soundInfo(music, 20, 32);
+}
+
+
+
+
+
+var setEventHandlers = function()
+{
+    // Socket connection successful
+    socket.on('connect', onSocketConnected)
+
+    // Socket disconnection
+    socket.on('disconnect', onSocketDisconnect)
+
+    // New player message received
+    socket.on('new player', onNewPlayer)
+
+    // Player move message received
+    socket.on('move player', onMovePlayer)
+
+    // Player removed message received
+    socket.on('remove player', onRemovePlayer)
+}
+
+// Socket connected
+function onSocketConnected()
+{
+    console.log('Connected to socket server')
+
+    // Send local player data to the game server
+    socket.emit('new player', { x: player.x, y: player.y })
+}
+
+// Socket disconnected
+function onSocketDisconnect()
+{
+    console.log('Disconnected from socket server')
+}
+
+// New player
+function onNewPlayer(data)
+{
+    console.log('New player connected:', data.id)
+
+    // Add new player to the remote players array
+    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y))
+}
+
+// Move player
+function onMovePlayer(data)
+{
+    var movePlayer = playerById(data.id)
+
+    // Player not found
+    if (!movePlayer) {
+        console.log('Player not found: ', data.id)
+        return
+    }
+
+    // Update player position
+    movePlayer.player.x = data.x
+    movePlayer.player.y = data.y
+}
+
+// Remove player
+function onRemovePlayer(data)
+{
+    var removePlayer = playerById(data.id)
+
+    // Player not found
+    if (!removePlayer) {
+        console.log('Player not found: ', data.id)
+        return
+    }
+
+    removePlayer.player.kill()
+
+    // Remove player from array
+    enemies.splice(enemies.indexOf(removePlayer), 1)
 }
