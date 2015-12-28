@@ -30,7 +30,9 @@ function preload()
     game.load.image('phaser', 'img/sprites/phaser-dude.png');
 
     // load world
-    game.load.json('island', '/island/full');
+    // game.load.json('island', '/island/full');
+
+    game.load.tilemap('island', '/island/full', null, Phaser.Tilemap.TILED_JSON);
 }
 
 var cursors;

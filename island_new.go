@@ -124,7 +124,7 @@ func generateIsland(seed int64, width int, height int) *Island {
 		png.Encode(rollerImgFile, rollerImage)
 	*/
 
-	m := make2DUintSlice(width, height)
+	m := make2DIntSlice(width, height)
 
 	noise := opensimplex.NewWithSeed(seed)
 
@@ -143,16 +143,16 @@ func generateIsland(seed int64, width int, height int) *Island {
 			f = (f + 1.0) / 2.0
 
 			// scale from 0.0-1.0 to 0-255
-			b := uint(0)
+			b := int(0)
 			if f == 1.0 {
 				b = 255
 			} else {
-				b = uint(math.Floor(f * 256.0))
+				b = int(math.Floor(f * 256.0))
 			}
 
 			// combine with rolling particle
 			opacity := 0.5
-			b = uint((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
+			b = int((1-opacity)*float64(b) + opacity*float64(roller[y][x]))
 
 			m[y][x] = b
 		}

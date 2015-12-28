@@ -28,11 +28,11 @@ func make2DByteSlice(width int, height int) [][]byte {
 }
 
 // returns a 2d slice in [height][width]
-func make2DUintSlice(width int, height int) [][]uint {
+func make2DIntSlice(width int, height int) [][]int {
 	// allocate 2d slice
-	m := make([][]uint, height)
+	m := make([][]int, height)
 	for i := range m {
-		m[i] = make([]uint, width)
+		m[i] = make([]int, width)
 	}
 	return m
 }

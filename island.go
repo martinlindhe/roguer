@@ -15,7 +15,7 @@ type Island struct {
 	Height    int
 	Seed      int64
 	Age       int64
-	HeightMap [][]uint
+	HeightMap [][]int
 	Spawns    []*Obj
 
 	// lookup lists:
@@ -211,4 +211,43 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 	}
 
 	return img
+}
+
+func mapHeightToTileNumber(b int) int {
+	switch {
+	case b <= deepWater:
+		return 1 // deep water
+
+	case b <= shallowWater:
+		return 2 // shallow water
+
+	case b <= beach:
+		return 3 // beach
+
+	case b <= grass:
+		return 4 // grass (green)
+
+	case b <= forest:
+		return 5 // forest (dark green)
+
+	case b <= hills:
+		return 6 // hills (brown)
+
+	default:
+		return 7 // gray (mountains)
+	}
+}
+
+func (i *Island) HeightsAsFlatTilemap() []int {
+	// []int{1, 2, 3} // XXXX
+	res := make([]int, island.Width*island.Height)
+
+	for y := 0; y < island.Height; y++ {
+		for x := 0; x < island.Width; x++ {
+
+			res[y*island.Width+x] = mapHeightToTileNumber(island.HeightMap[y][x])
+		}
+	}
+
+	return res
 }
