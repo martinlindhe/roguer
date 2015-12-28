@@ -6,11 +6,11 @@ rogue-like with go and phaser.io
 # Install
 
 ```
-go get -u http://github.com/martinlindhe/go-rogue
+go get -u github.com/martinlindhe/rogue
 ```
 
 ```
-cd GOROOT/src/github.com/martinlindhe/go-rouge
+cd $GOROOT/src/github.com/martinlindhe/rouge
 go run cli/app/app.go
 ```
 
