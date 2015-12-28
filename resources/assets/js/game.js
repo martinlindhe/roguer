@@ -28,6 +28,9 @@ function preload()
     game.load.image('mushroom', 'img/sprites/mushroom.png');
     game.load.image('sonic', 'img/sprites/wabbit.png');
     game.load.image('phaser', 'img/sprites/phaser-dude.png');
+
+    // load world
+    game.load.json('island', '/island/full');
 }
 
 var cursors;

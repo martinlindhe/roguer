@@ -9,7 +9,7 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
 });
 
 function preload() {
-    game.stage.backgroundColor = '#262f71'; // deep water color
+    game.stage.backgroundColor = '#262f71'; // deep water
 
     // ground sprites:
     game.load.image('gr_shallow_water', 'img/ground/shallow_water.png');
@@ -23,6 +23,9 @@ function preload() {
     game.load.image('mushroom', 'img/sprites/mushroom.png');
     game.load.image('sonic', 'img/sprites/wabbit.png');
     game.load.image('phaser', 'img/sprites/phaser-dude.png');
+
+    // load world
+    game.load.json('island', '/island/full');
 }
 
 var cursors;
