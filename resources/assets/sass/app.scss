@@ -42,8 +42,3 @@ body {
 
   color: $textColor;
 }
-
-// will make vue invisible until component has loaded, thus hiding moustaches, http://vuejs.org/api/#v-cloak
-[v-cloak] {
-  display: none;
-}

@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', {
     preload: preload,
     create: create,
     update: update,
@@ -10,21 +10,7 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', {
 
 function preload() {
     game.stage.backgroundColor = '#262f71'; // deep water
-    /*
-        // ground sprites:
-        game.load.image('gr_shallow_water', 'img/ground/shallow_water.png');
-        game.load.image('gr_beach', 'img/ground/beach.png');
-        game.load.image('gr_grass', 'img/ground/grass.png');
-        game.load.image('gr_forest', 'img/ground/forest.png');
-        game.load.image('gr_hills', 'img/ground/hills.png');
-        game.load.image('gr_mountains', 'img/ground/mountains.png');
-    
-    
-        // world objects:
-        game.load.image('mushroom', 'img/sprites/mushroom.png');
-        game.load.image('sonic', 'img/sprites/wabbit.png');
-    
-    */
+
     // load world
     game.load.tilemap('island', '/island/full', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('tiles', 'img/sprites/island_tiles.png', 32, 32);
@@ -40,17 +26,16 @@ var sprite;
 var emitter;
 
 function create() {
-    //var island = game.cache.getJSON('island');
-
-    //  A Tilemap object just holds the data needed to describe the map (i.e. the json exported from Tiled, or the CSV exported from elsewhere).
-    //  You can add your own data or manipulate the data (swap tiles around, etc) but in order to display it you need to create a TilemapLayer.
+    // A Tilemap object just holds the data needed to describe the map
+    // You can add your own data or manipulate the data (swap tiles around, etc)
+    // but in order to display it you need to create a TilemapLayer.
     map = game.add.tilemap('island');
 
     map.addTilesetImage('island_tiles', 'tiles');
 
     layer = map.createLayer(0);
 
-    //  Basically this sets EVERY SINGLE tile to fully collide on all faces
+    // Basically this sets EVERY SINGLE tile to fully collide on all faces
     map.setCollisionByExclusion([7, 32, 35, 36, 47]);
 
     layer.resizeWorld();
@@ -79,7 +64,6 @@ function create() {
 }
 
 function particleBurst() {
-
     emitter.x = sprite.x;
     emitter.y = sprite.y;
     emitter.start(true, 2000, null, 1);

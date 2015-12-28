@@ -13523,7 +13523,3 @@ body {
   font-family: "avenir", arial;
   color: #67747b;
 }
-
-[v-cloak] {
-  display: none;
-}
