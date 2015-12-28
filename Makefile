@@ -8,3 +8,6 @@ run:
 
 views:
 	gorazor views views
+
+shrink-png:
+	find ./public/img -name '*.png' -print0 | xargs -0 -n1 shrink-png.sh
