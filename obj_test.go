@@ -368,7 +368,11 @@ func TestBuildShelter(t *testing.T) {
 		island.Tick()
 	}
 
-	assert.Equal(t, 1, len(island.withinRadiusOfType("shelter", 0, dw.Position)))
+	shelters := island.withinRadiusOfType("shelter", 0, dw.Position)
+	assert.Equal(t, 1, len(shelters))
+
+	// make sure npc made this their home
+	assert.Equal(t, true, dw.Home == shelters[0])
 
 	// make npc tired
 	dw.Tiredness = dw.tirednessCap() + 1

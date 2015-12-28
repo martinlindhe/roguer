@@ -273,7 +273,17 @@ func (n *Obj) performBuild() bool {
 
 		n.CurrentAction.Duration--
 		if n.CurrentAction.Duration < 0 {
-			island.addNpcFromName(n.CurrentAction.Result, *n.CurrentAction.Destination)
+			spec := island.getNpcSpecFromName(n.CurrentAction.Result)
+
+			o := island.getNpcFromSpec(spec)
+			o.Position = *n.CurrentAction.Destination
+			island.addSpawn(o)
+
+			// if object is a shelter, make it my home
+			if spec.Type == "shelter" || spec.Type == "burrow" {
+				n.Home = o
+			}
+
 			return true
 		}
 	}

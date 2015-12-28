@@ -21,6 +21,7 @@ type Obj struct {
 	Weight   int
 
 	XP             int
+	Home           *Obj
 	CurrentAction  *actionSpec
 	PlannedActions []actionSpec
 	Inventory      []Obj
