@@ -41,9 +41,6 @@ body {
   font-family: $baseFont;
 
   color: $textColor;
-
-  // NOTE: required for bootstrap 3 with navbar fixed-top, see https://stackoverflow.com/a/11124805
-  padding-top: 70px;
 }
 
 // will make vue invisible until component has loaded, thus hiding moustaches, http://vuejs.org/api/#v-cloak
