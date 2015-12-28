@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/martinlindhe/rogue"
@@ -44,7 +45,7 @@ func getRouter() *ace.Ace {
 
 	r.GET("/ping", pingController)
 
-	//r.POST("/island/new", newIslandController)
+	r.GET("/island/full", getFullIslandController)
 
 	r.Static("/js", "./public/js")
 	r.Static("/css", "./public/css")
@@ -60,17 +61,16 @@ func pingController(c *ace.C) {
 	c.JSON(200, map[string]string{"pong": "now"})
 }
 
-/*
-func newIslandController(c *ace.C) {
+func getFullIslandController(c *ace.C) {
+	// NOTE: this is useful in early stage for world debugging.
+	// later on, the game would only expose a small area around the player
 
-	newIsland := struct {
-		Name string `json:"name"`
-		Seed int64  `json:"seed"`
-	}{}
+	// return width, height, heigthmap only
+	islandMap := struct {
+		Width     int
+		Height    int
+		HeightMap [][]uint
+	}{island.Width, island.Height, island.HeightMap}
 
-	c.ParseJSON(&newIsland)
-
-	// XXX return as json
-	c.JSON(http.StatusOK, island)
+	c.JSON(http.StatusOK, islandMap)
 }
-*/

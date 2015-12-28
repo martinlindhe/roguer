@@ -49,4 +49,8 @@ generate island:
 
 # phaser js game engine
 
-xxx
+  - render the full island in phaser client
+  - allow camera to scroll around the island
+
+  - subscribe to game updates with websockets?
+  - first do a simple ajax polling version to have it functional
