@@ -13,11 +13,6 @@ var game = new Phaser.Game(
 
 function preload()
 {
-    // XXX post to new player backend, get initial coordinates
-
-
-
-
     game.stage.backgroundColor = '#262f71';  // deep water
 
     // load world
@@ -139,24 +134,28 @@ function initWebsockets()
     socket.onopen = onSocketConnected;
 }
 
+/**
+ * @param msg MessageEvent
+ */
 function onSocketMessage(msg)
 {
-    console.log("<-- " + msg);
+    console.log("<-recv- " + msg.data);
+}
+
+function sendSocketMsg(data) {
+    socket.send(data);
+    console.log("-sent->" + data);
 }
 
 // Socket connected
 function onSocketConnected()
 {
-    var send = function(data) {
-        console.log("-->" + data);
-        socket.send(data);
-    }
+    sendSocketMsg("new_player mrcool");
 
     setInterval(
-        function(){ send("ping") },
-        1000
+        function(){ sendSocketMsg("ping") },
+        5000
     );
-
 
     console.log('Connected to socket server');
 }

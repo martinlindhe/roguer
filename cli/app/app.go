@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -60,7 +62,34 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			break
 		}
-		conn.WriteMessage(t, msg)
+
+		b := []byte{}
+
+		parts := strings.SplitN(string(msg), " ", 2)
+
+		switch parts[0] {
+		case "new_player":
+			// XXX create new player etc
+			log.Printf("new player %s connected", parts[1])
+			pos := island.RandomPointAboveWater()
+
+			res := struct {
+				X      float64
+				Y      float64
+				token  string
+				player string
+			}{pos.X, pos.Y, "xxxxxx", parts[1]}
+			b, _ = json.Marshal(res)
+
+		case "ping":
+			b = []byte("pong")
+
+		default:
+			b = []byte(fmt.Sprintf("unknown command %s", parts[0]))
+			log.Errorf("unknown command %s", parts[0])
+		}
+
+		conn.WriteMessage(t, b)
 	}
 }
 
@@ -84,7 +113,6 @@ func getRouter() *ace.Ace {
 	r.Static("/fonts", "./public/fonts")
 	r.Static("/img", "./public/img")
 	r.Static("/audio", "./public/audio")
-	//r.Static("/flags", "./public/flags")
 	//r.LoadHTMLFiles("./public/index.html")
 	return r
 }
