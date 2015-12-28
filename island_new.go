@@ -102,12 +102,12 @@ func (i *Island) fillWithCritters() {
 
 	dwarf := i.getNpcSpecFromRace("dwarf")
 	for n := 0; n < 5; n++ {
-		i.addNpcFromSpec(dwarf, i.randomPointAboveWater())
+		i.addNpcFromSpec(dwarf, i.RandomPointAboveWater())
 	}
 
 	rabbit := i.getNpcSpecFromRace("rabbit")
 	for n := 0; n < 5; n++ {
-		i.addNpcFromSpec(rabbit, i.randomPointAboveWater())
+		i.addNpcFromSpec(rabbit, i.RandomPointAboveWater())
 	}
 }
 

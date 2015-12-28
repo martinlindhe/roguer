@@ -129,7 +129,7 @@ func (i *Island) addNpcFromSpec(spec objSpec, pos Point) *Obj {
 	return o
 }
 
-func (i *Island) randomPointAboveWater() Point {
+func (i *Island) RandomPointAboveWater() Point {
 
 	p := Point{float64(rand.Intn(i.Width)), float64(rand.Intn(i.Height))}
 
@@ -138,7 +138,7 @@ func (i *Island) randomPointAboveWater() Point {
 		return p
 	}
 
-	return i.randomPointAboveWater()
+	return i.RandomPointAboveWater()
 }
 
 func (i *Island) isAboveWater(p Point) bool {
@@ -216,25 +216,25 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 func mapHeightToTileNumber(b int) int {
 	switch {
 	case b <= deepWater:
-		return 1 // deep water
+		return 0 // deep water
 
 	case b <= shallowWater:
-		return 2 // shallow water
+		return 1 // shallow water
 
 	case b <= beach:
-		return 3 // beach
+		return 2 // beach
 
 	case b <= grass:
-		return 4 // grass (green)
+		return 3 // grass (green)
 
 	case b <= forest:
-		return 5 // forest (dark green)
+		return 4 // forest (dark green)
 
 	case b <= hills:
-		return 6 // hills (brown)
+		return 5 // hills (brown)
 
 	default:
-		return 7 // gray (mountains)
+		return 6 // gray (mountains)
 	}
 }
 

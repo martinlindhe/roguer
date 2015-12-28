@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
 	"github.com/plimble/ace"
@@ -43,70 +45,63 @@ func getRouter() *ace.Ace {
 
 	//	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	r.GET("/ping", pingController)
-
 	r.GET("/island/full", getFullIslandController)
+
+	r.POST("/player/new", postNewPlayerController)
 
 	r.Static("/js", "./public/js")
 	r.Static("/css", "./public/css")
 	r.Static("/fonts", "./public/fonts")
 	r.Static("/img", "./public/img")
+	r.Static("/audio", "./public/audio")
 	//r.Static("/flags", "./public/flags")
 	//r.LoadHTMLFiles("./public/index.html")
 	return r
 }
 
-// curl -v "http://localhost:8080/ping"
-func pingController(c *ace.C) {
-	c.JSON(200, map[string]string{"pong": "now"})
+func newJwt() string {
+
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	signingKey := "top secret"
+
+	//token.Claims["foo"] = "bar"
+	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+
+	tokenString, err := token.SignedString(signingKey)
+	if err != nil {
+		panic(err)
+	}
+
+	return tokenString
 }
 
-type phaserTileMap struct {
-	Version     int               `json:"version"`
-	Width       int               `json:"width"`
-	Height      int               `json:"height"`
-	TileWidth   int               `json:"tilewidth"`
-	TileHeight  int               `json:"tileheight"`
-	Orientation string            `json:"orientation"`
-	Layers      []phaserTileLayer `json:"layers"`
-	TileSets    []phaserTileSet   `json:"tilesets"`
-	// Properties ....  we skipped this
+// creates a new player in the world, returning their in game coordinates & a token
+func postNewPlayerController(c *ace.C) {
+
+	// XXX store player + token + in-game npc reference
+
+	playerName := c.Request.PostFormValue("player")
+	pos := island.RandomPointAboveWater()
+
+	token := newJwt()
+
+	res := struct {
+		X      float64
+		Y      float64
+		token  string
+		player string
+	}{pos.X, pos.Y, token, playerName}
+
+	c.JSON(http.StatusOK, res)
 }
 
-type phaserTileLayer struct {
-	Name    string `json:"name"`
-	Type    string `json:"type"`
-	Data    []int  `json:"data"`
-	Width   int    `json:"width"`
-	Height  int    `json:"height"`
-	Opacity int    `json:"opacity"`
-	Visible bool   `json:"visible"`
-	X       int    `json:"x"`
-	Y       int    `json:"y"`
-}
-
-type phaserTileSet struct {
-	FirstGid    int    `json:"firstgid"`
-	Image       string `json:"image"`
-	Name        string `json:"name"`
-	ImageHeight int    `json:"imageheight"`
-	ImageWidth  int    `json:"imagewidth"`
-	Margin      int    `json:"margin"`
-	Spacing     int    `json:"spacing"`
-	TileHeight  int    `json:"tileheight"`
-	TileWidth   int    `json:"tilewidth"`
-
-	// Properties ....  we skipped this
-}
-
+// returns a map in Tiled json format, recognized by phaser.io
 func getFullIslandController(c *ace.C) {
 	// NOTE: this is useful in early stage for world debugging.
 	// later on, the game would only expose a small area around the player
 
-	// return a map in Phaser.Tilemap.TILED_JSON format
-
-	// return width, height, heigthmap only
-	var tileMap phaserTileMap
+	var tileMap rogue.PhaserTileMap
 	tileMap.Version = 1
 	tileMap.Width = island.Width
 	tileMap.Height = island.Height
@@ -114,7 +109,7 @@ func getFullIslandController(c *ace.C) {
 	tileMap.TileHeight = 32
 	tileMap.Orientation = "orthogonal"
 
-	var layer phaserTileLayer
+	var layer rogue.PhaserTileLayer
 	layer.Data = island.HeightsAsFlatTilemap()
 	layer.Width = island.Width
 	layer.Height = island.Height
@@ -124,9 +119,9 @@ func getFullIslandController(c *ace.C) {
 	layer.Name = "layer1"
 	tileMap.Layers = append(tileMap.Layers, layer)
 
-	var tileset phaserTileSet
-	tileset.FirstGid = 1
-	// need to specify a tile in phaser later, .Name and .Image must be the same value (phaser 2.4.4, dec 2015)
+	var tileset rogue.PhaserTileSet
+	tileset.FirstGid = 0
+	// NOTE: need to specify a tile in phaser later, .Name and .Image must be the same value (phaser 2.4.4, dec 2015)
 	tileset.Name = "island_tiles"
 	tileset.Image = "island_tiles"
 	tileset.ImageHeight = 256

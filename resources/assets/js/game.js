@@ -21,6 +21,9 @@ function preload()
 
     game.load.image('chunk', 'img/sprites/chunk.png');
     game.load.image('phaser', 'img/sprites/phaser-dude.png');
+
+
+    game.load.audio('carter', ['audio/dead_feelings.mp3']);
 }
 
 
@@ -29,9 +32,16 @@ var layer;
 var cursors;
 var sprite;
 var emitter;
+var music;
 
 function create()
 {
+    music = game.add.audio('carter');
+    music.volume = 0.5; // 50%
+    music.play();
+
+
+
     // A Tilemap object just holds the data needed to describe the map
     // You can add your own data or manipulate the data (swap tiles around, etc)
     // but in order to display it you need to create a TilemapLayer.
@@ -106,4 +116,6 @@ function update()
 function render()
 {
     //game.debug.cameraInfo(game.camera, 32, 32);
+
+    //game.debug.soundInfo(music, 20, 32);
 }
