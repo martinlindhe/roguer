@@ -239,12 +239,10 @@ func mapHeightToTileNumber(b int) int {
 }
 
 func (i *Island) HeightsAsFlatTilemap() []int {
-	// []int{1, 2, 3} // XXXX
 	res := make([]int, island.Width*island.Height)
 
 	for y := 0; y < island.Height; y++ {
 		for x := 0; x < island.Width; x++ {
-
 			res[y*island.Width+x] = mapHeightToTileNumber(island.HeightMap[y][x])
 		}
 	}

@@ -110,14 +110,14 @@ func getFullIslandController(c *ace.C) {
 	tileMap.Version = 1
 	tileMap.Width = island.Width
 	tileMap.Height = island.Height
-	tileMap.TileWidth = 16
-	tileMap.TileHeight = 16
+	tileMap.TileWidth = 32
+	tileMap.TileHeight = 32
 	tileMap.Orientation = "orthogonal"
 
 	var layer phaserTileLayer
 	layer.Data = island.HeightsAsFlatTilemap()
-	layer.Width = 170
-	layer.Height = 44
+	layer.Width = island.Width
+	layer.Height = island.Height
 	layer.Visible = true
 	layer.Opacity = 1
 	layer.Type = "tilelayer"
@@ -126,12 +126,12 @@ func getFullIslandController(c *ace.C) {
 
 	var tileset phaserTileSet
 	tileset.FirstGid = 1
-	tileset.Image = "someimg.png"
-	tileset.ImageHeight = 128
-	tileset.ImageWidth = 176
-	tileset.Name = "some tileset name"
-	tileset.TileWidth = 16
-	tileset.TileHeight = 16
+	tileset.Name = "islandTiles.png"
+	tileset.Image = "islandTiles.png"
+	tileset.ImageHeight = 256
+	tileset.ImageWidth = 256
+	tileset.TileWidth = 32
+	tileset.TileHeight = 32
 	tileMap.TileSets = append(tileMap.TileSets, tileset)
 
 	c.JSON(http.StatusOK, tileMap)
