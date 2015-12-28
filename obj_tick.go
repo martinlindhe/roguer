@@ -182,7 +182,7 @@ func (n *Obj) survivalPlanningTick() {
 					n.planAction("build small fireplace", n.Position)
 					return
 				}
-				if len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
+				if n.Home == nil && len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a small hut
 					n.planAction("build small shelter", n.Position)
 					return
@@ -197,8 +197,8 @@ func (n *Obj) survivalPlanningTick() {
 						return
 					}
 
-					// XXX let npc remember this is their "home", when it has been buil
-					if len(island.withinRadiusOfName("small hut", 30, n.Position)) == 0 {
+					// build a hut if we already have a small shelter
+					if n.Home != nil && n.Home.Name == "small shelter" && len(island.withinRadiusOfName("small hut", 30, n.Position)) == 0 {
 						n.planAction("build small hut", n.Position)
 						return
 					}

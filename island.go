@@ -91,9 +91,9 @@ func (i *Island) getNpcSpecFromRace(n string) objSpec {
 	panic(fmt.Errorf("npc spec by race not found: %s", n))
 }
 
-func (i *Island) addNpcFromName(n string, pos Point) {
+func (i *Island) addNpcFromName(n string, pos Point) *Obj {
 
-	island.addNpcFromSpec(island.getNpcSpecFromName(n), pos)
+	return island.addNpcFromSpec(island.getNpcSpecFromName(n), pos)
 }
 
 func (i *Island) addNpcFromRace(n string, pos Point) {
@@ -121,11 +121,12 @@ func (i *Island) getNpcFromSpec(spec objSpec) *Obj {
 	return o
 }
 
-func (i *Island) addNpcFromSpec(spec objSpec, pos Point) {
+func (i *Island) addNpcFromSpec(spec objSpec, pos Point) *Obj {
 
 	o := i.getNpcFromSpec(spec)
 	o.Position = pos
 	i.addSpawn(o)
+	return o
 }
 
 func (i *Island) randomPointAboveWater() Point {

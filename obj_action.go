@@ -281,6 +281,7 @@ func (n *Obj) performBuild() bool {
 
 			// if object is a shelter, make it my home
 			if spec.Type == "shelter" || spec.Type == "burrow" {
+				log.Printf("%s made %s their home", n, o)
 				n.Home = o
 			}
 

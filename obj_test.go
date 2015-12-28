@@ -619,7 +619,9 @@ func TestBuildSmallHut(t *testing.T) {
 	// add nessecities nearby, so they dont need to be built
 	nextTo, _ := dw.Position.randomNearby()
 	island.addNpcFromName("small fireplace", nextTo)
-	island.addNpcFromName("small shelter", nextTo)
+
+	dw.Home = island.addNpcFromName("small shelter", nextTo)
+
 	island.addNpcFromName("apple tree", nextTo)
 	island.addNpcFromName("farmland", nextTo)
 	island.addNpcFromName("cooking pit", nextTo)
