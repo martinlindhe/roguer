@@ -92,42 +92,41 @@ function update() {
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
 
+    var moveStepping = 4;
+
     if (cursors.up.isDown) {
-        player.body.velocity.y = -200;
+        player.y -= moveStepping;
         particleBurst();
     } else if (cursors.down.isDown) {
-        player.body.velocity.y = 200;
+        player.y += moveStepping;
         particleBurst();
     }
 
     if (cursors.left.isDown) {
-        player.body.velocity.x = -200;
-        player.scale.x = -1;
+        player.x -= moveStepping;
         particleBurst();
     } else if (cursors.right.isDown) {
-        player.body.velocity.x = 200;
-        player.scale.x = 1;
+        player.x += moveStepping;
         particleBurst();
     }
 
+    /*  zoom is broken
     // zoom
     if (game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
         worldScale += 0.05;
-    } else if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+    }
+    else if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
         worldScale -= 0.05;
     }
-
-    // set a minimum and maximum scale value
-    worldScale = Phaser.Math.clamp(worldScale, 0.25, 2);
-
-    // set our world scale as needed
+     // set our world scale as needed
     game.world.scale.set(worldScale);
+    */
 }
 
 function render() {
-    game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");
+    game.debug.text(game.time.fps || '--', 1, 14, "#00ff00");
 
-    // game.debug.spriteInfo(player, 32, 32);
+    game.debug.spriteInfo(player, 32, 32);
     //game.debug.cameraInfo(game.camera, 32, 32);
 
     //game.debug.soundInfo(music, 20, 32);
