@@ -195,6 +195,10 @@ function onSocketMessage(msg)
         }
         break;
 
+    case 'ok':
+        console.log("server OK: " + msg.data);
+        break;
+
     default:
         console.log("<-recv- " + msg.data);
         console.log("unknown command from server: " + cmd.Type);

@@ -5,7 +5,7 @@
 forage:
   - later: some other "roam" mode, now we finds item of type X and moves straight towards it
 
-    
+
 
 tree:
   - humanoid: able to chop down tree, using an axe
@@ -23,7 +23,7 @@ death:
 cooking place:
   - should be usable to cook food
 
- 
+
 hut:
   - ...
 
@@ -47,10 +47,7 @@ generate island:
 
 
 
+
 # phaser js game engine
 
-  - render the full island in phaser client
-  - allow camera to scroll around the island
-
-  - subscribe to game updates with websockets?
-  - first do a simple ajax polling version to have it functional
+  - produce a 256x256 pixel (16x16 tiles) tilemap.png from input directory and id => name mapping
