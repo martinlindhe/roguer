@@ -11,3 +11,6 @@ views:
 
 shrink-png:
 	find ./public/img -name '*.png' -print0 | xargs -0 -n1 shrink-png.sh
+
+tiles:
+	go run cli/mktileset/mktileset.go
