@@ -8,37 +8,50 @@ import (
 	"math"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
+	"gopkg.in/alecthomas/kingpin.v2"
 
 	"image/draw"
 	_ "image/jpeg"
 	"image/png"
 )
 
+var (
+	file       = kingpin.Arg("file", "Input png tileset").Required().File()
+	outDir     = kingpin.Arg("outdir", "Output dir").Required().String()
+	tileWidth  = kingpin.Arg("width", "Tile width").Required().Int()
+	tileHeight = kingpin.Arg("height", "Tile height").Required().Int()
+)
+
 func main() {
 
-	// XXXX read cli args: file width height
+	// support -h for --help
+	kingpin.CommandLine.HelpFlag.Short('h')
+	kingpin.Parse()
 
-	// XXX 1 read source tileset
+	inFileName := (*file).Name()
 
-	/*
-		font.png: 8x8
-	*/
+	if pathDontExist(*outDir) {
+		err := os.Mkdir(*outDir, 0777)
+		if err != nil {
+			fmt.Printf("Could not create %s: %s", *outDir, err)
+			os.Exit(1)
+		}
+	}
 
-	inFile := "resources/assets/tilesets/oddball/font.png"
-	tileWidth := 8
-	tileHeight := 8
-
-	xx := sliceImage(inFile, tileWidth, tileHeight)
-
-	spew.Dump(xx)
+	sliceImage(inFileName, *outDir, *tileWidth, *tileHeight)
 }
 
-func sliceImage(imgFile string, tileWidth int, tileHeight int) []image.Image {
+func pathDontExist(path string) bool {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		// path/to/whatever does not exist
+		return true
+	}
+	return false
+}
+
+func sliceImage(imgFile string, outDir string, tileWidth int, tileHeight int) []image.Image {
 
 	var slices []image.Image
-
-	fmt.Printf("Source: %s\n", imgFile)
 
 	img, _, err := decodeImage(imgFile)
 	if err != nil {
@@ -60,13 +73,12 @@ func sliceImage(imgFile string, tileWidth int, tileHeight int) []image.Image {
 		log.Fatalf("Input image height %d is not evenly divisable by tile height %d", imgHeight, tileHeight)
 	}
 
-	fmt.Printf("%f cols, %f rows\n", cols, rows)
+	//fmt.Printf("%f cols, %f rows\n", cols, rows)
 
 	// slice up image into tiles
-	cnt := -1
+	cnt := 0
 	for row := 0; row < int(rows); row++ {
 		for col := 0; col < int(cols); col++ {
-			cnt++
 			x0 := col * tileWidth
 			x1 := (col + 1) * tileWidth
 			y0 := row * tileHeight
@@ -78,33 +90,35 @@ func sliceImage(imgFile string, tileWidth int, tileHeight int) []image.Image {
 			draw.Draw(dst, r, img, sr.Min, draw.Src)
 
 			if isOnlyTransparent(dst) {
-				// XXX identify if this img has no pixels (only transparent ones), show error and skip
-				fmt.Printf("Skipping empty tile %d\n", cnt)
+				fmt.Printf("Skipping empty tile at row %d, col %d\n", row, col)
+				continue
 			}
 
-			outFile := fmt.Sprintf("tmp/%d.png", cnt)
+			outFile := fmt.Sprintf("%s/%d.png", outDir, cnt)
 			writePng(outFile, dst)
+			cnt++
 		}
 	}
 
+	fmt.Printf("%d tiles written to %s\n", cnt, outDir)
 	return slices
 }
 
+// is this an empty tile?
 func isOnlyTransparent(img *image.RGBA) bool {
-	// XXX check alpha channel for all pixels
 
 	b := img.Bounds()
 
 	for y := b.Min.Y; y < b.Max.Y; y++ {
 		for x := b.Min.X; x < b.Max.X; x++ {
-			oldPixel := img.At(x, y)
-			_, _, _, a := oldPixel.RGBA()
-			fmt.Printf("%d", a)
+			_, _, _, a := img.At(x, y).RGBA()
+			if a > 0 {
+				return false
+			}
 		}
 	}
-	fmt.Println("")
 
-	return false
+	return true
 }
 
 func decodeImage(filename string) (image.Image, string, error) {
