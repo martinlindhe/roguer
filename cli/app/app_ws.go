@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
-	"github.com/qiniu/log"
 )
 
 var wsUpgrader = websocket.Upgrader{
@@ -27,8 +27,6 @@ type newPlayerResponse struct {
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
-
-	log.Printf("ws handler")
 
 	conn, err := wsUpgrader.Upgrade(w, r, nil)
 	if err != nil {
