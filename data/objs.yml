@@ -40,11 +40,11 @@ all:
     name: apple tree
     drops:
       - name: apple
-        chance: 10
-      - name: small branch
-        chance: 8
-      - name: branch
         chance: 4
+      - name: small branch
+        chance: 3
+      - name: branch
+        chance: 2
       - name: apple seed
         chance: 1
 
@@ -53,9 +53,9 @@ all:
     name: oak tree
     drops:
       - name: small branch
-        chance: 8
+        chance: 3
       - name: branch
-        chance: 4
+        chance: 2
       - name: oak seed
         chance: 1
 
@@ -64,9 +64,9 @@ all:
     name: birch tree
     drops:
       - name: small branch
-        chance: 8
+        chance: 3
       - name: branch
-        chance: 4
+        chance: 2
       - name: birch seed
         chance: 1
 

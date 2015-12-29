@@ -70,8 +70,7 @@ func main() {
 	go r.Run(listenAt)
 
 	c := time.Tick(3 * time.Second)
-	for now := range c {
-		log.Printf("beep beep %v\n", now)
+	for range c {
 		// progrsss game world
 		island.Tick()
 	}
