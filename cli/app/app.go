@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -12,8 +10,6 @@ import (
 	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
 	"github.com/plimble/ace"
-
-	"github.com/gorilla/websocket"
 )
 
 var island *rogue.Island
@@ -31,9 +27,7 @@ func main() {
 		c.String(200, views.Index())
 	})
 
-	// XXX run http server in separate process? we also need a websock server
-
-	// listen and serve on 0.0.0.0:8080
+	// listen and serve on 0.0.0.0:3322
 	appPort := 3322
 	listenAt := fmt.Sprintf(":%d", appPort)
 
@@ -42,67 +36,13 @@ func main() {
 	r.Run(listenAt)
 }
 
-var wsUpgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-func wsHandler(w http.ResponseWriter, r *http.Request) {
-
-	log.Printf("ws handler")
-
-	conn, err := wsUpgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Fatalf("Failed to set websocket upgrade: %+v", err)
-		return
-	}
-
-	for {
-		t, msg, err := conn.ReadMessage()
-		if err != nil {
-			break
-		}
-
-		b := []byte{}
-
-		parts := strings.SplitN(string(msg), " ", 2)
-
-		switch parts[0] {
-		case "new_player":
-			// XXX create new player etc
-			log.Printf("new player %s connected", parts[1])
-			pos := island.RandomPointAboveWater()
-
-			res := struct {
-				X      float64
-				Y      float64
-				token  string
-				player string
-			}{pos.X, pos.Y, "xxxxxx", parts[1]}
-			b, _ = json.Marshal(res)
-
-		case "ping":
-			b = []byte("pong")
-
-		default:
-			b = []byte(fmt.Sprintf("unknown command %s", parts[0]))
-			log.Errorf("unknown command %s", parts[0])
-		}
-
-		conn.WriteMessage(t, b)
-	}
-}
-
 func getRouter() *ace.Ace {
 
 	// ace with Logger, Recovery
 	r := ace.Default()
 
 	//	r.Use(gzip.Gzip(gzip.DefaultCompression))
-
 	r.GET("/island/full", getFullIslandController)
-
-	r.POST("/player/new", postNewPlayerController)
 
 	r.GET("/ws", func(c *ace.C) {
 		wsHandler(c.Writer, c.Request)
@@ -121,7 +61,7 @@ func newJwt() string {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
-	signingKey := "top secret"
+	signingKey := []byte("top secret")
 
 	//token.Claims["foo"] = "bar"
 	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
@@ -132,26 +72,6 @@ func newJwt() string {
 	}
 
 	return tokenString
-}
-
-// creates a new player in the world, returning their in game coordinates & a token
-func postNewPlayerController(c *ace.C) {
-
-	// XXX store player + token + in-game npc reference
-
-	playerName := c.Request.PostFormValue("player")
-	pos := island.RandomPointAboveWater()
-
-	token := newJwt()
-
-	res := struct {
-		X      float64
-		Y      float64
-		token  string
-		player string
-	}{pos.X, pos.Y, token, playerName}
-
-	c.JSON(http.StatusOK, res)
 }
 
 // returns a map in Tiled json format, recognized by phaser.io

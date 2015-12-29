@@ -31,9 +31,11 @@ var socket;
 var map;
 var layer;
 var cursors;
-var sprite;
+var player;
 var emitter;
 var music;
+
+var token;
 
 function create()
 {
@@ -67,17 +69,17 @@ function create()
     emitter.gravity = 150;
     emitter.bounce.setTo(0.5, 0.5);
 
-    sprite = game.add.sprite(300, 90, 'phaser');
-    sprite.anchor.set(0.5);
+    player = game.add.sprite(0, 0, 'phaser');
+    player.anchor.set(0.5);
 
-    game.physics.enable(sprite);
+    game.physics.enable(player);
 
     //  Because both our body and our tiles are so tiny,
     //  and the body is moving pretty fast, we need to add
     //  some tile padding to the body. WHat this does
-    sprite.body.tilePadding.set(32, 32);
+    player.body.tilePadding.set(32, 32);
 
-    game.camera.follow(sprite);
+    game.camera.follow(player);
 
 
     initWebsockets()
@@ -85,41 +87,41 @@ function create()
 
 function particleBurst()
 {
-    emitter.x = sprite.x;
-    emitter.y = sprite.y;
+    emitter.x = player.x;
+    emitter.y = player.y;
     emitter.start(true, 2000, null, 1);
 }
 
 function update()
 {
-    game.physics.arcade.collide(sprite, layer);
+    game.physics.arcade.collide(player, layer);
     game.physics.arcade.collide(emitter, layer);
 
-    sprite.body.velocity.x = 0;
-    sprite.body.velocity.y = 0;
+    player.body.velocity.x = 0;
+    player.body.velocity.y = 0;
 
     if (cursors.up.isDown) {
-        sprite.body.velocity.y = -200;
+        player.body.velocity.y = -200;
         particleBurst();
     } else if (cursors.down.isDown) {
-        sprite.body.velocity.y = 200;
+        player.body.velocity.y = 200;
         particleBurst();
     }
 
     if (cursors.left.isDown) {
-        sprite.body.velocity.x = -200;
-        sprite.scale.x = -1;
+        player.body.velocity.x = -200;
+        player.scale.x = -1;
         particleBurst();
     } else if (cursors.right.isDown) {
-        sprite.body.velocity.x = 200;
-        sprite.scale.x = 1;
+        player.body.velocity.x = 200;
+        player.scale.x = 1;
         particleBurst();
     }
 }
 
 function render()
 {
-    //game.debug.cameraInfo(game.camera, 32, 32);
+    game.debug.cameraInfo(game.camera, 32, 32);
 
     //game.debug.soundInfo(music, 20, 32);
 }
@@ -140,6 +142,25 @@ function initWebsockets()
 function onSocketMessage(msg)
 {
     console.log("<-recv- " + msg.data);
+
+    var cmd = JSON.parse(msg.data);
+
+    switch (cmd.Type) {
+    case 'xy':
+        player.x = cmd.X;
+        player.y = cmd.Y;
+        // XXX todo set floating name over head of player
+
+        token = cmd.Token;
+        break;
+
+    case 'pong':
+        console.log("pong");
+        break;
+
+    default:
+        console.log("unknown command from server: " + cmd.Type);
+    }
 }
 
 function sendSocketMsg(data) {
@@ -150,10 +171,13 @@ function sendSocketMsg(data) {
 // Socket connected
 function onSocketConnected()
 {
+    sendSocketMsg("ping");
     sendSocketMsg("new_player mrcool");
 
     setInterval(
-        function(){ sendSocketMsg("ping") },
+        function() {
+            sendSocketMsg("ping");
+        },
         5000
     );
 

@@ -4,7 +4,7 @@ bench:
 	go test -bench=.
 
 run:
-	go run cli/app/app.go
+	go run cli/app/*
 
 views:
 	gorazor views views
