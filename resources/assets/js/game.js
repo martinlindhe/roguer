@@ -121,7 +121,8 @@ function update()
 
 function render()
 {
-    game.debug.cameraInfo(game.camera, 32, 32);
+    game.debug.spriteInfo(player, 32, 32);
+    //game.debug.cameraInfo(game.camera, 32, 32);
 
     //game.debug.soundInfo(music, 20, 32);
 }
@@ -147,8 +148,9 @@ function onSocketMessage(msg)
 
     switch (cmd.Type) {
     case 'xy':
-        player.x = cmd.X;
-        player.y = cmd.Y;
+        // multiply coords with tile size to scale properly. sprite tiles are always in pixels
+        player.x = cmd.X * 16;
+        player.y = cmd.Y * 16;
         // XXX todo set floating name over head of player
 
         token = cmd.Token;

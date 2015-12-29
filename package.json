@@ -1,12 +1,8 @@
 {
   "private": true,
   "dependencies": {
-    "babel-runtime": "^5.8",
     "bootstrap-sass": "^3.0",
-    "es6-require": "^0.2",
-    "flag-icon-css": "^0.8",
     "font-awesome": "^4.4",
-    "moment": "^2.10",
     "phaser": "^2.4"
   },
   "devDependencies": {
