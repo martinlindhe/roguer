@@ -61,3 +61,13 @@ func (p *Point) randomNearby() (Point, error) {
 	// select something by random
 	return m[rand.Intn(len(m))], nil
 }
+
+func (p *Point) isNearby(pos Point) bool {
+	distance := float64(5)
+	absX := math.Abs(p.X - pos.X)
+	absY := math.Abs(p.Y - pos.Y)
+	if absX < distance && absY < distance {
+		return true
+	}
+	return false
+}

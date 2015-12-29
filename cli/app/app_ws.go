@@ -23,10 +23,11 @@ type wsResponse struct {
 
 type newPlayerResponse struct {
 	wsResponse
-	X     float64
-	Y     float64
-	Token string
-	Name  string
+	X         float64
+	Y         float64
+	Token     string
+	Name      string
+	LocalArea rogue.LocalArea
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -70,6 +71,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			res.Y = pos.Y
 			res.Name = parts[1]
 			res.Token = token
+			res.LocalArea = island.DescribeLocalArea(pos)
 
 			b, _ = json.Marshal(res)
 			log.Printf("new player %s spawned at %s", parts[1], pos)
