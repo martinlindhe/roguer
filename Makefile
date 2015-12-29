@@ -19,7 +19,9 @@ tiles:
 	go run cli/tileslicer/tileslicer.go resources/assets/tilesets/oddball/bosses.png resources/assets/tilesets/oddball/bosses 16 16
 	go run cli/tileslicer/tileslicer.go resources/assets/tilesets/oddball/items.png resources/assets/tilesets/oddball/items 8 8
 	go run cli/tileslicer/tileslicer.go resources/assets/tilesets/oddball/tiles.png resources/assets/tilesets/oddball/tiles 8 12
-	# tiles 0-73 is half height (4x12) how on earth do i move those with a simple command
+	# move 8x12, 8x4 tiles into own folders:
 	php move_tiles.php
-
-	#find resources/assets/tilesets/oddball/ -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
+	# cut the 8x12 tiles into 8x4:
+	go run cli/tilecutter/tilecutter.go
+	# pngcrush:
+	find resources/assets/tilesets/oddball -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh

@@ -13,7 +13,7 @@ at least according to so: https://stackoverflow.com/q/676467(edited)
 
 $inDir = "resources/assets/tilesets/oddball/tiles";
 
-$ifOutDir = "resources/assets/tilesets/oddball/tiles/4x12";
+$ifOutDir = "resources/assets/tilesets/oddball/tiles/8x4";
 $elseOutDir = "resources/assets/tilesets/oddball/tiles/8x12";
 
 for ($i = 0; $i < 400; $i++) {
