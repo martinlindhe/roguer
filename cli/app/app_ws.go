@@ -90,13 +90,15 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			if player == nil {
-				log.Errorf("Unknown token recieved: %s", token)
+				log.Errorf("Invalid token recieved: %s", token)
+				b = []byte(`{"Type": "error, invalid token"}`)
 			} else {
 				oldPos := player.Spawn.Position
 				player.Spawn.Position.X = float64(x)
 				player.Spawn.Position.Y = float64(y)
 
 				log.Printf("Player %s moved from %s to %s", player.Name, oldPos, player.Spawn.Position)
+				b = []byte(`{"Type": "ok"}`)
 			}
 
 		default:
