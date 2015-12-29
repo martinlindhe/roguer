@@ -24,6 +24,7 @@ type newPlayerResponse struct {
 	X     float64
 	Y     float64
 	Token string
+	Name  string
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -53,6 +54,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			res.Type = "xy"
 			res.X = pos.X
 			res.Y = pos.Y
+			res.Name = parts[1]
 			res.Token = newJwt()
 
 			b, _ = json.Marshal(res)

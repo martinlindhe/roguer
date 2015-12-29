@@ -61,6 +61,7 @@ function create() {
     emitter.bounce.setTo(0.5, 0.5);
 
     player = game.add.sprite(0, 0, 'phaser');
+    player.visible = false;
     player.anchor.set(0.5);
 
     game.physics.enable(player);
@@ -135,7 +136,12 @@ function onSocketMessage(msg) {
             // multiply coords with tile size to scale properly. sprite tiles are always in pixels
             player.x = cmd.X * 16;
             player.y = cmd.Y * 16;
+            player.visible = true;
             // XXX todo set floating name over head of player
+
+            var t = game.add.text(0, -24, cmd.Name, { font: "14px Arial", fill: "#ffffff", align: "center" });
+            t.anchor.set(0.5);
+            player.addChild(t);
 
             token = cmd.Token;
             break;
