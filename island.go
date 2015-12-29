@@ -17,6 +17,7 @@ type Island struct {
 	Age       int64
 	HeightMap [][]int
 	Spawns    []*Obj
+	Players   []Player
 
 	// lookup lists:
 	npcSpecs    []objSpec

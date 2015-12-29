@@ -61,20 +61,20 @@ func main() {
 	island = rogue.NewIsland()
 	islandMap = precalcTilemap()
 
-	c := time.Tick(3 * time.Second)
-	for now := range c {
-		log.Printf("beep beep %v\n", now)
-		// progrsss game world
-		island.Tick()
-	}
-
 	// listen and serve on 0.0.0.0:3322
 	appPort := 3322
 	listenAt := fmt.Sprintf(":%d", appPort)
 
 	log.Infof("Starting http server on %s", listenAt)
 
-	r.Run(listenAt)
+	go r.Run(listenAt)
+
+	c := time.Tick(3 * time.Second)
+	for now := range c {
+		log.Printf("beep beep %v\n", now)
+		// progrsss game world
+		island.Tick()
+	}
 }
 
 func getRouter() *ace.Ace {

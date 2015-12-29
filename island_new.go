@@ -71,13 +71,14 @@ func (i *Island) spawnGravel() {
 
 // create trees all over the island
 func (i *Island) spawnTrees() {
+
+	cnt := 0
 	for y := 0; y < i.Height; y++ {
 		for x := 0; x < i.Width; x++ {
 			pos := Point{X: float64(x), Y: float64(y)}
 			if i.isAboveWater(pos) {
-				// add 0-1 items
-				cnt := rand.Intn(2)
-				for i := 0; i < cnt; i++ {
+				// add one tree in 3% of the time
+				if rand.Intn(100) < 3 {
 					name := ""
 					// XXX make it less likely to place oak trees ?
 					switch rand.Intn(3) {
@@ -91,10 +92,12 @@ func (i *Island) spawnTrees() {
 						panic("")
 					}
 					island.addNpcFromName(name, pos)
+					cnt++
 				}
 			}
 		}
 	}
+	log.Printf("spawned %d trees", cnt)
 }
 
 // generate critters based on data file

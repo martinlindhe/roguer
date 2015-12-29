@@ -8,6 +8,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
+	"github.com/martinlindhe/rogue"
 )
 
 var wsUpgrader = websocket.Upgrader{
@@ -47,15 +48,27 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 		switch parts[0] {
 		case "new_player":
-			// XXX create new player etc
+			// create new player
 			pos := island.RandomPointAboveWater()
+			token := newJwt()
+
+			spawn := new(rogue.Obj)
+			spawn.Name = parts[1]
+			spawn.Position = pos
+			island.Spawns = append(island.Spawns, spawn)
+
+			var player rogue.Player
+			player.Name = parts[1]
+			player.Token = token
+			player.Spawn = spawn
+			island.Players = append(island.Players, player)
 
 			var res newPlayerResponse
 			res.Type = "xy"
 			res.X = pos.X
 			res.Y = pos.Y
 			res.Name = parts[1]
-			res.Token = newJwt()
+			res.Token = token
 
 			b, _ = json.Marshal(res)
 			log.Printf("new player %s spawned at %s", parts[1], pos)

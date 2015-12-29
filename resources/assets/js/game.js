@@ -111,17 +111,21 @@ function update()
 
     if (cursors.up.isDown) {
         player.y -= moveStepping;
+        sendSocketMove();
         particleBurst();
     } else if (cursors.down.isDown) {
         player.y += moveStepping;
+        sendSocketMove();
         particleBurst();
     }
 
     if (cursors.left.isDown) {
         player.x -= moveStepping;
+        sendSocketMove();
         particleBurst();
     } else if (cursors.right.isDown) {
         player.x += moveStepping;
+        sendSocketMove();
         particleBurst();
     }
 
@@ -183,10 +187,6 @@ function onSocketMessage(msg)
         token = cmd.Token;
         break;
 
-    case 'pong':
-        console.log("pong");
-        break;
-
     default:
         console.log("unknown command from server: " + cmd.Type);
     }
@@ -197,18 +197,14 @@ function sendSocketMsg(data) {
     console.log("-sent->" + data);
 }
 
+function sendSocketMove() {
+    sendSocketMsg("move " + Math.floor(player.x/16) + " " + Math.floor(player.y/16) + " " + token);
+}
+
 // Socket connected
 function onSocketConnected()
 {
-    sendSocketMsg("ping");
     sendSocketMsg("new_player mrcool");
-
-    setInterval(
-        function() {
-            sendSocketMsg("ping");
-        },
-        5000
-    );
 
     console.log('Connected to socket server');
 }
