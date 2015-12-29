@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
@@ -75,8 +76,28 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 			// XXX broadcast a "new player" event to all
 
-		case "ping":
-			b = []byte(`{"Type": "pong"}`)
+		case "move":
+			subcommand := strings.SplitN(parts[1], " ", 3)
+			x, _ := strconv.Atoi(subcommand[0])
+			y, _ := strconv.Atoi(subcommand[1])
+			token := subcommand[2]
+
+			// find user by token
+			var player *rogue.Player
+			for _, u := range island.Players {
+				if u.Token == token {
+					player = &u
+				}
+			}
+			if player == nil {
+				log.Errorf("Unknown token recieved: %s", token)
+			} else {
+				oldPos := player.Spawn.Position
+				player.Spawn.Position.X = float64(x)
+				player.Spawn.Position.Y = float64(y)
+
+				log.Printf("Player %s moved from %s to %s", player.Name, oldPos, player.Spawn.Position)
+			}
 
 		default:
 			b = []byte(fmt.Sprintf("unknown command %s", parts[0]))
