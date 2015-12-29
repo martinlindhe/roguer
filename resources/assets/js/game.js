@@ -168,8 +168,6 @@ function initWebsockets()
  */
 function onSocketMessage(msg)
 {
-    console.log("<-recv- " + msg.data);
-
     var cmd = JSON.parse(msg.data);
 
     switch (cmd.Type) {
@@ -185,9 +183,20 @@ function onSocketMessage(msg)
         player.addChild(t);
 
         token = cmd.Token;
+
+        // display all from .LocalSpawns
+        //console.log(cmd.LocalSpawns);
+        for (var i = 0; i < cmd.LocalSpawns.length; i++) {
+            var sp = cmd.LocalSpawns[i]
+            console.log(sp)
+
+            // XXX add to game world ...
+            game.add.sprite(sp.X * 16, sp.Y * 16, 'phaser');
+        }
         break;
 
     default:
+        console.log("<-recv- " + msg.data);
         console.log("unknown command from server: " + cmd.Type);
     }
 }

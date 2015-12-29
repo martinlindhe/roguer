@@ -251,31 +251,25 @@ func (i *Island) HeightsAsFlatTilemap() []int {
 	return res
 }
 
-// this describes a little piece of the world map
-type LocalArea struct {
-	center Point
-	Spawns []spawnInfo
-}
-
 // expose "public" info about the spawn to the player
-type spawnInfo struct {
+type LocalSpawns struct {
 	Name string
 	X    float64
 	Y    float64
 }
 
-func (i *Island) DescribeLocalArea(pos Point) LocalArea {
-	var res LocalArea
+func (i *Island) DescribeLocalArea(pos Point) []LocalSpawns {
+	var res []LocalSpawns
 
 	// find all spawns near pos
 	for _, sp := range island.Spawns {
 		if sp.Position.isNearby(pos) {
-			var si spawnInfo
-			si.Name = sp.Name
-			si.X = sp.Position.X
-			si.Y = sp.Position.Y
+			var ls LocalSpawns
+			ls.Name = sp.Name
+			ls.X = sp.Position.X
+			ls.Y = sp.Position.Y
 
-			res.Spawns = append(res.Spawns, si)
+			res = append(res, ls)
 		}
 	}
 
