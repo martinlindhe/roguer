@@ -13,6 +13,8 @@ var game = new Phaser.Game(
 
 function preload()
 {
+    game.time.advancedTiming = true; // required for fps counter
+
     game.stage.backgroundColor = '#262f71';  // deep water
 
     // load world
@@ -36,12 +38,16 @@ var emitter;
 var music;
 
 var token;
+var worldScale = 1.0;
 
 function create()
 {
     music = game.add.audio('carter');
     music.volume = 0.5; // 50%
     music.play();
+
+
+
 
 
 
@@ -118,11 +124,27 @@ function update()
         player.scale.x = 1;
         particleBurst();
     }
+
+    // zoom
+    if (game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
+        worldScale += 0.05;
+    }
+    else if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+        worldScale -= 0.05;
+    }
+
+    // set a minimum and maximum scale value
+    worldScale = Phaser.Math.clamp(worldScale, 0.25, 2);
+
+    // set our world scale as needed
+    game.world.scale.set(worldScale);
 }
 
 function render()
 {
-    game.debug.spriteInfo(player, 32, 32);
+    game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");
+
+    // game.debug.spriteInfo(player, 32, 32);
     //game.debug.cameraInfo(game.camera, 32, 32);
 
     //game.debug.soundInfo(music, 20, 32);
@@ -153,8 +175,8 @@ function onSocketMessage(msg)
         player.x = cmd.X * 16;
         player.y = cmd.Y * 16;
         player.visible = true;
-        // XXX todo set floating name over head of player
 
+        // floating name over head of player
         var t = game.add.text(0, -24, cmd.Name, { font: "14px Arial", fill: "#ffffff", align: "center" });
         t.anchor.set(0.5);
         player.addChild(t);
