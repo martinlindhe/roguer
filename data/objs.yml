@@ -3,6 +3,14 @@ all:
     class: npc
     race: dwarf
 
+  - type: humanoid
+    class: npc
+    race: elf
+
+  - type: humanoid
+    class: npc
+    race: human
+
   - type: rodent
     class: npc
     race: rabbit

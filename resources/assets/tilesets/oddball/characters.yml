@@ -1,2 +1,4 @@
-all:
-  dwarf: 4
+# oddball tileset mapping
+elf: 6
+dwarf: 90
+human: 48
