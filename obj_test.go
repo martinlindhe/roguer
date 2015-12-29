@@ -37,7 +37,7 @@ func TestWithinRadiusOfType(t *testing.T) {
 	prepareIsland()
 	assert.Equal(t, true, len(island.Spawns) == 0)
 
-	pos := island.randomPointAboveWater()
+	pos := island.RandomPointAboveWater()
 
 	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 0, pos)))
 	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 30, pos)))
@@ -66,7 +66,7 @@ func TestCanBuildAt(t *testing.T) {
 	prepareIsland()
 	assert.Equal(t, 0, len(island.Spawns))
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 
 	assert.Equal(t, true, island.canBuildAt(island.Spawns[0].Position))
@@ -80,7 +80,7 @@ func TestFindFoodAndEat(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
@@ -131,7 +131,7 @@ func TestFindWaterAndDrink(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
@@ -178,7 +178,7 @@ func TestFindFirewood(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 
 	// add nessecities, so they dont need to be built
 	island.addNpcFromName("small fireplace", island.Spawns[0].Position)
@@ -212,7 +212,7 @@ func TestSleep(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
@@ -247,7 +247,7 @@ func TestSleepAtShelter(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
 
@@ -269,7 +269,7 @@ func TestRabbitDigHole(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("rabbit", island.randomPointAboveWater())
+	island.addNpcFromRace("rabbit", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	ra := island.Spawns[0]
 
@@ -303,7 +303,7 @@ func TestBuildFireplace(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
@@ -342,7 +342,7 @@ func TestBuildShelter(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 
 	// add nessecities nearby, so they dont need to be built
 	nextTo, _ := island.Spawns[0].Position.randomNearby()
@@ -393,7 +393,7 @@ func TestBuildFarmland(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 
 	// add nessecities nearby, so they dont need to be built
 	nextTo, _ := island.Spawns[0].Position.randomNearby()
@@ -428,7 +428,7 @@ func TestTree(t *testing.T) {
 
 	prepareIsland()
 
-	pos := island.randomPointAboveWater()
+	pos := island.RandomPointAboveWater()
 	island.addNpcFromName("oak tree", pos)
 
 	assert.Equal(t, 1, len(island.Spawns))
@@ -446,7 +446,7 @@ func TestNpcDiesOfOldAge(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 
 	dw := island.Spawns[0]
@@ -471,7 +471,7 @@ func TestNpcMovesToFireplace(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 
 	dw := island.Spawns[0]
@@ -517,7 +517,7 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 
 	dw := island.Spawns[0]
@@ -580,7 +580,7 @@ func TestBuildCookingPit(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
 
@@ -612,7 +612,7 @@ func TestBuildSmallHut(t *testing.T) {
 
 	prepareIsland()
 
-	island.addNpcFromRace("dwarf", island.randomPointAboveWater())
+	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
 

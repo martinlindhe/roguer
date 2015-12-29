@@ -46,7 +46,7 @@ func (n *Obj) treeTick() {
 		//log.Debugf("Rolled %f for check if %s is spawned, %f chance", roll, drop.Name, drop.Chance)
 
 		if roll <= drop.Chance {
-			log.Printf("%s drops a %s", n.Name, drop.Name)
+			log.Printf("%s drops a %s", n, drop.Name)
 
 			spawnPos, err := n.Position.randomNearby()
 			if err == nil {

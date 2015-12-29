@@ -59,12 +59,14 @@ func main() {
 
 	r := getRouter()
 	island = rogue.NewIsland()
-
 	islandMap = precalcTilemap()
 
-	r.GET("/", func(c *ace.C) {
-		c.String(200, views.Index())
-	})
+	c := time.Tick(3 * time.Second)
+	for now := range c {
+		log.Printf("beep beep %v\n", now)
+		// progrsss game world
+		island.Tick()
+	}
 
 	// listen and serve on 0.0.0.0:3322
 	appPort := 3322
@@ -81,6 +83,11 @@ func getRouter() *ace.Ace {
 	r := ace.Default()
 
 	//	r.Use(gzip.Gzip(gzip.DefaultCompression))
+
+	r.GET("/", func(c *ace.C) {
+		c.String(200, views.Index())
+	})
+
 	r.GET("/island/full", getFullIslandController)
 
 	r.GET("/ws", func(c *ace.C) {
