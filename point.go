@@ -44,9 +44,11 @@ func (p *Point) randomNearby() (Point, error) {
 
 	for y := p.Y - 1; y <= p.Y+1; y++ {
 		for x := p.X - 1; x <= p.X+1; x++ {
-			pp := Point{x, y}
-			if pp != *p && island.isAboveWater(pp) {
-				m = append(m, pp)
+			if y >= 0 && y < float64(island.Height) && x >= 0 && x < float64(island.Width) {
+				pp := Point{x, y}
+				if pp != *p && island.isAboveWater(pp) {
+					m = append(m, pp)
+				}
 			}
 		}
 	}
