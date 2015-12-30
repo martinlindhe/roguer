@@ -31,9 +31,10 @@ func TestSpawnsByType(t *testing.T) {
 	pos2, _ := pos.randomNearby()
 	fmt.Println("pos2", pos2)
 	assert.Equal(t, 0, len(pos2.spawnsByName("small fireplace", 0)))
-	assert.Equal(t, 1, len(pos2.spawnsByName("small fireplace", 1)))
-	assert.Equal(t, 1, len(pos2.spawnsByName("small fireplace", 20)))
+	assert.Equal(t, 1, len(pos2.spawnsByName("small fireplace", 2))) // NOTE: distance here is random but can be over 1.0
+	assert.Equal(t, 1, len(pos2.spawnsByName("small fireplace", 30)))
+
 	assert.Equal(t, 0, len(pos2.spawnsByType("fireplace", 0)))
-	assert.Equal(t, 1, len(pos2.spawnsByType("fireplace", 1)))
-	assert.Equal(t, 1, len(pos2.spawnsByType("fireplace", 20)))
+	assert.Equal(t, 1, len(pos2.spawnsByType("fireplace", 2))) // NOTE: distance here is random but can be over 1.0
+	assert.Equal(t, 1, len(pos2.spawnsByType("fireplace", 30)))
 }
