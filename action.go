@@ -27,19 +27,20 @@ type actionSpec struct {
 	Destination *Point
 }
 
-func parseActionsDefinition(defFileName string) []actionSpec {
+func parseActionsDefinition(defFileName string) ([]actionSpec, error) {
+
+	var specs actionList
 
 	data, err := ioutil.ReadFile(defFileName)
 	if err != nil {
-		panic(err)
+		return specs.All, err
 	}
 
-	var actions actionList
-	err = yaml.Unmarshal(data, &actions)
+	err = yaml.Unmarshal(data, &specs)
 	if err != nil {
-		panic(err)
+		return specs.All, err
 	}
 
-	log.Infof("Read %d entries from %s", len(actions.All), defFileName)
-	return actions.All
+	log.Infof("Read %d entries from %s", len(specs.All), defFileName)
+	return specs.All, nil
 }

@@ -60,19 +60,20 @@ type dropSpec struct {
 	Chance float64 `json:"chance"`
 }
 
-func parseObjectsDefinition(defFileName string) []objSpec {
+func parseObjectsDefinition(defFileName string) ([]objSpec, error) {
+
+	var npcs objList
 
 	data, err := ioutil.ReadFile(defFileName)
 	if err != nil {
-		panic(err)
+		return npcs.All, err
 	}
 
-	var npcs objList
 	err = yaml.Unmarshal(data, &npcs)
 	if err != nil {
-		panic(err)
+		return npcs.All, err
 	}
 
 	log.Infof("Read %d entries from %s", len(npcs.All), defFileName)
-	return npcs.All
+	return npcs.All, nil
 }

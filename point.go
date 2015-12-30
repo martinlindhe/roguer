@@ -71,3 +71,27 @@ func (p *Point) isNearby(pos Point) bool {
 	}
 	return false
 }
+
+func (pos *Point) spawnsByName(n string, radius float64) []Obj {
+
+	var res []Obj
+	for _, o := range island.Spawns {
+		if o.Name == n && o.distanceTo(*pos) <= radius {
+			res = append(res, *o)
+		}
+	}
+	return res
+}
+
+func (pos *Point) spawnsByType(t string, radius float64) []*Obj {
+
+	var res []*Obj
+	for _, o := range island.Spawns {
+
+		// log.Printf("XXX %s at dist %f (radius %f)", npc, npc.distanceTo(pos), radius)
+		if o.Type == t && o.distanceTo(*pos) <= radius {
+			res = append(res, o)
+		}
+	}
+	return res
+}

@@ -16,6 +16,7 @@ var island *Island // singelton
 
 // NewIsland inits the singelton
 func NewIsland() *Island {
+
 	// XXX load existing world from disk
 	seed := int64(666666)
 	log.Infof("Generating island with seed %d ...", seed)
@@ -29,7 +30,7 @@ func NewIsland() *Island {
 
 	// store island to disk as png
 	islandColImage := island.ColoredHeightMapAsImage()
-	islandColImageName := fmt.Sprintf("./public/img/islands/%d.png", seed)
+	islandColImageName := fmt.Sprintf("public/img/islands/%d.png", seed)
 	islandColImgFile, _ := os.Create(islandColImageName)
 	png.Encode(islandColImgFile, islandColImage)
 	/*
@@ -168,8 +169,8 @@ func generateIsland(seed int64, width int, height int) *Island {
 		HeightMap: m}
 
 	// load all possible world items, NPC:s and actions
-	is.npcSpecs = parseObjectsDefinition("data/objs.yml")
-	is.actionSpecs = parseActionsDefinition("data/actions.yml")
+	is.npcSpecs, _ = parseObjectsDefinition("data/objs.yml")
+	is.actionSpecs, _ = parseActionsDefinition("data/actions.yml")
 
 	return is
 }

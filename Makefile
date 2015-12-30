@@ -35,3 +35,9 @@ jointiles:
 	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/characters public/img/tileset/oddball/characters.png 16; imgcat public/img/tileset/oddball/characters.png
 	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/bosses     public/img/tileset/oddball/bosses.png 8; imgcat public/img/tileset/oddball/bosses.png
 	find public/img/tileset/oddball -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
+
+validate-yaml:
+	find . -name '*.yml' -not -path "./node_modules/*" -print0 | xargs -0 -n1 validyaml
+
+validate-json:
+	find . -name '*.json' -not -path "./node_modules/*" -print0 | xargs -0 -n1 validjson

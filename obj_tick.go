@@ -87,7 +87,7 @@ func (n *Obj) npcTick() bool {
 			n.planAction("find fire wood")
 		}
 
-		nearbyFireplaces := island.withinRadiusOfType("fireplace", 1, n.Position)
+		nearbyFireplaces := n.Position.spawnsByType("fireplace", 1)
 		if len(nearbyFireplaces) > 0 {
 
 			fireplace := nearbyFireplaces[0]
@@ -123,7 +123,7 @@ func (n *Obj) npcTick() bool {
 		}
 
 		if !n.hasPlannedType("travel") && n.hasItemTypeInInventory("wood") {
-			fireplaces := island.withinRadiusOfType("fireplace", 30, n.Position)
+			fireplaces := n.Position.spawnsByType("fireplace", 30)
 
 			if len(fireplaces) > 0 {
 				if n.distanceTo(fireplaces[0].Position) > 1 {
@@ -168,7 +168,7 @@ func (n *Obj) survivalPlanningTick() {
 		// when basic needs is resolved, randomly decide to do
 		// something that would help improve situation for the npc
 		if n.Race == "rabbit" {
-			if len(island.withinRadiusOfName("small hole", 30, n.Position)) == 0 {
+			if len(n.Position.spawnsByType("small hole", 30)) == 0 {
 				n.planAction("dig small hole", n.Position)
 				return
 			}
@@ -177,39 +177,39 @@ func (n *Obj) survivalPlanningTick() {
 		if n.Type == "humanoid" {
 
 			if island.canBuildAt(n.Position) && !n.hasPlannedType("build") {
-				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) == 0 {
+				if len(n.Position.spawnsByType("fireplace", 30)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a larger fireplace
 					n.planAction("build small fireplace", n.Position)
 					return
 				}
-				if n.Home == nil && len(island.withinRadiusOfType("shelter", 30, n.Position)) == 0 {
+				if n.Home == nil && len(n.Position.spawnsByType("shelter", 30)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a small hut
 					n.planAction("build small shelter", n.Position)
 					return
 				}
 
-				if len(island.withinRadiusOfType("fireplace", 30, n.Position)) > 0 &&
-					len(island.withinRadiusOfType("shelter", 30, n.Position)) > 0 {
+				if len(n.Position.spawnsByType("fireplace", 30)) > 0 &&
+					len(n.Position.spawnsByType("shelter", 30)) > 0 {
 
 					// basic survival is satisifed, lets build a cooking pit
-					if len(island.withinRadiusOfType("cooking", 30, n.Position)) == 0 {
+					if len(n.Position.spawnsByType("cooking", 30)) == 0 {
 						n.planAction("build cooking pit", n.Position)
 						return
 					}
 
 					// build a hut if we already have a small shelter
-					if n.Home != nil && n.Home.Name == "small shelter" && len(island.withinRadiusOfName("small hut", 30, n.Position)) == 0 {
+					if n.Home != nil && n.Home.Name == "small shelter" && len(n.Position.spawnsByName("small hut", 30)) == 0 {
 						n.planAction("build small hut", n.Position)
 						return
 					}
 				}
 
-				if len(island.withinRadiusOfName("farmland", 1, n.Position)) == 0 {
+				if len(n.Position.spawnsByName("farmland", 1)) == 0 {
 					n.planAction("build farmland", n.Position)
 					return
 				}
 
-				if len(island.withinRadiusOfName("apple tree", 30, n.Position)) == 0 {
+				if len(n.Position.spawnsByName("apple tree", 30)) == 0 {
 					// XXX require having a apple seed
 					// XXX require having a garden, plant there
 					n.planAction("plant apple tree", n.Position)
@@ -243,14 +243,14 @@ func (n *Obj) tiredTick() bool {
 			return true
 		}
 
-		nearbyShelters := island.withinRadiusOfType(shelterType, 0, n.Position)
+		nearbyShelters := n.Position.spawnsByType(shelterType, 0)
 		if len(nearbyShelters) > 0 {
 			log.Printf("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", n.Name, nearbyShelters[0].Name, n.Tiredness, n.tirednessCap())
 			n.planAction("sleep")
 			return true
 		}
 
-		shelters := island.withinRadiusOfType(shelterType, 30, n.Position)
+		shelters := n.Position.spawnsByType(shelterType, 30)
 		if len(shelters) == 0 {
 			log.Printf("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
 			n.planAction("sleep")

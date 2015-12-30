@@ -32,33 +32,9 @@ func prepareIsland() {
 	island.Spawns = nil
 }
 
-func TestWithinRadiusOfType(t *testing.T) {
-
-	prepareIsland()
-	assert.Equal(t, true, len(island.Spawns) == 0)
-
-	pos := island.RandomPointAboveWater()
-
-	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 0, pos)))
-	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 30, pos)))
-	assert.Equal(t, 0, len(island.withinRadiusOfType("fireplace", 0, pos)))
-	assert.Equal(t, 0, len(island.withinRadiusOfType("fireplace", 30, pos)))
-
-	island.addNpcFromName("small fireplace", pos)
-	assert.Equal(t, true, len(island.Spawns) == 1)
-
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 0, pos)))
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, pos)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, pos)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, pos)))
-
-	pos2, _ := pos.randomNearby()
-	assert.Equal(t, 0, len(island.withinRadiusOfName("small fireplace", 0, pos2)))
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 1, pos2)))
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 30, pos2)))
-	assert.Equal(t, 0, len(island.withinRadiusOfType("fireplace", 0, pos2)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 1, pos2)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 30, pos2)))
+func TestParseObjectsDefinition(t *testing.T) {
+	_, err := parseObjectsDefinition("data/objs.yml")
+	assert.Equal(t, nil, err)
 }
 
 func TestCanBuildAt(t *testing.T) {
@@ -283,8 +259,8 @@ func TestRabbitDigHole(t *testing.T) {
 		island.Tick()
 	}
 
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small hole", 0, ra.Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("burrow", 0, ra.Position)))
+	assert.Equal(t, 1, len(ra.Position.spawnsByName("small hole", 0)))
+	assert.Equal(t, 1, len(ra.Position.spawnsByType("burrow", 0)))
 
 	// XXX make sure rabbit uses the burrow to sleep
 
@@ -318,7 +294,7 @@ func TestBuildFireplace(t *testing.T) {
 	island.addNpcFromName("farmland", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
 
-	assert.Equal(t, 1, len(island.withinRadiusOfType("shelter", 30, dw.Position)))
+	assert.Equal(t, 1, len(dw.Position.spawnsByType("shelter", 30)))
 
 	assert.Equal(t, true, len(island.Spawns) == 4)
 
@@ -334,8 +310,8 @@ func TestBuildFireplace(t *testing.T) {
 		island.Tick()
 	}
 
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small fireplace", 0, dw.Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 0, dw.Position)))
+	assert.Equal(t, 1, len(dw.Position.spawnsByName("small fireplace", 0)))
+	assert.Equal(t, 1, len(dw.Position.spawnsByType("fireplace", 0)))
 }
 
 func TestBuildShelter(t *testing.T) {
@@ -356,7 +332,7 @@ func TestBuildShelter(t *testing.T) {
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
 
-	assert.Equal(t, 1, len(island.withinRadiusOfType("fireplace", 2, dw.Position)))
+	assert.Equal(t, 1, len(dw.Position.spawnsByType("fireplace", 2)))
 
 	island.Tick()
 	assert.Equal(t, true, dw.hasPlanned("build small shelter"))
@@ -368,7 +344,7 @@ func TestBuildShelter(t *testing.T) {
 		island.Tick()
 	}
 
-	shelters := island.withinRadiusOfType("shelter", 0, dw.Position)
+	shelters := dw.Position.spawnsByType("shelter", 0)
 	assert.Equal(t, 1, len(shelters))
 
 	// make sure npc made this their home
@@ -420,8 +396,8 @@ func TestBuildFarmland(t *testing.T) {
 		island.Tick()
 	}
 
-	assert.Equal(t, 1, len(island.withinRadiusOfName("farmland", 0, dw.Position)))
-	assert.Equal(t, 1, len(island.withinRadiusOfType("food producer", 0, dw.Position)))
+	assert.Equal(t, 1, len(dw.Position.spawnsByName("farmland", 0)))
+	assert.Equal(t, 1, len(dw.Position.spawnsByType("food producer", 0)))
 }
 
 func TestTree(t *testing.T) {
@@ -439,7 +415,7 @@ func TestTree(t *testing.T) {
 	}
 
 	assert.Equal(t, true, len(island.Spawns) > 1)
-	assert.Equal(t, true, len(island.withinRadiusOfType("wood", 1, pos)) > 0)
+	assert.Equal(t, true, len(pos.spawnsByType("wood", 1)) > 0)
 }
 
 func TestNpcDiesOfOldAge(t *testing.T) {
@@ -605,7 +581,7 @@ func TestBuildCookingPit(t *testing.T) {
 		}
 	}
 
-	assert.Equal(t, 1, len(island.withinRadiusOfName("cooking pit", 0, dw.Position)))
+	assert.Equal(t, 1, len(dw.Position.spawnsByName("cooking pit", 0)))
 }
 
 func TestBuildSmallHut(t *testing.T) {
@@ -640,5 +616,5 @@ func TestBuildSmallHut(t *testing.T) {
 		}
 	}
 
-	assert.Equal(t, 1, len(island.withinRadiusOfName("small hut", 0, dw.Position)))
+	assert.Equal(t, 1, len(dw.Position.spawnsByName("small hut", 0)))
 }

@@ -179,7 +179,7 @@ func (n *Obj) performSleep() bool {
 	energy := mult
 
 	if shelterType != "" {
-		shelters := island.withinRadiusOfType(shelterType, 0, n.Position)
+		shelters := n.Position.spawnsByType(shelterType, 0)
 		if len(shelters) > 0 {
 			// give bonus from nearby shelter
 			mult = shelters[0].Energy
@@ -217,7 +217,7 @@ func (n *Obj) performForage() bool {
 	if *n.CurrentAction.Destination == p {
 		// XXX
 
-		list := island.withinRadiusOfType(n.CurrentAction.Result, 30, n.Position)
+		list := n.Position.spawnsByType(n.CurrentAction.Result, 30)
 		if len(list) > 0 {
 
 			rnd := list[rand.Intn(len(list))]
@@ -230,7 +230,7 @@ func (n *Obj) performForage() bool {
 		check := n.performTravel(1) // XXX 1=walking speed
 
 		// look for food at current spot
-		list := island.withinRadiusOfType(n.CurrentAction.Result, 0.9, n.Position)
+		list := n.Position.spawnsByType(n.CurrentAction.Result, 0.9)
 
 		for _, it := range list {
 			log.Printf("%s picked up %s", n.Name, it.Name)
@@ -241,7 +241,7 @@ func (n *Obj) performForage() bool {
 		}
 
 		// if nothing left on dst point, consider it a success!
-		dstList := island.withinRadiusOfType(n.CurrentAction.Result, 0.9, *n.CurrentAction.Destination)
+		dstList := n.CurrentAction.Destination.spawnsByType(n.CurrentAction.Result, 0.9)
 		if len(dstList) == 0 {
 			return true
 		}
