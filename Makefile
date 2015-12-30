@@ -25,3 +25,13 @@ tiles:
 	go run cli/tilecutter/tilecutter.go
 	# pngcrush:
 	find resources/assets/tilesets/oddball -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
+
+
+jointiles:
+	mkdir -p public/img/tileset/oddball
+	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/tiles/8x4 public/img/tileset/oddball/tiles.png 8; imgcat public/img/tileset/oddball/tiles.png
+	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/tiles/8x12 public/img/tileset/oddball/tiles-big.png 8; imgcat public/img/tileset/oddball/tiles-big.png
+	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/items public/img/tileset/oddball/items.png 8; imgcat public/img/tileset/oddball/items.png
+	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/font public/img/tileset/oddball/font.png 8; imgcat public/img/tileset/oddball/font.png
+	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/characters public/img/tileset/oddball/characters.png 8; imgcat public/img/tileset/oddball/characters.png
+	find public/img/tileset/oddball -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh

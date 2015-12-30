@@ -80,8 +80,8 @@ func sliceImage(imgFile string, outDir string, tileWidth int, tileHeight int) []
 	for row := 0; row < int(rows); row++ {
 		for col := 0; col < int(cols); col++ {
 			x0 := col * tileWidth
-			x1 := (col + 1) * tileWidth
 			y0 := row * tileHeight
+			x1 := (col + 1) * tileWidth
 			y1 := (row + 1) * tileHeight
 			sr := image.Rect(x0, y0, x1, y1)
 
@@ -94,7 +94,7 @@ func sliceImage(imgFile string, outDir string, tileWidth int, tileHeight int) []
 				continue
 			}
 
-			outFile := fmt.Sprintf("%s/%d.png", outDir, cnt)
+			outFile := fmt.Sprintf("%s/%03d.png", outDir, cnt)
 			writePng(outFile, dst)
 			cnt++
 		}

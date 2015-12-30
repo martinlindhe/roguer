@@ -13,15 +13,19 @@ at least according to so: https://stackoverflow.com/q/676467(edited)
 
 $inDir = "resources/assets/tilesets/oddball/tiles";
 
-$ifOutDir = "resources/assets/tilesets/oddball/tiles/8x4";
+$ifOutDir   = "resources/assets/tilesets/oddball/tiles/8x4";
 $elseOutDir = "resources/assets/tilesets/oddball/tiles/8x12";
 
-for ($i = 0; $i < 400; $i++) {
-    $f = $inDir."/".$i.".png";
+for ($i = 0; $i < 500; $i++) {
+    $f = $inDir."/".sprintf("%03d", $i).".png";
     if (file_exists($f)) {
 
         $out = $i <= 79 ? $ifOutDir : $elseOutDir;
-        $out .= "/".$i.".png";
+        if (!is_dir($out)) {
+            mkdir($out);
+        }
+
+        $out .= "/".sprintf("%03d", $i).".png";
         rename($f, $out);
         echo "Renamed ".$f." to ".$out."\n";
     }

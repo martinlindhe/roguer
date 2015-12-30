@@ -12,6 +12,8 @@ import (
 
 func main() {
 
+	// TODO: take command line input: allow to choose bottom or top part, allow to choose half, 1/3 or 2/3 to keep
+
 	// loop over input folder, keep bottom third of each image, overwrite
 
 	inDir := "resources/assets/tilesets/oddball/tiles/8x4"

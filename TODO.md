@@ -50,7 +50,8 @@ generate island:
 
 # phaser js game engine
 
-  - produce a 256x256 pixel (16x16 tiles) tilemap.png from input directory and id => name mapping
+
+
 
   - tool: read *.yml from oddball tileset, use it to pick the proper tiles, and generate new tile maps,
     one for each input folder (so we'll have multiple tile maps still, but mapped to the items we use)
