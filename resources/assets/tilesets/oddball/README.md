@@ -12,5 +12,5 @@ For any other licence or purpose please contact Oddball through the forums pm se
 font.png: 8x8
 characters.png: 8x8
 bosses.png: 16x16
-tiles.png: 8x12
+ground.png: 8x12
 items.png: 8x8

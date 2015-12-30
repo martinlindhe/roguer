@@ -3,12 +3,13 @@ package rogue
 import (
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseTilesetDefinition(t *testing.T) {
+func TestParseGroundTilesetDefinition(t *testing.T) {
 
-	_, err := parseTilesetDefinition("resources/assets/tilesets/oddball/tiles.yml")
-	//spew.Dump(ts)
+	ts, err := parseGroundTilesetDefinition("resources/assets/tilesets/oddball/ground.yml")
+	spew.Dump(ts)
 	assert.Equal(t, nil, err)
 }

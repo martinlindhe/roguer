@@ -11,10 +11,10 @@ i can use grep, but seems number-range matching is not-a-thing :tm: in regexp,
 at least according to so: https://stackoverflow.com/q/676467(edited)
 */
 
-$inDir = "resources/assets/tilesets/oddball/tiles";
+$inDir = "resources/assets/tilesets/oddball/ground";
 
-$ifOutDir   = "resources/assets/tilesets/oddball/tiles/8x4";
-$elseOutDir = "resources/assets/tilesets/oddball/tiles/8x12";
+$ifOutDir   = "resources/assets/tilesets/oddball/ground/8x4";
+$elseOutDir = "resources/assets/tilesets/oddball/ground/8x12";
 
 for ($i = 0; $i < 500; $i++) {
     $f = $inDir."/".sprintf("%03d", $i).".png";

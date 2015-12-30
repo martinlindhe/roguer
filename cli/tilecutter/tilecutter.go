@@ -8,19 +8,28 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"gopkg.in/alecthomas/kingpin.v2"
+)
+
+var (
+	inDir = kingpin.Arg("indir", "Input directory").Required().String()
 )
 
 func main() {
 
-	// TODO: take command line input: allow to choose bottom or top part, allow to choose half, 1/3 or 2/3 to keep
+	// support -h for --help
+	kingpin.CommandLine.HelpFlag.Short('h')
+	kingpin.Parse()
+
+	// TODO: allow to choose bottom or top part, allow to choose half, 1/3 or 2/3 to keep
 
 	// loop over input folder, keep bottom third of each image, overwrite
 
-	inDir := "resources/assets/tilesets/oddball/tiles/8x4"
-	files, _ := ioutil.ReadDir(inDir)
+	files, _ := ioutil.ReadDir(*inDir)
 	for _, f := range files {
 
-		p := filepath.Join(inDir, f.Name())
+		p := filepath.Join(*inDir, f.Name())
 		img := getBottomThirdOfImage(p)
 
 		writePng(p, img)
