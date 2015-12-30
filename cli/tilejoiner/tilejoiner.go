@@ -27,16 +27,12 @@ func main() {
 	kingpin.CommandLine.HelpFlag.Short('h')
 	kingpin.Parse()
 
-	//inDir := ""
-	//outFile := "joined-tiles.png"
-
 	var images []image.Image
 
 	tileWidth := 0
 	tileHeight := 0
 	tileCount := 0
 
-	// XXX must be alphabetical order!!!
 	files, _ := ioutil.ReadDir(*inDir)
 	for _, f := range files {
 
@@ -68,8 +64,8 @@ func main() {
 
 	dst := image.NewRGBA(image.Rect(0, 0, outWidth, outHeight))
 	for i, img := range images {
-		x0 := (i % tileWidth) * tileWidth
-		y0 := (i / tileWidth) * tileHeight
+		x0 := (i % *tilesPerRow) * tileWidth
+		y0 := (i / *tilesPerRow) * tileHeight
 
 		// fmt.Printf("Writing %d to %d,%d\n", i, x0, y0)
 
