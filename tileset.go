@@ -8,8 +8,14 @@ import (
 )
 
 type tilesetSpec struct {
-	Props tilesetProps   `json:"props"`
-	Tiles map[string]int `json:"tiles"`
+	Props   tilesetProps `json:"props"`
+	Water   []int        `json:"water"`
+	Gray    []int        `json:"gray"`
+	Grass   []int        `json:"grass"`
+	Shallow []int        `json:"shallow"`
+	Lava    []int        `json:"lava"`
+	Dirt    []int        `json:"dirt"`
+	Wall    []int        `json:"wall"`
 }
 
 type tilesetProps struct {
@@ -32,35 +38,6 @@ func parseGroundTilesetDefinition(defFileName string) (tilesetSpec, error) {
 		return specs, err
 	}
 
-	log.Infof("Read %d entries from %s", len(specs.Tiles), defFileName)
-	return specs, nil
-}
-
-type spritesetSpec struct {
-	Props   tilesetProps   `json:"props"`
-	Sprites map[string]int `json:"tiles"`
-}
-
-type spritesetProps struct {
-	Width   int    `json:"width"`
-	Height  int    `json:"height"`
-	TileMap string `json:"tilemap"`
-}
-
-func parseSpritesetDefinition(defFileName string) (tilesetSpec, error) {
-
-	var specs tilesetSpec
-
-	data, err := ioutil.ReadFile(defFileName)
-	if err != nil {
-		return specs, err
-	}
-
-	err = yaml.Unmarshal(data, &specs)
-	if err != nil {
-		return specs, err
-	}
-
-	log.Infof("Read %d entries from %s", len(specs.Tiles), defFileName)
+	log.Infof("Read %s", defFileName)
 	return specs, nil
 }
