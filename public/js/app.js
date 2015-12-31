@@ -1,7 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', {
+var gameWidth = 800;
+var gameHeight = 600;
+
+var tileWidth = 8;
+var tileHeight = 4;
+
+var game = new Phaser.Game(gameWidth, gameHeight, Phaser.CANVAS, 'game', {
     preload: preload,
     create: create,
     update: update,
@@ -20,6 +26,8 @@ function preload() {
     game.load.image('chunk', 'img/sprites/chunk.png');
     game.load.image('phaser', 'img/sprites/phaser-dude.png');
 
+    game.load.image('minimap', 'img/islands/current.png');
+
     game.load.audio('carter', ['audio/dead_feelings.mp3']);
 }
 
@@ -28,8 +36,8 @@ var map;
 var layer;
 var cursors;
 var player;
-var emitter;
 var music;
+var minimap;
 
 var token;
 var worldScale = 1.0;
@@ -55,17 +63,10 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    emitter = game.add.emitter(0, 0, 200);
-
-    emitter.makeParticles('chunk');
-    emitter.minRotation = 0;
-    emitter.maxRotation = 0;
-    emitter.gravity = 150;
-    emitter.bounce.setTo(0.5, 0.5);
-
-    player = game.add.sprite(0, 0, 'phaser');
-    player.visible = false;
+    player = game.add.sprite(10, 10, 'phaser');
+    //player.visible = false;
     player.anchor.set(0.5);
+    game.camera.follow(player);
 
     game.physics.enable(player);
 
@@ -74,44 +75,35 @@ function create() {
     //  some tile padding to the body. WHat this does
     player.body.tilePadding.set(32, 32);
 
-    game.camera.follow(player);
+    minimap = game.add.sprite(gameWidth - game.cache.getImage('minimap').width / 2, 0, 'minimap');
+    minimap.fixedToCamera = true;
+    minimap.scale.set(0.5);
+    minimap.alpha = 0.8;
+
+    //minimap.setScaleMinMax(1, 1);
 
     initWebsockets();
 }
 
-function particleBurst() {
-    emitter.x = player.x;
-    emitter.y = player.y;
-    emitter.start(true, 2000, null, 1);
-}
-
 function update() {
-    game.physics.arcade.collide(player, layer);
-    game.physics.arcade.collide(emitter, layer);
-
-    player.body.velocity.x = 0;
-    player.body.velocity.y = 0;
+    //game.physics.arcade.collide(player, layer);
 
     var moveStepping = 4;
 
     if (cursors.up.isDown) {
         player.y -= moveStepping;
         sendSocketMove();
-        particleBurst();
     } else if (cursors.down.isDown) {
         player.y += moveStepping;
         sendSocketMove();
-        particleBurst();
     }
 
     if (cursors.left.isDown) {
         player.x -= moveStepping;
         sendSocketMove();
-        particleBurst();
     } else if (cursors.right.isDown) {
         player.x += moveStepping;
         sendSocketMove();
-        particleBurst();
     }
 
     /*  zoom is broken
@@ -153,8 +145,8 @@ function onSocketMessage(msg) {
     switch (cmd.Type) {
         case 'xy':
             // multiply coords with tile size to scale properly. sprite tiles are always in pixels
-            player.x = cmd.X * 16;
-            player.y = cmd.Y * 16;
+            player.x = cmd.X * tileWidth;
+            player.y = cmd.Y * tileHeight;
             player.visible = true;
 
             // floating name over head of player
@@ -168,10 +160,10 @@ function onSocketMessage(msg) {
             //console.log(cmd.LocalSpawns);
             for (var i = 0; i < cmd.LocalSpawns.length; i++) {
                 var sp = cmd.LocalSpawns[i];
-                console.log(sp);
+                // console.log(sp)
 
                 // XXX add to game world ...
-                game.add.sprite(sp.X * 16, sp.Y * 16, 'phaser');
+                game.add.sprite(sp.X * tileWidth, sp.Y * tileHeight, 'phaser');
             }
             break;
 
@@ -191,7 +183,7 @@ function sendSocketMsg(data) {
 }
 
 function sendSocketMove() {
-    sendSocketMsg("move " + Math.floor(player.x / 16) + " " + Math.floor(player.y / 16) + " " + token);
+    sendSocketMsg("move " + Math.floor(player.x / tileWidth) + " " + Math.floor(player.y / tileHeight) + " " + token);
 }
 
 // Socket connected

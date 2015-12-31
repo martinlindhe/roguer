@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"fmt"
 	"image/png"
 	"math"
 	"math/rand"
@@ -30,8 +29,12 @@ func NewIsland() *Island {
 
 	// store island to disk as png
 	islandColImage := island.ColoredHeightMapAsImage()
-	islandColImageName := fmt.Sprintf("public/img/islands/%d.png", seed)
-	islandColImgFile, _ := os.Create(islandColImageName)
+	//islandColImageName := fmt.Sprintf("public/img/islands/%d.png", seed)
+	islandColImageName := "public/img/islands/current.png"
+	islandColImgFile, err := os.Create(islandColImageName)
+	if err != nil {
+		panic(err)
+	}
 	png.Encode(islandColImgFile, islandColImage)
 	/*
 		islandImage := island.HeightMapAsImage()

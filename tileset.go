@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gobuild/log"
 	"gopkg.in/yaml.v2"
 )
@@ -52,7 +51,6 @@ func PrecalcTilemap() []byte {
 	if err != nil {
 		panic(err)
 	}
-	spew.Dump(tiles)
 
 	imgWidth, imgHeight := getImageDimension(tiles.Props.TileMap)
 
