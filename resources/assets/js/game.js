@@ -141,7 +141,7 @@ function render()
 {
     game.debug.text(game.time.fps || '--', 1, 14, "#00ff00");
 
-    game.debug.spriteInfo(player, 32, 32);
+    //game.debug.spriteInfo(player, 32, 32);
     //game.debug.cameraInfo(game.camera, 32, 32);
 
     //game.debug.soundInfo(music, 20, 32);

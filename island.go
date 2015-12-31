@@ -27,9 +27,9 @@ type Island struct {
 // height constants
 const (
 	deepWater    = 80
-	shallowWater = 90
-	beach        = 95
-	grass        = 150
+	shallowWater = 100
+	beach        = 110
+	grass        = 120
 )
 
 // Add ...
@@ -193,20 +193,18 @@ func (i *Island) HeightsAsFlatTilemap() []int {
 
 			b := island.HeightMap[y][x]
 
-			// XXX instead of random, scale based on slice size for each tile type
-
 			switch {
-			case b <= deepWater:
-				num = tiles.DeepWater[rand.Intn(len(tiles.DeepWater))]
+			case b < deepWater:
+				num = fromSliceByScale(b, 0, deepWater, tiles.DeepWater)
 
-			case b <= shallowWater:
-				num = tiles.ShallowWater[rand.Intn(len(tiles.ShallowWater))]
+			case b < shallowWater:
+				num = fromSliceByScale(b, deepWater, shallowWater, tiles.ShallowWater)
 
-			case b <= beach:
-				num = tiles.Beach[rand.Intn(len(tiles.Beach))]
+			case b < beach:
+				num = fromSliceByScale(b, shallowWater, beach, tiles.Beach)
 
 			default:
-				num = tiles.Grass[rand.Intn(len(tiles.Grass))]
+				num = fromSliceByScale(b, beach, grass, tiles.Grass)
 			}
 
 			res[y*island.Width+x] = num
@@ -214,6 +212,21 @@ func (i *Island) HeightsAsFlatTilemap() []int {
 	}
 
 	return res
+}
+
+func scale(valueIn float64, baseMin float64, baseMax float64, limitMin float64, limitMax float64) float64 {
+	return ((limitMax - limitMin) * (valueIn - baseMin) / (baseMax - baseMin)) + limitMin
+}
+
+func fromSliceByScale(b int, min int, max int, tiles []int) int {
+
+	num := int(scale(float64(b), float64(min), float64(max), 0, float64(len(tiles))))
+
+	if num >= len(tiles) {
+		fmt.Printf("ERROR: num is %d, max is %d\n", num, len(tiles)-1)
+		num = len(tiles) - 1
+	}
+	return tiles[num]
 }
 
 // expose "public" info about the spawn to the player

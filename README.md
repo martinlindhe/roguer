@@ -17,6 +17,13 @@ go run cli/app/app.go
 Finally, visit http://localhost:3322
 
 
+
+# Screenshot
+
+![Screenshot 1](screenshots/screen1.png)
+
+
+
 # License
 
 Under [MIT](LICENSE)
