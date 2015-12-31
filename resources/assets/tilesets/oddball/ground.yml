@@ -2,7 +2,7 @@ props:
   width: 8
   height: 4
   # NOTE: tilemap is produced from resources/assets/tilesets/tiles/8x4/*.png
-  tilemap: img/tileset/oddball/ground.png
+  tilemap: public/img/tileset/oddball/ground1.png
 
 
 deepwater: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]   # 10

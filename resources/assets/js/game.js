@@ -19,7 +19,7 @@ function preload()
 
     // load world
     game.load.tilemap('island', '/island/full', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('tiles', 'img/sprites/island_tiles.png', 32, 32);
+    game.load.image('tiles', 'img/tileset/oddball/ground1.png', 4, 8);
 
     game.load.image('chunk', 'img/sprites/chunk.png');
     game.load.image('phaser', 'img/sprites/phaser-dude.png');
@@ -61,7 +61,7 @@ function create()
     layer = map.createLayer(0);
 
     // Basically this sets EVERY SINGLE tile to fully collide on all faces
-    map.setCollisionByExclusion([7, 32, 35, 36, 47]);
+    // map.setCollisionByExclusion([7, 32, 35, 36, 47]);
 
     layer.resizeWorld();
 

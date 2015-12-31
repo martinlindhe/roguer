@@ -1,8 +1,12 @@
 package rogue
 
 import (
+	"encoding/json"
+	"image"
 	"io/ioutil"
+	"os"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gobuild/log"
 	"gopkg.in/yaml.v2"
 )
@@ -40,4 +44,62 @@ func parseGroundTilesetDefinition(defFileName string) (tilesetSpec, error) {
 
 	log.Infof("Read %s", defFileName)
 	return specs, nil
+}
+
+func PrecalcTilemap() []byte {
+
+	tiles, err := parseGroundTilesetDefinition("resources/assets/tilesets/oddball/ground.yml")
+	if err != nil {
+		panic(err)
+	}
+	spew.Dump(tiles)
+
+	imgWidth, imgHeight := getImageDimension(tiles.Props.TileMap)
+
+	var tileMap PhaserTileMap
+	tileMap.Version = 1
+	tileMap.Width = island.Width
+	tileMap.Height = island.Height
+	tileMap.TileWidth = tiles.Props.Width
+	tileMap.TileHeight = tiles.Props.Height
+	tileMap.Orientation = "orthogonal"
+
+	var layer PhaserTileLayer
+	layer.Data = island.HeightsAsFlatTilemap()
+	layer.Width = island.Width
+	layer.Height = island.Height
+	layer.Visible = true
+	layer.Opacity = 1
+	layer.Type = "tilelayer"
+	layer.Name = "layer1"
+	tileMap.Layers = append(tileMap.Layers, layer)
+
+	var tileset PhaserTileSet
+	tileset.FirstGid = 0
+	// NOTE: need to specify a tile in phaser later, .Name and .Image must be the same value (phaser 2.4.4, dec 2015)
+	tileset.Name = "island_tiles"
+	tileset.Image = "island_tiles"
+	tileset.ImageWidth = imgWidth
+	tileset.ImageHeight = imgHeight
+	tileset.TileWidth = tiles.Props.Width
+	tileset.TileHeight = tiles.Props.Height
+	tileMap.TileSets = append(tileMap.TileSets, tileset)
+
+	b, _ := json.Marshal(tileMap)
+
+	return b
+}
+
+func getImageDimension(imagePath string) (int, int) {
+	file, err := os.Open(imagePath)
+	if err != nil {
+		log.Println(err)
+	}
+	defer file.Close()
+
+	image, _, err := image.DecodeConfig(file)
+	if err != nil {
+		log.Println(imagePath, err)
+	}
+	return image.Width, image.Height
 }
