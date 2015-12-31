@@ -37,7 +37,6 @@ function preload()
 }
 
 
-var socket;
 var map;
 var layer;
 var cursors;
@@ -90,10 +89,10 @@ function create()
     //  some tile padding to the body. WHat this does
     player.body.tilePadding.set(32, 32);
 
-
-    minimap = game.add.sprite(gameWidth - game.cache.getImage('minimap').width/2, 0, 'minimap');
+    var minimapScale = 3
+    minimap = game.add.sprite(gameWidth - game.cache.getImage('minimap').width/minimapScale, 0, 'minimap');
     minimap.fixedToCamera = true;
-    minimap.scale.set(0.5);
+    minimap.scale.set(1.0/minimapScale);
     minimap.alpha = 0.8;
 
     //minimap.setScaleMinMax(1, 1);
@@ -148,6 +147,10 @@ function render()
     //game.debug.soundInfo(music, 20, 32);
 }
 
+
+
+
+var socket;
 
 function initWebsockets()
 {
