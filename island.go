@@ -30,8 +30,6 @@ const (
 	shallowWater = 90
 	beach        = 95
 	grass        = 150
-	forest       = 230
-	hills        = 240
 )
 
 // Add ...
@@ -169,17 +167,8 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 			case b <= beach:
 				col = color.RGBA{0xD4, 0xBC, 0x6A, 0xff} // beach
 
-			case b <= grass:
-				col = color.RGBA{0x2D, 0x88, 0x2D, 0xff} // grass (green)
-
-			case b <= forest:
-				col = color.RGBA{0x00, 0x4E, 0x00, 0xff} // forest (dark green)
-
-			case b <= hills:
-				col = color.RGBA{0x4B, 0x2D, 0x12, 0xff} // hills (brown)
-
 			default:
-				col = color.RGBA{0xF2, 0xED, 0xE6, 0xff} // gray (mountains)
+				col = color.RGBA{0x2D, 0x88, 0x2D, 0xff} // grass (green)
 			}
 
 			img.Set(x, y, col)
@@ -189,37 +178,38 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 	return img
 }
 
-func mapHeightToTileNumber(b int) int {
-	switch {
-	case b <= deepWater:
-		return 0 // deep water
-
-	case b <= shallowWater:
-		return 1 // shallow water
-
-	case b <= beach:
-		return 2 // beach
-
-	case b <= grass:
-		return 3 // grass (green)
-
-	case b <= forest:
-		return 4 // forest (dark green)
-
-	case b <= hills:
-		return 5 // hills (brown)
-
-	default:
-		return 6 // gray (mountains)
-	}
-}
-
 func (i *Island) HeightsAsFlatTilemap() []int {
+
+	tiles, err := parseGroundTilesetDefinition("resources/assets/tilesets/oddball/ground.yml")
+	if err != nil {
+		panic(err)
+	}
+
 	res := make([]int, island.Width*island.Height)
 
 	for y := 0; y < island.Height; y++ {
 		for x := 0; x < island.Width; x++ {
-			res[y*island.Width+x] = mapHeightToTileNumber(island.HeightMap[y][x])
+			num := 0
+
+			b := island.HeightMap[y][x]
+
+			// XXX instead of random, scale based on slice size for each tile type
+
+			switch {
+			case b <= deepWater:
+				num = tiles.DeepWater[rand.Intn(len(tiles.DeepWater))]
+
+			case b <= shallowWater:
+				num = tiles.ShallowWater[rand.Intn(len(tiles.ShallowWater))]
+
+			case b <= beach:
+				num = tiles.Beach[rand.Intn(len(tiles.Beach))]
+
+			default:
+				num = tiles.Grass[rand.Intn(len(tiles.Grass))]
+			}
+
+			res[y*island.Width+x] = num
 		}
 	}
 

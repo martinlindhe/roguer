@@ -89,7 +89,9 @@ func getFullIslandController(c *ace.C) {
 	// NOTE: this is useful in early stage for world debugging.
 	// later on, the game would only expose a small area around the player
 
-	c.String(http.StatusOK, islandMap)
+	c.Writer.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	c.Writer.WriteHeader(http.StatusOK)
+	c.Writer.Write([]byte(islandMap))
 }
 
 func precalcTilemap() string {

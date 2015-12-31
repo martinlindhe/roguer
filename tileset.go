@@ -8,14 +8,14 @@ import (
 )
 
 type tilesetSpec struct {
-	Props   tilesetProps `json:"props"`
-	Water   []int        `json:"water"`
-	Gray    []int        `json:"gray"`
-	Grass   []int        `json:"grass"`
-	Shallow []int        `json:"shallow"`
-	Lava    []int        `json:"lava"`
-	Dirt    []int        `json:"dirt"`
-	Wall    []int        `json:"wall"`
+	Props        tilesetProps `json:"props"`
+	DeepWater    []int        `json:"deepwater"`
+	Beach        []int        `json:"beach"`
+	Grass        []int        `json:"grass"`
+	ShallowWater []int        `json:"shallowwater"`
+	Lava         []int        `json:"lava"`
+	Dirt         []int        `json:"dirt"`
+	Wall         []int        `json:"wall"`
 }
 
 type tilesetProps struct {

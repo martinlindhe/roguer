@@ -55,3 +55,10 @@ generate island:
 
   - tool: read *.yml from oddball tileset, use it to pick the proper tiles, and generate new tile maps,
     one for each input folder (so we'll have multiple tile maps still, but mapped to the items we use)
+
+
+
+
+----
+nya tiles
+    XXX NU: använd samma höjd-gränser, men segmentera de till samma antal som tiles per grupp i ground.yml
