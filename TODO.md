@@ -60,5 +60,6 @@ generate island:
 
 
 ----
-nya tiles
-    XXX NU: använd samma höjd-gränser, men segmentera de till samma antal som tiles per grupp i ground.yml
+
+NU: shared sprite textures för characters:
+    http://phaser.io/examples/v2/sprites/shared-sprite-textures

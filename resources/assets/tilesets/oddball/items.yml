@@ -1,5 +1,10 @@
-# oddball tileset mapping
-club: 18
-meat: 61
-water: 59  # "blue potion"
-ring: 72
+props:
+  width: 8
+  height: 8
+  tilemap: public/img/tileset/oddball/items.png
+
+tiles:
+  club: 18
+  meat: 61
+  water: 59  # "blue potion"
+  ring: 72

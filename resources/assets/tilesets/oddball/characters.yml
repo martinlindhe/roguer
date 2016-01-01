@@ -1,4 +1,9 @@
-# oddball tileset mapping
-elf: 6
-dwarf: 90
-human: 48
+props:
+  width: 8
+  height: 8
+  tilemap: public/img/tileset/oddball/characters.png
+
+tiles:
+  elf: 6
+  dwarf: 90
+  human: 48
