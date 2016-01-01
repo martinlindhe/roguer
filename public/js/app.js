@@ -19,16 +19,14 @@ function preload() {
 
     game.stage.backgroundColor = '#262f71'; // deep water
 
-    // load world
+    game.load.image('minimap', 'img/islands/current.png');
+
     game.load.tilemap('island', '/island/full', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('tiles', 'img/tileset/oddball/ground1.png', 4, 8);
 
-    game.load.image('chunk', 'img/sprites/chunk.png');
-    game.load.image('phaser', 'img/sprites/phaser-dude.png');
+    game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 
-    game.load.image('minimap', 'img/islands/current.png');
-
-    game.load.audio('carter', ['audio/dead_feelings.mp3']);
+    game.load.atlas('atlas', 'img/tileset/oddball/characters.png', 'sprite/character');
 }
 
 var map;
@@ -42,7 +40,7 @@ var token;
 var worldScale = 1.0;
 
 function create() {
-    music = game.add.audio('carter');
+    music = game.add.audio('bgSound');
     music.volume = 0.5; // 50%
     music.play();
 
@@ -62,8 +60,10 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    player = game.add.sprite(10, 10, 'phaser');
-    //player.visible = false;
+    player = game.add.sprite(10, 10, 'atlas');
+    player.frameName = 'dwarf';
+
+    player.visible = false;
     player.anchor.set(0.5);
     game.camera.follow(player);
 
@@ -88,21 +88,22 @@ function create() {
 function update() {
     //game.physics.arcade.collide(player, layer);
 
-    var moveStepping = 4;
+    var steppingVert = 2;
+    var steppingHoriz = 4;
 
     if (cursors.up.isDown) {
-        player.y -= moveStepping;
+        player.y -= steppingVert;
         sendSocketMove();
     } else if (cursors.down.isDown) {
-        player.y += moveStepping;
+        player.y += steppingVert;
         sendSocketMove();
     }
 
     if (cursors.left.isDown) {
-        player.x -= moveStepping;
+        player.x -= steppingHoriz;
         sendSocketMove();
     } else if (cursors.right.isDown) {
-        player.x += moveStepping;
+        player.x += steppingHoriz;
         sendSocketMove();
     }
 
@@ -152,7 +153,7 @@ function onSocketMessage(msg) {
             player.visible = true;
 
             // floating name over head of player
-            var t = game.add.text(0, -24, cmd.Name, { font: "14px Arial", fill: "#ffffff", align: "center" });
+            var t = game.add.text(0, -16, cmd.Name, { font: "8px Arial", fill: "#ffffff", align: "center" });
             t.anchor.set(0.5);
             player.addChild(t);
 

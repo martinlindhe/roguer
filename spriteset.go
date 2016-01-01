@@ -12,7 +12,7 @@ type spritesheetSpec struct {
 	Tiles map[string]int `json:"tiles"`
 }
 
-func parseSpritesetDefinition(defFileName string) (spritesheetSpec, error) {
+func ParseSpritesetDefinition(defFileName string) (spritesheetSpec, error) {
 
 	var specs spritesheetSpec
 
@@ -67,7 +67,7 @@ type textureFrame struct {
 	SourceSize       textureSize      `json:"sourceSize"`
 }
 
-func generateTexturePacker(spec spritesheetSpec) TexturePack {
+func GenerateTexturePacker(spec spritesheetSpec) TexturePack {
 
 	imgWidth, imgHeight := getImageDimension(spec.Props.TileMap)
 

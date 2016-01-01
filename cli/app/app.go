@@ -53,6 +53,8 @@ func getRouter() *ace.Ace {
 
 	r.GET("/island/full", getFullIslandController)
 
+	r.GET("/sprite/character", getTexturePackCharacterController)
+
 	r.GET("/ws", func(c *ace.C) {
 		wsHandler(c.Writer, c.Request)
 	})
@@ -91,4 +93,15 @@ func getFullIslandController(c *ace.C) {
 	c.Writer.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	c.Writer.WriteHeader(http.StatusOK)
 	c.Writer.Write(islandMap)
+}
+
+func getTexturePackCharacterController(c *ace.C) {
+
+	ss, err := rogue.ParseSpritesetDefinition("resources/assets/tilesets/oddball/characters.yml")
+	if err != nil {
+		panic(err)
+	}
+
+	tp := rogue.GenerateTexturePacker(ss)
+	c.JSON(http.StatusOK, tp)
 }
