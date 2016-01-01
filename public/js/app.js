@@ -91,6 +91,13 @@ function update() {
     var steppingVert = 2;
     var steppingHoriz = 4;
 
+    // flip horizontally
+    if (player.body.velocity.x = cursors.left.isDown) {
+        player.scale.x = -1;
+    } else if (player.body.velocity.x = cursors.right.isDown) {
+        player.scale.x = 1;
+    }
+
     if (cursors.up.isDown) {
         player.y -= steppingVert;
         sendSocketMove();
