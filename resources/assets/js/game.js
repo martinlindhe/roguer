@@ -41,15 +41,16 @@ var map;
 var layer;
 var cursors;
 var player;
+var playerGroup;
 var music;
 var minimap;
 var retroFont;
+
 
 var token;
 var worldScale = 1.0;
 
 
-var playerName; // XXX for name over player head
 
 var oddballFontSet = "                " + // colors
     "                " + // cursor
@@ -83,20 +84,7 @@ function create()
     cursors = game.input.keyboard.createCursorKeys();
 
 
-    player = game.add.sprite(10, 10, 'atlas');
-    player.frameName = 'dwarf';
 
-
-    //player.visible = false;
-    player.anchor.set(0.5);
-    game.camera.follow(player);
-
-    game.physics.enable(player);
-
-    //  Because both our body and our tiles are so tiny,
-    //  and the body is moving pretty fast, we need to add
-    //  some tile padding to the body. WHat this does
-    player.body.tilePadding.set(32, 32);
 
     var minimapScale = 3
     minimap = game.add.sprite(gameWidth - game.cache.getImage('minimap').width/minimapScale, 0, 'minimap');
@@ -111,6 +99,10 @@ function create()
 
 function update()
 {
+    if (!playerGroup) {
+        return
+    }
+
     //game.physics.arcade.collide(player, layer);
 
     var steppingVert = 2;
@@ -119,27 +111,24 @@ function update()
     // flip horizontally
     if (player.body.velocity.x = cursors.left.isDown) {
         player.scale.x = -1;
-        playerName.scale.x = -1;
     } else if (player.body.velocity.x = cursors.right.isDown) {
         player.scale.x = 1;
-        playerName.scale.x = 1;
     }
 
 
-
     if (cursors.up.isDown) {
-        player.y -= steppingVert;
+        playerGroup.y -= steppingVert;
         sendSocketMove();
     } else if (cursors.down.isDown) {
-        player.y += steppingVert;
+        playerGroup.y += steppingVert;
         sendSocketMove();
     }
 
     if (cursors.left.isDown) {
-        player.x -= steppingHoriz;
+        playerGroup.x -= steppingHoriz;
         sendSocketMove();
     } else if (cursors.right.isDown) {
-        player.x += steppingHoriz;
+        playerGroup.x += steppingHoriz;
         sendSocketMove();
     }
 
@@ -191,9 +180,28 @@ function onSocketMessage(msg)
     switch (cmd.Type) {
     case 'xy':
         // multiply coords with tile size to scale properly. sprite tiles are always in pixels
-        player.x = cmd.X * tileWidth;
-        player.y = cmd.Y * tileHeight;
-        player.visible = true;
+
+        playerGroup = game.add.group();
+        playerGroup.z = 10;
+
+
+        player = game.add.sprite(0, 0, 'atlas');
+        player.frameName = 'dwarf';
+        player.anchor.set(0.5);
+        game.camera.follow(player);
+        game.physics.enable(player);
+
+        //  Because both our body and our tiles are so tiny,
+        //  and the body is moving pretty fast, we need to add
+        //  some tile padding to the body. WHat this does
+        player.body.tilePadding.set(32, 32);
+
+
+
+        playerGroup.x = cmd.X * tileWidth;
+        playerGroup.y = cmd.Y * tileHeight;
+        playerGroup.add(player);
+
 
 
 
@@ -202,9 +210,11 @@ function onSocketMessage(msg)
         retroFont.text = cmd.Name;
 
         // floating name over head of player
-        playerName = game.add.image(0, -16, retroFont);
+        var playerName = game.add.image(0, -10, retroFont);
+
         playerName.anchor.set(0.5);
-        player.addChild(playerName);
+
+        playerGroup.add(playerName);
 
 
         token = cmd.Token;

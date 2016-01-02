@@ -27,9 +27,9 @@ type Island struct {
 // height constants
 const (
 	deepWater    = 80
-	shallowWater = 100
-	beach        = 110
-	grass        = 120
+	shallowWater = 104
+	beach        = 112
+	grass        = 118
 )
 
 // Add ...
