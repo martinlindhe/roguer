@@ -1,6 +1,6 @@
 # About
 
-rogue-like with go and phaser.io
+rogue-like with go and phaser.io, using websockets
 
 
 # Install
