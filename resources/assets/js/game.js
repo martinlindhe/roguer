@@ -49,6 +49,8 @@ var token;
 var worldScale = 1.0;
 
 
+var playerName; // XXX for name over player head
+
 var oddballFontSet = "                " + // colors
     "                " + // cursor
     "!\"#$%&'()  ,-./0123456789:;<=>?@" +
@@ -117,8 +119,10 @@ function update()
     // flip horizontally
     if (player.body.velocity.x = cursors.left.isDown) {
         player.scale.x = -1;
+        playerName.scale.x = -1;
     } else if (player.body.velocity.x = cursors.right.isDown) {
         player.scale.x = 1;
+        playerName.scale.x = 1;
     }
 
 
@@ -198,9 +202,9 @@ function onSocketMessage(msg)
         retroFont.text = cmd.Name;
 
         // floating name over head of player
-        var t = game.add.image(0, -16, retroFont);
-        t.anchor.set(0.5);
-        player.addChild(t);
+        playerName = game.add.image(0, -16, retroFont);
+        playerName.anchor.set(0.5);
+        player.addChild(playerName);
 
 
         token = cmd.Token;
