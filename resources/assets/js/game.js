@@ -31,6 +31,9 @@ function preload()
     game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 
     game.load.atlas('atlas', 'img/tileset/oddball/characters.png', 'sprite/character');
+
+
+    game.load.image('oddballFont', 'img/tileset/oddball/font.png');
 }
 
 
@@ -40,18 +43,25 @@ var cursors;
 var player;
 var music;
 var minimap;
+var retroFont;
 
 var token;
 var worldScale = 1.0;
+
+
+var oddballFontSet = "                " + // colors
+    "                " + // cursor
+    "!\"#$%&'()  ,-./0123456789:;<=>?@" +
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" +
+    "abcdefghijklmnopqrstuvwxyz{|}~" +
+    "" // XXX more characters
+
 
 function create()
 {
     music = game.add.audio('bgSound');
     music.volume = 0.5; // 50%
     music.play();
-
-
-
 
     // A Tilemap object just holds the data needed to describe the map
     // You can add your own data or manipulate the data (swap tiles around, etc)
@@ -67,15 +77,15 @@ function create()
 
     layer.resizeWorld();
 
-    cursors = game.input.keyboard.createCursorKeys();
 
+    cursors = game.input.keyboard.createCursorKeys();
 
 
     player = game.add.sprite(10, 10, 'atlas');
     player.frameName = 'dwarf';
 
 
-    player.visible = false;
+    //player.visible = false;
     player.anchor.set(0.5);
     game.camera.follow(player);
 
@@ -93,7 +103,6 @@ function create()
     minimap.alpha = 0.8;
 
     //minimap.setScaleMinMax(1, 1);
-
 
     initWebsockets()
 }
@@ -182,10 +191,17 @@ function onSocketMessage(msg)
         player.y = cmd.Y * tileHeight;
         player.visible = true;
 
+
+
+        retroFont = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
+        retroFont.autoUpperCase = false;
+        retroFont.text = cmd.Name;
+
         // floating name over head of player
-        var t = game.add.text(0, -16, cmd.Name, { font: "8px Arial", fill: "#ffffff", align: "center" });
+        var t = game.add.image(0, -16, retroFont);
         t.anchor.set(0.5);
         player.addChild(t);
+
 
         token = cmd.Token;
 
