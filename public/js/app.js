@@ -55,10 +55,6 @@ var oddballFontSet = "                " + // colors
 "!\"#$%&'()  ,-./0123456789:;<=>?@" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" + "abcdefghijklmnopqrstuvwxyz{|}~" + ""; // XXX more characters
 
 function create() {
-    music = game.add.audio('bgSound');
-    music.volume = 0.5; // 50%
-    music.play();
-
     // A Tilemap object just holds the data needed to describe the map
     // You can add your own data or manipulate the data (swap tiles around, etc)
     // but in order to display it you need to create a TilemapLayer.
@@ -72,6 +68,24 @@ function create() {
 
     layer.resizeWorld();
 
+    playerGroup = game.add.group();
+    playerGroup.z = 10;
+
+    player = game.add.sprite(0, 0, 'characterAtlas');
+    player.frameName = 'dwarf';
+    player.anchor.set(0.5);
+    game.camera.follow(playerGroup);
+    game.physics.enable(player);
+
+    //  Because both our body and our tiles are so tiny,
+    //  and the body is moving pretty fast, we need to add
+    //  some tile padding to the body. WHat this does
+    player.body.tilePadding.set(32, 32);
+
+    music = game.add.audio('bgSound');
+    music.volume = 0.5; // 50%
+    music.play();
+
     cursors = game.input.keyboard.createCursorKeys();
 
     var minimapScale = 3;
@@ -80,7 +94,7 @@ function create() {
     minimap.scale.set(1.0 / minimapScale);
     minimap.alpha = 0.8;
 
-    //minimap.setScaleMinMax(1, 1);
+    minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
 
     initWebsockets();
 }
@@ -188,20 +202,6 @@ function onSocketConnected() {
 
 function handleXyMessage(cmd) {
     // multiply coords with tile size to scale properly. sprite tiles are always in pixels
-
-    playerGroup = game.add.group();
-    playerGroup.z = 10;
-
-    player = game.add.sprite(0, 0, 'characterAtlas');
-    player.frameName = 'dwarf';
-    player.anchor.set(0.5);
-    game.camera.follow(player);
-    game.physics.enable(player);
-
-    //  Because both our body and our tiles are so tiny,
-    //  and the body is moving pretty fast, we need to add
-    //  some tile padding to the body. WHat this does
-    player.body.tilePadding.set(32, 32);
 
     playerGroup.x = cmd.X * tileWidth;
     playerGroup.y = cmd.Y * tileHeight;

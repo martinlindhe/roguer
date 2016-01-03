@@ -46,6 +46,3 @@ generate island:
 
 
 # phaser js game engine
-
-  - BUG: spawning sometimes outside of map.
-    perhaps because spawn data is done before island map has been processed?
