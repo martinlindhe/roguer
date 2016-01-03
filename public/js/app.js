@@ -182,6 +182,7 @@ function onSocketMessage(msg) {
             playerName.anchor.set(0.5);
 
             playerGroup.add(playerName);
+            console.log("spawned at " + cmd.X + ", " + cmd.Y);
 
             token = cmd.Token;
 
@@ -189,10 +190,21 @@ function onSocketMessage(msg) {
             //console.log(cmd.LocalSpawns);
             for (var i = 0; i < cmd.LocalSpawns.length; i++) {
                 var sp = cmd.LocalSpawns[i];
-                // console.log(sp)
+                //console.log(sp)
+
+                var spGroup = game.add.group();
+                spGroup.x = sp.X * tileWidth;
+                spGroup.y = sp.Y * tileHeight;
+                spGroup.z = 10;
+
+                var spr = game.add.sprite(0, 0, 'atlas');
+                spr.frameName = sp.Sprite;
+                spr.anchor.set(0.5);
+
+                spGroup.add(spr);
 
                 // XXX add to game world ...
-                game.add.sprite(sp.X * tileWidth, sp.Y * tileHeight, 'phaser');
+                //game.add.sprite(sp.X * tileWidth, sp.Y * tileHeight, 'phaser');
             }
             break;
 

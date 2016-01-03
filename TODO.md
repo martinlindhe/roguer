@@ -61,5 +61,9 @@ generate island:
 
 ----
 
-NU: shared sprite textures för characters:
-    http://phaser.io/examples/v2/sprites/shared-sprite-textures
+NOW:
+    - spawning sometimes outside of map. perhaps because spawn data is done before island map has been processed?
+
+    - able to use characters.yml and items.yml on map
+
+    - move ground/8x12 to a sprite layer, rather than ground-tile layer
