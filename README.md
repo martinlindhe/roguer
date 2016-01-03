@@ -14,14 +14,7 @@ cd $GOROOT/src/github.com/martinlindhe/rouge
 go run cli/app/app.go
 ```
 
-Finally, visit http://localhost:3322
-
-
-
-# Screenshot
-
-![Screenshot 1](screenshots/screen1.png)
-
+Finally, visit <http://localhost:3322>
 
 
 # License
