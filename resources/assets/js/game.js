@@ -267,8 +267,8 @@ function handleXyMessage(cmd)
     // display all from .LocalSpawns
     //console.log(cmd.LocalSpawns);
     for (var i = 0; i < cmd.LocalSpawns.length; i++) {
-        var sp = cmd.LocalSpawns[i]
-        //console.log(sp.Sprite)
+        var sp = cmd.LocalSpawns[i];
+        //console.log(sp);
 
 
         var values = sp.Sprite.split(':');
