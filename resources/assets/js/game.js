@@ -4,6 +4,9 @@ var gameHeight = 600;
 var tileWidth = 8;
 var tileHeight = 4;
 
+var worldScale = 1.0;
+
+
 var game = new Phaser.Game(
     gameWidth,
     gameHeight,
@@ -14,7 +17,9 @@ var game = new Phaser.Game(
         create: create,
         update: update,
         render : render
-    }
+    },
+    false,  // transparent
+    false   // antialias
 );
 
 function preload()
@@ -36,6 +41,8 @@ function preload()
 
 
     game.load.image('oddballFont', 'img/tileset/oddball/font.png');
+
+    game.world.scale.set(worldScale);
 }
 
 
@@ -50,7 +57,6 @@ var retroFont;
 
 
 var token;
-var worldScale = 1.0;
 
 
 
@@ -83,8 +89,6 @@ function create()
 
 
     cursors = game.input.keyboard.createCursorKeys();
-
-
 
 
     var minimapScale = 3
@@ -133,7 +137,7 @@ function update()
         sendSocketMove();
     }
 
-    /*  zoom is broken
+    // XXX  zoom is broken
     // zoom
     if (game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
         worldScale += 0.05;
@@ -144,7 +148,6 @@ function update()
 
     // set our world scale as needed
     game.world.scale.set(worldScale);
-    */
 }
 
 function render()
