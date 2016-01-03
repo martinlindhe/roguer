@@ -25,7 +25,9 @@ for ($i = 0; $i < 500; $i++) {
             mkdir($out);
         }
 
-        $out .= "/".sprintf("%03d", $i).".png";
+        $n = $i <= 79 ? $i : $i - 80;
+
+        $out .= "/".sprintf("%03d", $n).".png";
         rename($f, $out);
         echo "Renamed ".$f." to ".$out."\n";
     }

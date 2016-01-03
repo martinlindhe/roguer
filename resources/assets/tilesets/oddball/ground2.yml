@@ -5,4 +5,4 @@ props:
   tilemap: public/img/tileset/oddball/ground2.png
 
 tiles:
-  tree: 123
+  tree: 62
