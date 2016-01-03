@@ -1,0 +1,8 @@
+# NOTE this is a sprite map, not the ground tile map (see ground.yml)
+props:
+  width: 8
+  height: 12
+  tilemap: public/img/tileset/oddball/ground2.png
+
+tiles:
+  tree: 123

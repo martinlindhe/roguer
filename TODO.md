@@ -66,4 +66,4 @@ NOW:
 
     - able to use characters.yml and items.yml on map
 
-    - move ground/8x12 to a sprite layer, rather than ground-tile layer
+    - move ground/8x12 to a sprite layer, rather than ground-tile layer (to draw trees and walls on top of map)

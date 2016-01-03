@@ -25,12 +25,14 @@ function preload()
 
     game.load.image('minimap', 'img/islands/current.png');
 
-    game.load.tilemap('island', '/island/full', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('tiles', 'img/tileset/oddball/ground1.png', 4, 8);
+    game.load.tilemap('islandMap', '/island/full', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('ground', 'img/tileset/oddball/ground.png', 4, 8);
 
     game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 
-    game.load.atlas('atlas', 'img/tileset/oddball/characters.png', 'sprite/character');
+    game.load.atlas('characterAtlas', 'img/tileset/oddball/characters.png', 'sprite/character');
+    game.load.atlas('itemAtlas', 'img/tileset/oddball/items.png', 'sprite/item');
+    game.load.atlas('ground2Atlas', 'img/tileset/oddball/ground2.png', 'sprite/ground2');
 
 
     game.load.image('oddballFont', 'img/tileset/oddball/font.png');
@@ -69,9 +71,8 @@ function create()
     // A Tilemap object just holds the data needed to describe the map
     // You can add your own data or manipulate the data (swap tiles around, etc)
     // but in order to display it you need to create a TilemapLayer.
-    map = game.add.tilemap('island');
-
-    map.addTilesetImage('island_tiles', 'tiles');
+    map = game.add.tilemap('islandMap');
+    map.addTilesetImage('island_tiles', 'ground');
 
     layer = map.createLayer(0);
 
@@ -179,71 +180,7 @@ function onSocketMessage(msg)
 
     switch (cmd.Type) {
     case 'xy':
-        // multiply coords with tile size to scale properly. sprite tiles are always in pixels
-
-        playerGroup = game.add.group();
-        playerGroup.z = 10;
-
-
-        player = game.add.sprite(0, 0, 'atlas');
-        player.frameName = 'dwarf';
-        player.anchor.set(0.5);
-        game.camera.follow(player);
-        game.physics.enable(player);
-
-        //  Because both our body and our tiles are so tiny,
-        //  and the body is moving pretty fast, we need to add
-        //  some tile padding to the body. WHat this does
-        player.body.tilePadding.set(32, 32);
-
-
-
-        playerGroup.x = cmd.X * tileWidth;
-        playerGroup.y = cmd.Y * tileHeight;
-        playerGroup.add(player);
-
-
-
-
-        retroFont = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
-        retroFont.autoUpperCase = false;
-        retroFont.text = cmd.Name;
-
-        // floating name over head of player
-        var playerName = game.add.image(0, -10, retroFont);
-
-        playerName.anchor.set(0.5);
-
-        playerGroup.add(playerName);
-        console.log("spawned at " + cmd.X + ", " + cmd.Y);
-
-
-        token = cmd.Token;
-
-        // display all from .LocalSpawns
-        //console.log(cmd.LocalSpawns);
-        for (var i = 0; i < cmd.LocalSpawns.length; i++) {
-            var sp = cmd.LocalSpawns[i]
-            //console.log(sp)
-
-
-            var spGroup = game.add.group();
-            spGroup.x = sp.X * tileWidth;
-            spGroup.y = sp.Y * tileHeight;
-            spGroup.z = 10;
-
-
-            var spr = game.add.sprite(0, 0, 'atlas');
-            spr.frameName = sp.Sprite;
-            spr.anchor.set(0.5);
-
-            spGroup.add(spr);
-
-
-
-            // XXX add to game world ...
-            //game.add.sprite(sp.X * tileWidth, sp.Y * tileHeight, 'phaser');
-        }
+        handleXyMessage(cmd)
         break;
 
     case 'ok':
@@ -271,4 +208,87 @@ function onSocketConnected()
     sendSocketMsg("new_player mrcool");
 
     console.log('Connected to socket server');
+}
+
+function handleXyMessage(cmd)
+{
+    // multiply coords with tile size to scale properly. sprite tiles are always in pixels
+
+    playerGroup = game.add.group();
+    playerGroup.z = 10;
+
+
+    player = game.add.sprite(0, 0, 'characterAtlas');
+    player.frameName = 'dwarf';
+    player.anchor.set(0.5);
+    game.camera.follow(player);
+    game.physics.enable(player);
+
+    //  Because both our body and our tiles are so tiny,
+    //  and the body is moving pretty fast, we need to add
+    //  some tile padding to the body. WHat this does
+    player.body.tilePadding.set(32, 32);
+
+
+
+    playerGroup.x = cmd.X * tileWidth;
+    playerGroup.y = cmd.Y * tileHeight;
+    playerGroup.add(player);
+
+
+
+
+    retroFont = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
+    retroFont.autoUpperCase = false;
+    retroFont.text = cmd.Name;
+
+    // floating name over head of player
+    var playerName = game.add.image(0, -10, retroFont);
+
+    playerName.anchor.set(0.5);
+
+    playerGroup.add(playerName);
+    console.log("spawned at " + cmd.X + ", " + cmd.Y);
+
+
+    token = cmd.Token;
+
+
+    var atlas = "";
+
+    // display all from .LocalSpawns
+    //console.log(cmd.LocalSpawns);
+    for (var i = 0; i < cmd.LocalSpawns.length; i++) {
+        var sp = cmd.LocalSpawns[i]
+        //console.log(sp.Sprite)
+
+
+        var values = sp.Sprite.split(':');
+        switch (values[0]) {
+        case 'c':
+            atlas = 'characterAtlas';
+            break;
+        case 's':
+            atlas = 'spriteAtlas';
+            break;
+        case 'g':
+            atlas = 'ground2Atlas';
+            break;
+        default:
+            console.log('ERROR unknown sprite type ' + values[0]);
+            continue;
+        }
+
+
+
+        var spGroup = game.add.group();
+        spGroup.x = sp.X * tileWidth;
+        spGroup.y = sp.Y * tileHeight;
+
+        var spr = game.add.sprite(0, 0, atlas);
+        spr.frameName = values[1];
+        spr.anchor.set(0.5);
+
+        spGroup.add(spr);
+    }
 }

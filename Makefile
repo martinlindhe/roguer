@@ -28,7 +28,7 @@ tiles:
 
 jointiles:
 	mkdir -p public/img/tileset/oddball
-	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/ground/8x4  resources/assets/tilesets/oddball/ground1.png 8;     imgcat resources/assets/tilesets/oddball/ground1.png
+	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/ground/8x4  resources/assets/tilesets/oddball/ground.png 8;      imgcat resources/assets/tilesets/oddball/ground.png
 	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/ground/8x12 resources/assets/tilesets/oddball/ground2.png 8;     imgcat resources/assets/tilesets/oddball/ground2.png
 	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/items       resources/assets/tilesets/oddball/items.png 8;       imgcat resources/assets/tilesets/oddball/items.png
 	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/font        resources/assets/tilesets/oddball/font.png 16;       imgcat resources/assets/tilesets/oddball/font.png

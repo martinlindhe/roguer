@@ -245,7 +245,7 @@ func (i *Island) DescribeLocalArea(pos Point) []LocalSpawns {
 		if sp.Position.isNearby(pos) {
 			var ls LocalSpawns
 			ls.Name = sp.Name
-			ls.Sprite = "c:elf" // XXX c=characters, i=items ... must map to something in items.yml or characters.yml
+			ls.Sprite = "g:tree" // XXX c=characters, i=items  g=ground2   ... must map to something in items.yml or characters.yml
 			ls.X = sp.Position.X
 			ls.Y = sp.Position.Y
 
