@@ -7,3 +7,4 @@ tiles:
   elf: 6
   dwarf: 90
   human: 48
+  rabbit: 213 # XXX is a rat

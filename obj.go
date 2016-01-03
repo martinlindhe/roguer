@@ -16,6 +16,7 @@ type Obj struct {
 	Race     string
 	Type     string
 	Class    string
+	Sprite   string
 	Position Point
 	Energy   int
 	Weight   int
@@ -50,6 +51,7 @@ type objSpec struct {
 	Class  string     `json:"class"`
 	Race   string     `json:"race"`
 	Name   string     `json:"name"`
+	Sprite string     `json:"sprite"`
 	Energy int        `json:"energy"`
 	Weight int        `json:"weight"`
 	Drops  []dropSpec `json:"drops"`

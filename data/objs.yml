@@ -2,49 +2,60 @@ all:
   - type: humanoid
     class: npc
     race: dwarf
+    sprite: c:dwarf
 
   - type: humanoid
     class: npc
     race: elf
+    sprite: c:elf
 
   - type: humanoid
     class: npc
     race: human
+    sprite: c:human
 
   - type: rodent
     class: npc
     race: rabbit
     name: a rabbit
+    sprite: c:rabbit
 
   - type: fireplace
     class: object
     name: small fireplace
+    sprite: g:fireplace
 
   - type: cooking
     class: object
     name: cooking pit
+    sprite: g:cooking_pit
 
   - type: burrow
     class: object
     name: small hole
+    sprite: g:hole
     energy: 5
 
   - type: shelter
     class: object
     name: small shelter
+    sprite: xxx
     energy: 5
 
   - type: shelter
     class: object
     name: small hut
+    sprite: xxx
     energy: 20
 
   - type: food producer
     class: object
     name: farmland
+    sprite: xxx
 
   - type: tree
     class: object
+    sprite: g:tree
     name: apple tree
     drops:
       - name: apple
@@ -58,6 +69,7 @@ all:
 
   - type: tree
     class: object
+    sprite: g:tree
     name: oak tree
     drops:
       - name: small branch
@@ -69,6 +81,7 @@ all:
 
   - type: tree
     class: object
+    sprite: g:tree
     name: birch tree
     drops:
       - name: small branch
@@ -80,57 +93,69 @@ all:
 
   - type: food
     class: object
+    spawn: i:food
     name: sweet potato
     energy: 50
 
   - type: food
     class: object
+    spawn: i:food
     name: carrot
     energy: 50
 
   - type: food
     class: object
+    spawn: i:food
     name: apple
     energy: 50
 
   - type: drink
     class: object
+    spawn: i:drink
     name: pouch of water
     energy: 100
 
   - type: wood
     class: object
+    spawn: xxx
     name: small branch
     energy: 50
 
   - type: wood
     class: object
+    spawn: xxx
     name: branch
     energy: 100
 
   - type: seed
     class: object
+    spawn: i:seed
     name: oak seed
 
   - type: seed
     class: object
+    spawn: i:seed
     name: apple seed
 
   - type: seed
     class: object
+    spawn: i:seed
     name: birch seed
 
   - type: rock
     class: object
+    spawn: xxx
     name: small rock
     weight: 10
 
   - type: rock
     class: object
+    spawn: xxx
     name: medium rock
     weight: 50
 
   - type: rock
     class: object
+    spawn: xxx
     name: large rock
     weight: 100

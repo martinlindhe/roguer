@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var gameWidth = 800;
-var gameHeight = 600;
+var gameWidth = 640;
+var gameHeight = 480;
 
 var tileWidth = 8;
 var tileHeight = 4;
@@ -23,18 +23,18 @@ function preload() {
 
     game.stage.backgroundColor = '#262f71'; // deep water
 
-    game.load.image('minimap', 'img/islands/current.png');
-
     game.load.tilemap('islandMap', '/island/full', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('ground', 'img/tileset/oddball/ground.png', 4, 8);
 
-    game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
+    game.load.image('minimap', 'img/islands/current.png');
 
     game.load.atlas('characterAtlas', 'img/tileset/oddball/characters.png', 'sprite/character');
     game.load.atlas('itemAtlas', 'img/tileset/oddball/items.png', 'sprite/item');
     game.load.atlas('ground2Atlas', 'img/tileset/oddball/ground2.png', 'sprite/ground2');
 
     game.load.image('oddballFont', 'img/tileset/oddball/font.png');
+
+    game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 
     game.world.scale.set(worldScale);
 }
@@ -241,7 +241,7 @@ function handleXyMessage(cmd) {
                 atlas = 'ground2Atlas';
                 break;
             default:
-                console.log('ERROR unknown sprite type ' + values[0]);
+                console.log('ERROR unknown sprite: ' + sp.Sprite);
                 continue;
         }
 

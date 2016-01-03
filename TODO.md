@@ -1,10 +1,7 @@
-
 # TODO
-
 
 forage:
   - later: some other "roam" mode, now we finds item of type X and moves straight towards it
-
 
 
 tree:
@@ -50,20 +47,5 @@ generate island:
 
 # phaser js game engine
 
-
-
-
-  - tool: read *.yml from oddball tileset, use it to pick the proper tiles, and generate new tile maps,
-    one for each input folder (so we'll have multiple tile maps still, but mapped to the items we use)
-
-
-
-
-----
-
-NOW:
-    - spawning sometimes outside of map. perhaps because spawn data is done before island map has been processed?
-
-    - able to use characters.yml and items.yml on map
-
-    - move ground/8x12 to a sprite layer, rather than ground-tile layer (to draw trees and walls on top of map)
+  - BUG: spawning sometimes outside of map.
+    perhaps because spawn data is done before island map has been processed?

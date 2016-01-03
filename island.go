@@ -107,6 +107,7 @@ func (i *Island) getNpcFromSpec(spec objSpec) *Obj {
 	o.Race = spec.Race
 	o.Type = spec.Type
 	o.Class = spec.Class
+	o.Sprite = spec.Sprite
 	o.Energy = spec.Energy
 	o.Weight = spec.Weight
 
@@ -245,7 +246,7 @@ func (i *Island) DescribeLocalArea(pos Point) []LocalSpawns {
 		if sp.Position.isNearby(pos) {
 			var ls LocalSpawns
 			ls.Name = sp.Name
-			ls.Sprite = "g:tree" // XXX c=characters, i=items  g=ground2   ... must map to something in items.yml or characters.yml
+			ls.Sprite = sp.Sprite
 			ls.X = sp.Position.X
 			ls.Y = sp.Position.Y
 

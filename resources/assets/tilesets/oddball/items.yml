@@ -6,5 +6,7 @@ props:
 tiles:
   club: 18
   meat: 61
-  water: 59  # "blue potion"
   ring: 72
+  food: 53   # full heart
+  drink: 59  # "blue potion"
+  seed: 55   # unsure what it is...

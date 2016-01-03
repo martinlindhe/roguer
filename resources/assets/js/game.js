@@ -1,5 +1,5 @@
-var gameWidth = 800;
-var gameHeight = 600;
+var gameWidth = 640;
+var gameHeight = 480;
 
 var tileWidth = 8;
 var tileHeight = 4;
@@ -28,12 +28,10 @@ function preload()
 
     game.stage.backgroundColor = '#262f71';  // deep water
 
-    game.load.image('minimap', 'img/islands/current.png');
-
     game.load.tilemap('islandMap', '/island/full', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('ground', 'img/tileset/oddball/ground.png', 4, 8);
 
-    game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
+    game.load.image('minimap', 'img/islands/current.png');
 
     game.load.atlas('characterAtlas', 'img/tileset/oddball/characters.png', 'sprite/character');
     game.load.atlas('itemAtlas', 'img/tileset/oddball/items.png', 'sprite/item');
@@ -41,6 +39,8 @@ function preload()
 
 
     game.load.image('oddballFont', 'img/tileset/oddball/font.png');
+
+    game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 
     game.world.scale.set(worldScale);
 }
@@ -278,11 +278,9 @@ function handleXyMessage(cmd)
             atlas = 'ground2Atlas';
             break;
         default:
-            console.log('ERROR unknown sprite type ' + values[0]);
+            console.log('ERROR unknown sprite: ' + sp.Sprite);
             continue;
         }
-
-
 
         var spGroup = game.add.group();
         spGroup.x = sp.X * tileWidth;
