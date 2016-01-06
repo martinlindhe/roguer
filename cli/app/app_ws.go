@@ -22,11 +22,15 @@ type wsResponse struct {
 }
 
 type newPlayerResponse struct {
+	moveResponse
+	Token string
+	Name  string
+}
+
+type moveResponse struct {
 	wsResponse
 	X           float64
 	Y           float64
-	Token       string
-	Name        string
 	LocalSpawns []rogue.LocalSpawns
 }
 
@@ -89,7 +93,14 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			player.Spawn.Position.Y = float64(y)
 
 			log.Printf("Player %s moved from %s to %s", player.Name, oldPos, player.Spawn.Position)
-			b = []byte(`{"Type": "ok"}`)
+
+			var res moveResponse
+			res.Type = "move_res"
+			res.X = player.Spawn.Position.X
+			res.Y = player.Spawn.Position.X
+			res.LocalSpawns = island.DescribeLocalArea(player.Spawn.Position)
+			//b = []byte(`{"Type": "ok"}`)
+			b, _ = json.Marshal(res)
 
 		default:
 			b = []byte(fmt.Sprintf("unknown command %s", parts[0]))

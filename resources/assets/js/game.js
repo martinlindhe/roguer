@@ -208,6 +208,9 @@ function onSocketMessage(msg)
     case 'xy':
         handleXyMessage(cmd);
         break;
+    case 'move_res':
+        handleMoveResMessage(cmd);
+        break;
 
     case 'ok':
         console.log("server OK: " + msg.data);
@@ -225,7 +228,7 @@ function sendSocketMsg(data) {
 }
 
 function sendSocketMove() {
-    sendSocketMsg("move " + Math.floor(player.x/tileWidth) + " " + Math.floor(player.y/tileHeight) + " " + token);
+    sendSocketMsg("move " + Math.floor(playerGroup.x/tileWidth) + " " + Math.floor(playerGroup.y/tileHeight) + " " + token);
 }
 
 // Socket connected
@@ -262,12 +265,22 @@ function handleXyMessage(cmd)
     token = cmd.Token;
 
 
+    renderLocalSpawns(cmd.LocalSpawns);
+}
+
+function handleMoveResMessage(cmd)
+{
+    console.log("Rendering " + cmd.LocalSpawns.length + " spawns at " + cmd.X + ", " + cmd.Y);
+    renderLocalSpawns(cmd.LocalSpawns);
+}
+
+
+function renderLocalSpawns(spawns)
+{
     var atlas = "";
 
-    // display all from .LocalSpawns
-    //console.log(cmd.LocalSpawns);
-    for (var i = 0; i < cmd.LocalSpawns.length; i++) {
-        var sp = cmd.LocalSpawns[i];
+    for (var i = 0; i < spawns.length; i++) {
+        var sp = spawns[i];
 
         var values = sp.Sprite.split(':');
         switch (values[0]) {
