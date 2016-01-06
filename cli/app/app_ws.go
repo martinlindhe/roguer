@@ -50,20 +50,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 		switch parts[0] {
 		case "new_player":
-			// create new player
-			pos := island.RandomPointAboveWater()
-			token := newJwt()
-
-			spawn := new(rogue.Obj)
-			spawn.Name = parts[1]
-			spawn.Position = pos
-			island.Spawns = append(island.Spawns, spawn)
-
-			var player rogue.Player
-			player.Name = parts[1]
-			player.Token = token
-			player.Spawn = spawn
-			island.Players = append(island.Players, player)
+			pos, token := island.NewPlayer(parts[1])
 
 			var res newPlayerResponse
 			res.Type = "xy"

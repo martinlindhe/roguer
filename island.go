@@ -32,6 +32,28 @@ const (
 	grass        = 118
 )
 
+// NewPlayer creates a new player
+func (i *Island) NewPlayer(name string) (Point, string) {
+
+	pos := island.RandomPointAboveWater()
+	token := newJwt()
+
+	spec := i.getNpcSpecFromRace("dwarf")
+	spawn := i.getNpcFromSpec(spec)
+
+	spawn.Name = name
+	spawn.Position = pos
+	island.Spawns = append(island.Spawns, spawn)
+
+	var player Player
+	player.Name = name
+	player.Token = token
+	player.Spawn = spawn
+	island.Players = append(island.Players, player)
+
+	return pos, token
+}
+
 // Add ...
 func (i *Island) addSpawn(o *Obj) {
 	i.Spawns = append(i.Spawns, o)
@@ -129,11 +151,11 @@ func (i *Island) addNpcFromSpec(spec objSpec, pos Point) *Obj {
 	return o
 }
 
+// RandomPointAboveWater ...
 func (i *Island) RandomPointAboveWater() Point {
 
 	p := Point{float64(rand.Intn(i.Width)), float64(rand.Intn(i.Height))}
 
-	// above ground
 	if i.isAboveWater(p) {
 		return p
 	}
@@ -179,6 +201,7 @@ func (i *Island) ColoredHeightMapAsImage() image.Image {
 	return img
 }
 
+// HeightsAsFlatTilemap ...
 func (i *Island) HeightsAsFlatTilemap() []int {
 
 	tiles, err := parseGroundTilesetDefinition("resources/assets/tilesets/oddball/ground.yml")
@@ -230,7 +253,7 @@ func fromSliceByScale(b int, min int, max int, tiles []int) int {
 	return tiles[num]
 }
 
-// expose "public" info about the spawn to the player
+// LocalSpawns exposes public info about the spawn to the player
 type LocalSpawns struct {
 	Name   string
 	Sprite string
@@ -238,10 +261,10 @@ type LocalSpawns struct {
 	Y      float64
 }
 
+// DescribeLocalArea returns all spawns near pos
 func (i *Island) DescribeLocalArea(pos Point) []LocalSpawns {
 	var res []LocalSpawns
 
-	// find all spawns near pos
 	for _, sp := range island.Spawns {
 		if sp.Position.isNearby(pos) {
 			var ls LocalSpawns

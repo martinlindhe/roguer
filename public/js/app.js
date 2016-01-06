@@ -104,15 +104,15 @@ function update() {
         return;
     }
 
-    //game.physics.arcade.collide(player, layer);
+    game.physics.arcade.collide(player, layer);
 
     var steppingVert = 2;
     var steppingHoriz = 4;
 
     // flip horizontally
-    if (player.body.velocity.x = cursors.left.isDown) {
+    if (player.body.velocity.x == cursors.left.isDown) {
         player.scale.x = -1;
-    } else if (player.body.velocity.x = cursors.right.isDown) {
+    } else if (player.body.velocity.x == cursors.right.isDown) {
         player.scale.x = 1;
     }
 
@@ -227,7 +227,6 @@ function handleXyMessage(cmd) {
     //console.log(cmd.LocalSpawns);
     for (var i = 0; i < cmd.LocalSpawns.length; i++) {
         var sp = cmd.LocalSpawns[i];
-        //console.log(sp);
 
         var values = sp.Sprite.split(':');
         switch (values[0]) {
@@ -242,6 +241,7 @@ function handleXyMessage(cmd) {
                 break;
             default:
                 console.log('ERROR unknown sprite: ' + sp.Sprite);
+                console.log(sp);
                 continue;
         }
 

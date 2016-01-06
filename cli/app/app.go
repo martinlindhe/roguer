@@ -6,7 +6,6 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/martinlindhe/rogue"
 	"github.com/martinlindhe/rogue/views"
 	"github.com/plimble/ace"
@@ -68,23 +67,6 @@ func getRouter() *ace.Ace {
 	r.Static("/audio", "./public/audio")
 	//r.LoadHTMLFiles("./public/index.html")
 	return r
-}
-
-func newJwt() string {
-
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	signingKey := []byte("top secret")
-
-	//token.Claims["foo"] = "bar"
-	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-
-	tokenString, err := token.SignedString(signingKey)
-	if err != nil {
-		panic(err)
-	}
-
-	return tokenString
 }
 
 // returns a map in Tiled json format, recognized by phaser.io
