@@ -38,9 +38,8 @@ func (i *Island) NewPlayer(name string) (Point, string) {
 	pos := island.RandomPointAboveWater()
 	token := newJwt()
 
-	spec := i.getNpcSpecFromRace("dwarf")
-	spawn := i.getNpcFromSpec(spec)
-
+	spawn := i.getNpcFromRace("dwarf")
+	spawn.Class = "player"
 	spawn.Name = name
 	spawn.Position = pos
 	island.Spawns = append(island.Spawns, spawn)
@@ -114,12 +113,17 @@ func (i *Island) getNpcSpecFromRace(n string) objSpec {
 
 func (i *Island) addNpcFromName(n string, pos Point) *Obj {
 
-	return island.addNpcFromSpec(island.getNpcSpecFromName(n), pos)
+	return i.addNpcFromSpec(i.getNpcSpecFromName(n), pos)
 }
 
 func (i *Island) addNpcFromRace(n string, pos Point) {
 
-	island.addNpcFromSpec(island.getNpcSpecFromRace(n), pos)
+	i.addNpcFromSpec(i.getNpcSpecFromRace(n), pos)
+}
+
+func (i *Island) getNpcFromRace(race string) *Obj {
+	spec := i.getNpcSpecFromRace(race)
+	return i.getNpcFromSpec(spec)
 }
 
 func (i *Island) getNpcFromSpec(spec objSpec) *Obj {
