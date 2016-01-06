@@ -260,6 +260,7 @@ func fromSliceByScale(b int, min int, max int, tiles []int) int {
 // LocalSpawns exposes public info about the spawn to the player
 type LocalSpawns struct {
 	Name   string
+	Class  string
 	Sprite string
 	X      float64
 	Y      float64
@@ -273,6 +274,7 @@ func (i *Island) DescribeLocalArea(pos Point) []LocalSpawns {
 		if sp.Position.isNearby(pos) {
 			var ls LocalSpawns
 			ls.Name = sp.Name
+			ls.Class = sp.Class
 			ls.Sprite = sp.Sprite
 			ls.X = sp.Position.X
 			ls.Y = sp.Position.Y

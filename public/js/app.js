@@ -43,6 +43,7 @@ var map;
 var layer;
 var cursors;
 var player;
+var playerName;
 var playerGroup;
 var music;
 var minimap;
@@ -189,7 +190,7 @@ function onSocketMessage(msg) {
 
 function sendSocketMsg(data) {
     socket.send(data);
-    console.log("-sent->" + data);
+    // console.log("-sent->" + data);
 }
 
 function sendSocketMove() {
@@ -200,11 +201,12 @@ function sendSocketMove() {
 function onSocketConnected() {
     sendSocketMsg("new_player mrcool");
 
-    console.log('Connected to socket server');
+    console.log('Websocket connected');
 }
 
 function handleXyMessage(cmd) {
     // multiply coords with tile size to scale properly. sprite tiles are always in pixels
+    playerName = cmd.Name;
 
     playerGroup.x = cmd.X * tileWidth;
     playerGroup.y = cmd.Y * tileHeight;
@@ -212,14 +214,12 @@ function handleXyMessage(cmd) {
 
     retroFont = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
     retroFont.autoUpperCase = false;
-    retroFont.text = cmd.Name;
+    retroFont.text = playerName;
 
     // floating name over head of player
-    var playerName = game.add.image(0, -10, retroFont);
-
-    playerName.anchor.set(0.5);
-
-    playerGroup.add(playerName);
+    var aboveHead = game.add.image(0, -10, retroFont);
+    aboveHead.anchor.set(0.5);
+    playerGroup.add(aboveHead);
     console.log("spawned at " + cmd.X + ", " + cmd.Y);
 
     token = cmd.Token;
@@ -228,7 +228,7 @@ function handleXyMessage(cmd) {
 }
 
 function handleMoveResMessage(cmd) {
-    console.log("Rendering " + cmd.LocalSpawns.length + " spawns at " + cmd.X + ", " + cmd.Y);
+    // console.log("Rendering " + cmd.LocalSpawns.length + " spawns at " + cmd.X + ", " + cmd.Y);
     renderLocalSpawns(cmd.LocalSpawns);
 }
 
@@ -237,14 +237,17 @@ function renderLocalSpawns(spawns) {
 
     for (var i = 0; i < spawns.length; i++) {
         var sp = spawns[i];
+        if (sp.Class == "player" && sp.Name == playerName) {
+            continue;
+        }
 
         var values = sp.Sprite.split(':');
         switch (values[0]) {
             case 'c':
                 atlas = 'characterAtlas';
                 break;
-            case 's':
-                atlas = 'spriteAtlas';
+            case 'i':
+                atlas = 'itemAtlas';
                 break;
             case 'g':
                 atlas = 'ground2Atlas';

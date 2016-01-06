@@ -117,13 +117,13 @@ all:
 
   - type: wood
     class: object
-    sprite: xxx
+    sprite: i:branch
     name: small branch
     energy: 50
 
   - type: wood
     class: object
-    sprite: xxx
+    sprite: i:branch
     name: branch
     energy: 100
 
@@ -144,18 +144,18 @@ all:
 
   - type: rock
     class: object
-    sprite: xxx
+    sprite: i:rock
     name: small rock
     weight: 10
 
   - type: rock
     class: object
-    sprite: xxx
+    sprite: i:rock
     name: medium rock
     weight: 50
 
   - type: rock
     class: object
-    sprite: xxx
+    sprite: i:rock
     name: large rock
     weight: 100

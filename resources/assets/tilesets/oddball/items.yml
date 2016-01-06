@@ -10,3 +10,5 @@ tiles:
   food: 53   # full heart
   drink: 59  # "blue potion"
   seed: 55   # unsure what it is...
+  branch: 21 # some wood stick
+  rock: 34   # gray stick
