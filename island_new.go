@@ -7,7 +7,7 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/martinlindhe/rogue/rollingparticle"
+	"github.com/martinlindhe/roguer/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
 )
 

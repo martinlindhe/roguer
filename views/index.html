@@ -7,21 +7,15 @@
     <title>rogue</title>
     <link href="/css/app.css" rel="stylesheet" type="text/css">
 </head>
+
 <body>
     <noscript>
         <div class="alert alert-danger" role="alert">
-            <h4>{{ trans('help.please_enable_javascript') }}</h4>
-            {{ trans('help.enable_javascript_info') }}
+            <h4>Please enable javascript</h4>
         </div>
     </noscript>
-
-    <!--[if lt IE 10]>
-    <div>
-        {!! trans('help.old_ie', ['link' => 'http://ie.microsoft.com/']) !!}
-    </div>
-    <![endif]-->
-
     <script src="/js/phaser.js"></script>
     <script src="/js/app.js"></script>
 </body>
+
 </html>

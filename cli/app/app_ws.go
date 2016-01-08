@@ -9,7 +9,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
-	"github.com/martinlindhe/rogue"
+	"github.com/martinlindhe/roguer"
 )
 
 var wsUpgrader = websocket.Upgrader{

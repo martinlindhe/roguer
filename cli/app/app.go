@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/martinlindhe/rogue"
-	"github.com/martinlindhe/rogue/views"
+	"github.com/martinlindhe/roguer"
 	"github.com/plimble/ace"
 )
 
@@ -24,7 +24,6 @@ func main() {
 	island = rogue.NewIsland()
 	islandMap = rogue.PrecalcTilemap()
 
-	// listen and serve on 0.0.0.0:3322
 	appPort := 3322
 	listenAt := fmt.Sprintf(":%d", appPort)
 
@@ -44,10 +43,9 @@ func getRouter() *ace.Ace {
 	// ace with Logger, Recovery
 	r := ace.Default()
 
-	//	r.Use(gzip.Gzip(gzip.DefaultCompression))
-
 	r.GET("/", func(c *ace.C) {
-		c.String(200, views.Index())
+		body, _ := ioutil.ReadFile("views/index.html")
+		c.String(200, string(body))
 	})
 
 	r.GET("/island/full", getFullIslandController)
@@ -65,14 +63,11 @@ func getRouter() *ace.Ace {
 	r.Static("/fonts", "./public/fonts")
 	r.Static("/img", "./public/img")
 	r.Static("/audio", "./public/audio")
-	//r.LoadHTMLFiles("./public/index.html")
 	return r
 }
 
 // returns a map in Tiled json format, recognized by phaser.io
 func getFullIslandController(c *ace.C) {
-	// NOTE: this is useful in early stage for world debugging.
-	// later on, the game would only expose a small area around the player
 
 	c.Writer.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	c.Writer.WriteHeader(http.StatusOK)
