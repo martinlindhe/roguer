@@ -223,13 +223,27 @@ function onSocketMessage(msg)
     }
 }
 
-function sendSocketMsg(data) {
+function sendSocketMsg(data)
+{
     socket.send(data);
     // console.log("-sent->" + data);
 }
 
-function sendSocketMove() {
-    sendSocketMsg("move " + Math.floor(playerGroup.x/tileWidth) + " " + Math.floor(playerGroup.y/tileHeight) + " " + token);
+var prevX, prevY;
+function sendSocketMove()
+{
+    var newX = Math.floor(playerGroup.x/tileWidth);
+    var newY = Math.floor(playerGroup.y/tileHeight);
+
+    if (prevX == newX && prevY == newY) {
+        // dont spam server when coords havent changed
+        return;
+    }
+
+    sendSocketMsg("move " + newX + " " + newY + " " + token);
+
+    prevX = newX;
+    prevY = newY;
 }
 
 // Socket connected

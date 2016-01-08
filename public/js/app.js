@@ -193,8 +193,20 @@ function sendSocketMsg(data) {
     // console.log("-sent->" + data);
 }
 
+var prevX, prevY;
 function sendSocketMove() {
-    sendSocketMsg("move " + Math.floor(playerGroup.x / tileWidth) + " " + Math.floor(playerGroup.y / tileHeight) + " " + token);
+    var newX = Math.floor(playerGroup.x / tileWidth);
+    var newY = Math.floor(playerGroup.y / tileHeight);
+
+    if (prevX == newX && prevY == newY) {
+        // dont spam server when coords havent changed
+        return;
+    }
+
+    sendSocketMsg("move " + newX + " " + newY + " " + token);
+
+    prevX = newX;
+    prevY = newY;
 }
 
 // Socket connected
