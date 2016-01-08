@@ -312,14 +312,10 @@ function renderLocalSpawns(spawns)
             continue;
         }
 
-        var spGroup = game.add.group();
-        spGroup.x = sp.X * tileWidth;
-        spGroup.y = sp.Y * tileHeight;
-
         var spr = game.add.sprite(0, 0, atlas);
+        spr.x = sp.X * tileWidth;
+        spr.y = sp.Y * tileHeight;
         spr.frameName = values[1];
         spr.anchor.set(0.5);
-
-        spGroup.add(spr);
     }
 }
