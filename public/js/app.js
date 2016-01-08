@@ -51,6 +51,8 @@ var retroFont;
 
 var token;
 
+var spawnLayer; // this group holds all nearby spawns
+
 var oddballFontSet = "                " + // colors
 "                " + // cursor
 "!\"#$%&'()  ,-./0123456789:;<=>?@" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" + "abcdefghijklmnopqrstuvwxyz{|}~" + ""; // XXX more characters
@@ -86,6 +88,9 @@ function create() {
     music = game.add.audio('bgSound');
     music.volume = 0.5; // 50%
     music.play();
+
+    spawnLayer = game.add.group();
+    spawnLayer.z = 5;
 
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -245,6 +250,8 @@ function handleMoveResMessage(cmd) {
 }
 
 function renderLocalSpawns(spawns) {
+    spawnLayer.removeAll();
+
     var atlas = "";
 
     for (var i = 0; i < spawns.length; i++) {
@@ -275,6 +282,8 @@ function renderLocalSpawns(spawns) {
         spr.y = sp.Y * tileHeight;
         spr.frameName = values[1];
         spr.anchor.set(0.5);
+
+        spawnLayer.add(spr);
     }
 }
 
