@@ -50,10 +50,8 @@ func (i *Island) spawnGravel() {
 		for x := 0; x < i.Width; x++ {
 			pos := Point{X: float64(x), Y: float64(y)}
 			if i.isAboveWater(pos) {
-				// add 1-3 items
-				cnt := 1 + rand.Intn(3)
-
-				for i := 0; i < cnt; i++ {
+				// 10% chance to add a rock
+				if rand.Intn(100) < 10 {
 					name := ""
 					// XXX make it less likely to place a large rock
 					switch rand.Intn(3) {
