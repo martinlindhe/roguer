@@ -46,3 +46,8 @@ generate island:
 
 
 # phaser js game engine
+    fog of war thing:
+        only light up nearby area, ignore line of sight thing for now
+
+
+    collision detection (dont walk on water...)

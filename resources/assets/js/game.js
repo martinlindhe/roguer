@@ -6,23 +6,9 @@ var tileHeight = 4;
 
 var worldScale = 1.0;
 
+var GameState = function(game) {};
 
-var game = new Phaser.Game(
-    gameWidth,
-    gameHeight,
-    Phaser.CANVAS,
-    'game',
-    {
-        preload: preload,
-        create: create,
-        update: update,
-        render : render
-    },
-    false,  // transparent
-    false   // antialias
-);
-
-function preload()
+GameState.prototype.preload = function()
 {
     game.time.advancedTiming = true; // required for fps counter
 
@@ -46,7 +32,7 @@ function preload()
 
 
     game.world.scale.set(worldScale);
-}
+};
 
 
 var map;
@@ -74,7 +60,7 @@ var oddballFontSet = "                " + // colors
     ""; // XXX more characters
 
 
-function create()
+GameState.prototype.create = function()
 {
     // A Tilemap object just holds the data needed to describe the map
     // You can add your own data or manipulate the data (swap tiles around, etc)
@@ -130,9 +116,10 @@ function create()
     minimap.setScaleMinMax(1.0/minimapScale, 1.0/minimapScale);
 
     initWebsockets();
-}
+};
 
-function update()
+
+GameState.prototype.update = function()
 {
     if (!playerGroup) {
         return;
@@ -178,9 +165,10 @@ function update()
 
     // set our world scale as needed
     game.world.scale.set(worldScale);
-}
+};
 
-function render()
+
+GameState.prototype.render = function()
 {
     game.debug.text(game.time.fps || '--', 1, 14, "#00ff00");
 
@@ -188,7 +176,7 @@ function render()
     //game.debug.cameraInfo(game.camera, 32, 32);
 
     //game.debug.soundInfo(music, 20, 32);
-}
+};
 
 
 
@@ -329,3 +317,17 @@ function renderLocalSpawns(spawns)
         spawnLayer.add(spr);
     }
 }
+
+
+
+
+var game = new Phaser.Game(
+    gameWidth,
+    gameHeight,
+    Phaser.CANVAS,
+    'game',
+    {},
+    false,  // transparent
+    false   // antialias
+);
+game.state.add('game', GameState, true);
