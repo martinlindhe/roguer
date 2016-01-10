@@ -1,5 +1,5 @@
-var gameWidth = 640;
-var gameHeight = 480;
+var gameWidth = 800;
+var gameHeight = 400;
 
 var tileWidth = 8;
 var tileHeight = 4;
@@ -10,6 +10,10 @@ var GameState = function(game) {};
 
 GameState.prototype.preload = function()
 {
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.setGameSize(gameWidth, gameHeight);
+
+
     game.time.advancedTiming = true; // required for fps counter
 
     game.stage.backgroundColor = '#262f71';  // deep water
@@ -27,11 +31,6 @@ GameState.prototype.preload = function()
     game.load.image('oddballFont', 'img/tileset/oddball/font.png');
 
     game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
-
-
-
-
-    game.world.scale.set(worldScale);
 };
 
 

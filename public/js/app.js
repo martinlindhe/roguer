@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var gameWidth = 640;
-var gameHeight = 480;
+var gameWidth = 800;
+var gameHeight = 400;
 
 var tileWidth = 8;
 var tileHeight = 4;
@@ -12,6 +12,9 @@ var worldScale = 1.0;
 var GameState = function GameState(game) {};
 
 GameState.prototype.preload = function () {
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.setGameSize(gameWidth, gameHeight);
+
     game.time.advancedTiming = true; // required for fps counter
 
     game.stage.backgroundColor = '#262f71'; // deep water
@@ -28,8 +31,6 @@ GameState.prototype.preload = function () {
     game.load.image('oddballFont', 'img/tileset/oddball/font.png');
 
     game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
-
-    game.world.scale.set(worldScale);
 };
 
 var layer;
