@@ -40,3 +40,6 @@ validate-yaml:
 
 validate-json:
 	find . -name '*.json' -not -path "./node_modules/*" -print0 | xargs -0 -n1 validjson
+
+validate-js:
+	jshint resources/assets/js

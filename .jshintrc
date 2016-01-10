@@ -1,0 +1,9 @@
+{
+  "browser":true,
+  "devel": true,
+  "esnext": true,
+  "indent": 4,
+  "predef": [ "Phaser" ],
+  "undef": true,
+  "unused": true
+}

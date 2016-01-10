@@ -1,17 +1,12 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-var GameState = function GameState(game) {
+var GameState = function(game) {
     this.game = game;
 };
 
-GameState.prototype.preload = function () {
+GameState.prototype.preload = function()
+{
     this.game.time.advancedTiming = true; // required for fps counter
 
-    this.game.stage.backgroundColor = '#262f71'; // deep water
+    this.game.stage.backgroundColor = '#262f71';  // deep water
 
     this.game.load.tilemap('islandMap', '/island/full', null, Phaser.Tilemap.TILED_JSON);
     this.game.load.image('ground', 'img/tileset/oddball/ground.png', 4, 8);
@@ -29,13 +24,18 @@ GameState.prototype.preload = function () {
     this.game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 };
 
-GameState.prototype.create = function () {
+GameState.prototype.create = function()
+{
     this.worldScale = 1.0;
     this.tileWidth = 8;
     this.tileHeight = 4;
     this.playerName = "Jimpson";
 
-    this.logMessages = [{ text: "hello there", time: 1222 }, { text: "later on", time: 1234 }];
+    this.logMessages = [
+        {text: "hello there", time: 1222},
+        {text: "later on", time: 1234},
+    ];
+
 
     // scale to whole window
     this.game.scale.setGameSize(window.innerWidth, window.innerHeight);
@@ -43,8 +43,10 @@ GameState.prototype.create = function () {
     var boundsPoint = new Phaser.Point(0, 0);
     var viewRect = new Phaser.Rectangle(0, 0, this.game.width, this.game.height);
 
+
     // world (except UI) is in this group, so it can be scaled
     this.stageGroup = this.game.add.group();
+
 
     this.groundMap = this.game.add.tilemap('islandMap');
     this.groundMap.addTilesetImage('island_tiles', 'ground');
@@ -53,14 +55,21 @@ GameState.prototype.create = function () {
 
     this.stageGroup.add(this.groundLayer);
 
+
+
+
+
     this.music = this.game.add.audio('bgSound');
     this.music.volume = 0.20; // 20%
+
 
     this.spawnLayer = this.game.add.group();
     this.spawnLayer.z = 5;
     this.stageGroup.add(this.spawnLayer);
 
+
     this.cursors = this.game.input.keyboard.createCursorKeys();
+
 
     var minimapScale = 3;
     var minimapX = this.game.width - this.game.cache.getImage('minimap').width / minimapScale;
@@ -70,16 +79,29 @@ GameState.prototype.create = function () {
     this.minimap.alpha = 0.8;
     this.minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
 
-    var button = this.game.add.button(this.game.width - 102, 2, 'button', function () {
-        // onClick
-        if (this.music.isPlaying) {
-            this.music.stop();
-        } else {
-            this.music.play();
-        }
-    }, this, 0, 0, 0);
+
+
+    var button = this.game.add.button(
+        this.game.width - 102,
+        2,
+        'button',
+        function() { // onClick
+            if (this.music.isPlaying) {
+                this.music.stop();
+            } else {
+                this.music.play();
+            }
+        },
+        this,
+        0,
+        0,
+        0
+    );
 
     button.fixedToCamera = true;
+
+
+
 
     // fog of war
 
@@ -101,47 +123,33 @@ GameState.prototype.create = function () {
     this.initWebsockets();
 };
 
-GameState.prototype.redrawLogMessages = function () {
+
+GameState.prototype.redrawLogMessages = function()
+{
     this.logMessageWindow = this.game.add.group();
     this.logMessageWindow.x = 100;
     this.logMessageWindow.y = 100;
     this.logMessageWindow.z = 20;
     this.logMessageWindow.fixedToCamera = true;
 
+
+
+
     // XXX make some pretty log window with scroll
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    for (let msg of this.logMessages) {
+        console.log(msg);
 
-    try {
-        for (var _iterator = this.logMessages[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var msg = _step.value;
+        var txt = this.makeText(msg.text);
 
-            console.log(msg);
-
-            var txt = this.makeText(msg.text);
-
-            // floating name over head of player
-            var img = this.game.add.image(0, -10, txt);
-            this.logMessageWindow.add(img);
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator['return']) {
-                _iterator['return']();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
-        }
+        // floating name over head of player
+        var img = this.game.add.image(0, -10, txt);
+        this.logMessageWindow.add(img);
     }
 };
 
-GameState.prototype.update = function () {
+
+GameState.prototype.update = function()
+{
     if (!this.playerGroup) {
         return;
     }
@@ -198,7 +206,9 @@ GameState.prototype.update = function () {
     this.groundLayer.resizeWorld();
 };
 
-GameState.prototype.render = function () {
+
+GameState.prototype.render = function()
+{
     this.game.debug.text(this.game.time.fps || '--', 1, 14, "#00ff00");
 
     //game.debug.spriteInfo(this.player, 32, 32);
@@ -207,7 +217,10 @@ GameState.prototype.render = function () {
     //game.debug.soundInfo(this.music, 10, 140);
 };
 
-GameState.prototype.updateShadowTexture = function () {
+
+
+GameState.prototype.updateShadowTexture = function()
+{
     // This function updates the shadow texture (this.shadowTexture).
     // First, it fills the entire texture with a dark shadow color.
     // Then it draws a white circle centered on the pointer position.
@@ -220,20 +233,33 @@ GameState.prototype.updateShadowTexture = function () {
     this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);
 
     // Draw circle of light with a soft edge
-    var gradient = this.shadowTexture.context.createRadialGradient(this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS * 0.75, this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS);
+    var gradient = this.shadowTexture.context.createRadialGradient(
+        this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS * 0.75,
+        this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS
+    );
     gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
     this.shadowTexture.context.beginPath();
     this.shadowTexture.context.fillStyle = gradient;
-    this.shadowTexture.context.arc(this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS, 0, Math.PI * 2);
+    this.shadowTexture.context.arc(
+        this.playerGroup.x,
+        this.playerGroup.y,
+        this.LIGHT_RADIUS,
+        0,
+        Math.PI * 2
+    );
     this.shadowTexture.context.fill();
 
     // This just tells the engine it should update the texture cache
     this.shadowTexture.dirty = true;
 };
 
-GameState.prototype.initWebsockets = function () {
+
+
+
+GameState.prototype.initWebsockets = function()
+{
     var url = 'ws://localhost:3322/ws';
     this.socket = new WebSocket(url);
 
@@ -242,34 +268,38 @@ GameState.prototype.initWebsockets = function () {
     /**
      * @param msg MessageEvent
      */
-    this.socket.onmessage = function (msg) {
+    this.socket.onmessage = function(msg)
+    {
         var cmd = JSON.parse(msg.data);
 
         switch (cmd.Type) {
-            case 'xy':
-                parent.handleXyMessage(cmd);
-                break;
-            case 'move_res':
-                parent.handleMoveResMessage(cmd);
-                break;
+        case 'xy':
+            parent.handleXyMessage(cmd);
+            break;
+        case 'move_res':
+            parent.handleMoveResMessage(cmd);
+            break;
 
-            case 'ok':
-                console.log("server OK: " + msg.data);
-                break;
+        case 'ok':
+            console.log("server OK: " + msg.data);
+            break;
 
-            default:
-                console.log("<-recv- " + msg.data);
-                console.log("unknown command from server: " + cmd.Type);
+        default:
+            console.log("<-recv- " + msg.data);
+            console.log("unknown command from server: " + cmd.Type);
         }
     };
 
-    this.socket.onopen = function () {
+    this.socket.onopen = function()
+    {
         //console.log('Websocket connected');
         this.send("new_player " + this.playerName);
     };
 };
 
-GameState.prototype.sendMove = function () {
+
+GameState.prototype.sendMove = function()
+{
     var newX = Math.floor(this.playerGroup.x / this.tileWidth);
     var newY = Math.floor(this.playerGroup.y / this.tileHeight);
 
@@ -283,10 +313,14 @@ GameState.prototype.sendMove = function () {
     this.prevY = newY;
 };
 
-GameState.prototype.handleXyMessage = function (cmd) {
+
+
+GameState.prototype.handleXyMessage = function(cmd)
+{
     this.playerGroup = this.game.add.group();
     this.playerGroup.z = 10;
     this.stageGroup.add(this.playerGroup);
+
 
     this.player = this.game.add.sprite(0, 0, 'characterAtlas');
     this.player.frameName = 'dwarf';
@@ -295,10 +329,12 @@ GameState.prototype.handleXyMessage = function (cmd) {
 
     this.game.physics.enable(this.player);
 
+
     //  Because both our body and our tiles are so tiny,
     //  and the body is moving pretty fast, we need to add
     //  some tile padding to the body. WHat this does
     this.player.body.tilePadding.set(32, 32);
+
 
     // multiply coords with tile size to scale properly.
     // sprite tiles are always in pixels
@@ -319,10 +355,14 @@ GameState.prototype.handleXyMessage = function (cmd) {
     this.renderLocalSpawns(cmd.LocalSpawns);
 };
 
-GameState.prototype.makeText = function (msg) {
+GameState.prototype.makeText = function(msg)
+{
     var oddballFontSet = "                " + // colors
-    "                " + // cursor
-    "!\"#$%&'()  ,-./0123456789:;<=>?@" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" + "abcdefghijklmnopqrstuvwxyz{|}~" + ""; // XXX more characters
+        "                " + // cursor
+        "!\"#$%&'()  ,-./0123456789:;<=>?@" +
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" +
+        "abcdefghijklmnopqrstuvwxyz{|}~" +
+        ""; // XXX more characters
 
     var o = this.game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
     o.autoUpperCase = false;
@@ -331,12 +371,17 @@ GameState.prototype.makeText = function (msg) {
     return o;
 };
 
-GameState.prototype.handleMoveResMessage = function (cmd) {
+
+
+GameState.prototype.handleMoveResMessage = function(cmd)
+{
     // console.log("Rendering " + cmd.LocalSpawns.length + " spawns at " + cmd.X + ", " + cmd.Y);
     this.renderLocalSpawns(cmd.LocalSpawns);
 };
 
-GameState.prototype.renderLocalSpawns = function (spawns) {
+
+GameState.prototype.renderLocalSpawns = function(spawns)
+{
     this.spawnLayer.removeAll();
 
     var atlas = "";
@@ -349,19 +394,19 @@ GameState.prototype.renderLocalSpawns = function (spawns) {
 
         var values = sp.Sprite.split(':');
         switch (values[0]) {
-            case 'c':
-                atlas = 'characterAtlas';
-                break;
-            case 'i':
-                atlas = 'itemAtlas';
-                break;
-            case 'g':
-                atlas = 'ground2Atlas';
-                break;
-            default:
-                console.log('ERROR unknown sprite: ' + sp.Sprite);
-                console.log(sp);
-                continue;
+        case 'c':
+            atlas = 'characterAtlas';
+            break;
+        case 'i':
+            atlas = 'itemAtlas';
+            break;
+        case 'g':
+            atlas = 'ground2Atlas';
+            break;
+        default:
+            console.log('ERROR unknown sprite: ' + sp.Sprite);
+            console.log(sp);
+            continue;
         }
 
         var spr = this.game.add.sprite(0, 0, atlas);
@@ -374,21 +419,4 @@ GameState.prototype.renderLocalSpawns = function (spawns) {
     }
 };
 
-exports['default'] = GameState;
-module.exports = exports['default'];
-
-},{}],2:[function(require,module,exports){
-'use strict';
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _GameStateJs = require('./GameState.js');
-
-var _GameStateJs2 = _interopRequireDefault(_GameStateJs);
-
-var game = new Phaser.Game(800, 400, Phaser.CANVAS, 'game', {}, false, // transparent
-false // antialias
-);
-game.state.add('game', _GameStateJs2['default'], true);
-
-},{"./GameState.js":1}]},{},[2]);
+export default GameState;
