@@ -10,4 +10,5 @@ var game = new Phaser.Game(
     false,  // transparent
     false   // antialias
 );
+
 game.state.add('game', GameState, true);

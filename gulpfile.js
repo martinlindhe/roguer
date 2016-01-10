@@ -9,7 +9,7 @@ elixir(function(mix) {
 
         .browserify(
             [
-                './resources/assets/js/game.js',
+                './resources/assets/js/app.js',
             ],
             'public/js/app.js'
         )

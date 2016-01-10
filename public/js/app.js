@@ -40,9 +40,6 @@ GameState.prototype.create = function () {
     // scale to whole window
     this.game.scale.setGameSize(window.innerWidth, window.innerHeight);
 
-    var boundsPoint = new Phaser.Point(0, 0);
-    var viewRect = new Phaser.Rectangle(0, 0, this.game.width, this.game.height);
-
     // world (except UI) is in this group, so it can be scaled
     this.stageGroup = this.game.add.group();
 
@@ -389,6 +386,7 @@ var _GameStateJs2 = _interopRequireDefault(_GameStateJs);
 var game = new Phaser.Game(800, 400, Phaser.CANVAS, 'game', {}, false, // transparent
 false // antialias
 );
+
 game.state.add('game', _GameStateJs2['default'], true);
 
 },{"./GameState.js":1}]},{},[2]);

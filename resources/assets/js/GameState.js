@@ -40,8 +40,6 @@ GameState.prototype.create = function()
     // scale to whole window
     this.game.scale.setGameSize(window.innerWidth, window.innerHeight);
 
-    var boundsPoint = new Phaser.Point(0, 0);
-    var viewRect = new Phaser.Rectangle(0, 0, this.game.width, this.game.height);
 
 
     // world (except UI) is in this group, so it can be scaled
