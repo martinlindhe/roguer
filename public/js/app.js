@@ -89,7 +89,7 @@ GameState.prototype.create = function () {
     // everything below this sprite.
     lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
 
-    initWebsockets();
+    this.initWebsockets();
 };
 
 GameState.prototype.update = function () {
@@ -114,18 +114,18 @@ GameState.prototype.update = function () {
 
     if (this.cursors.up.isDown) {
         playerGroup.y -= steppingVert;
-        sendSocketMove();
+        this.sendMove();
     } else if (this.cursors.down.isDown) {
         playerGroup.y += steppingVert;
-        sendSocketMove();
+        this.sendMove();
     }
 
     if (this.cursors.left.isDown) {
         playerGroup.x -= steppingHoriz;
-        sendSocketMove();
+        this.sendMove();
     } else if (this.cursors.right.isDown) {
         playerGroup.x += steppingHoriz;
-        sendSocketMove();
+        this.sendMove();
     }
 
     // XXX  zoom is broken
@@ -180,67 +180,58 @@ GameState.prototype.updateShadowTexture = function () {
 
 var socket;
 
-function initWebsockets() {
+GameState.prototype.initWebsockets = function () {
     var url = 'ws://localhost:3322/ws';
     socket = new WebSocket(url);
 
-    socket.onmessage = onSocketMessage;
-    socket.onopen = onSocketConnected;
-}
+    parent = this;
 
-/**
- * @param msg MessageEvent
- */
-function onSocketMessage(msg) {
-    var cmd = JSON.parse(msg.data);
+    /**
+     * @param msg MessageEvent
+     */
+    socket.onmessage = function (msg) {
+        var cmd = JSON.parse(msg.data);
 
-    switch (cmd.Type) {
-        case 'xy':
-            handleXyMessage(cmd);
-            break;
-        case 'move_res':
-            handleMoveResMessage(cmd);
-            break;
+        switch (cmd.Type) {
+            case 'xy':
+                parent.handleXyMessage(cmd);
+                break;
+            case 'move_res':
+                parent.handleMoveResMessage(cmd);
+                break;
 
-        case 'ok':
-            console.log("server OK: " + msg.data);
-            break;
+            case 'ok':
+                console.log("server OK: " + msg.data);
+                break;
 
-        default:
-            console.log("<-recv- " + msg.data);
-            console.log("unknown command from server: " + cmd.Type);
-    }
-}
+            default:
+                console.log("<-recv- " + msg.data);
+                console.log("unknown command from server: " + cmd.Type);
+        }
+    };
 
-function sendSocketMsg(data) {
-    socket.send(data);
-    // console.log("-sent->" + data);
-}
+    socket.onopen = function () {
+        //console.log('Websocket connected');
+        socket.send("new_player mrcool");
+    };
+};
 
-var prevX, prevY;
-function sendSocketMove() {
+GameState.prototype.sendMove = function () {
     var newX = Math.floor(playerGroup.x / tileWidth);
     var newY = Math.floor(playerGroup.y / tileHeight);
 
-    if (prevX == newX && prevY == newY) {
+    if (this.prevX == newX && this.prevY == newY) {
         // dont spam server when coords havent changed
         return;
     }
 
-    sendSocketMsg("move " + newX + " " + newY + " " + token);
+    socket.send("move " + newX + " " + newY + " " + token);
 
-    prevX = newX;
-    prevY = newY;
-}
+    this.prevX = newX;
+    this.prevY = newY;
+};
 
-// Socket connected
-function onSocketConnected() {
-    sendSocketMsg("new_player mrcool");
-
-    console.log('Websocket connected');
-}
-
-function handleXyMessage(cmd) {
+GameState.prototype.handleXyMessage = function (cmd) {
     playerGroup = game.add.group();
     playerGroup.z = 10;
 
@@ -276,15 +267,15 @@ function handleXyMessage(cmd) {
 
     token = cmd.Token;
 
-    renderLocalSpawns(cmd.LocalSpawns);
-}
+    this.renderLocalSpawns(cmd.LocalSpawns);
+};
 
-function handleMoveResMessage(cmd) {
+GameState.prototype.handleMoveResMessage = function (cmd) {
     // console.log("Rendering " + cmd.LocalSpawns.length + " spawns at " + cmd.X + ", " + cmd.Y);
-    renderLocalSpawns(cmd.LocalSpawns);
-}
+    this.renderLocalSpawns(cmd.LocalSpawns);
+};
 
-function renderLocalSpawns(spawns) {
+GameState.prototype.renderLocalSpawns = function (spawns) {
     spawnLayer.removeAll();
 
     var atlas = "";
@@ -320,7 +311,7 @@ function renderLocalSpawns(spawns) {
 
         spawnLayer.add(spr);
     }
-}
+};
 
 var game = new Phaser.Game(gameWidth, gameHeight, Phaser.CANVAS, 'game', {}, false, // transparent
 false // antialias
