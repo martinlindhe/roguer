@@ -105,6 +105,10 @@ GameState.prototype.create = function()
 
 
     // fog of war
+
+    // The radius of the circle of light
+    this.LIGHT_RADIUS = 100;
+
     // Create the shadow texture
     this.shadowTexture = this.game.add.bitmapData(this.game.width, this.game.height);
 
@@ -129,7 +133,7 @@ GameState.prototype.update = function()
     }
 
     // Update the shadow texture each frame
-    //this.updateShadowTexture();
+    this.updateShadowTexture();
 
 
     game.physics.arcade.collide(player, layer);
