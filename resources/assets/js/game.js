@@ -1,11 +1,3 @@
-var gameWidth = 800;
-var gameHeight = 400;
-
-var tileWidth = 8;
-var tileHeight = 4;
-
-var worldScale = 1.0;
-
 var GameState = function(game) {};
 
 GameState.prototype.preload = function()
@@ -31,23 +23,19 @@ GameState.prototype.preload = function()
 
     game.load.image('oddballFont', 'img/tileset/oddball/font.png');
 
-    game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
+    //game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 };
-
-
-
-
-
-var oddballFontSet = "                " + // colors
-    "                " + // cursor
-    "!\"#$%&'()  ,-./0123456789:;<=>?@" +
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" +
-    "abcdefghijklmnopqrstuvwxyz{|}~" +
-    ""; // XXX more characters
-
 
 GameState.prototype.create = function()
 {
+    this.worldScale = 1.0;
+    this.tileWidth = 8;
+    this.tileHeight = 4;
+
+    var boundsPoint = new Phaser.Point(0, 0);
+    var viewRect = new Phaser.Rectangle(0, 0, game.width, game.height);
+
+
     // world (except UI) is in this group, so it can be scaled
     this.stageGroup = game.add.group();
 
@@ -63,11 +51,11 @@ GameState.prototype.create = function()
 
 
 
-
+/*
     this.music = game.add.audio('bgSound');
     this.music.volume = 0.5; // 50%
     this.music.play();
-
+*/
 
     this.spawnLayer = game.add.group();
     this.spawnLayer.z = 5;
@@ -80,11 +68,12 @@ GameState.prototype.create = function()
 
 
     var minimapScale = 3;
-    this.minimap = game.add.sprite(gameWidth - game.cache.getImage('minimap').width/minimapScale, 0, 'minimap');
+    var minimapX = game.width - game.cache.getImage('minimap').width / minimapScale;
+    this.minimap = game.add.sprite(minimapX, 0, 'minimap');
     this.minimap.fixedToCamera = true;
-    this.minimap.scale.set(1.0/minimapScale);
+    this.minimap.scale.set(1.0 / minimapScale);
     this.minimap.alpha = 0.8;
-    this.minimap.setScaleMinMax(1.0/minimapScale, 1.0/minimapScale);
+    this.minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
 
 
 
@@ -149,19 +138,26 @@ GameState.prototype.update = function()
         this.sendMove();
     }
 
-    // zoom
     if (game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
-        worldScale += 0.05;
+        this.worldScale += 0.05;
+    } else if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+        this.worldScale -= 0.05;
     }
-    else if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-        worldScale -= 0.05;
-    }
-
-    // set our world scale as needed
-    //game.world.scale.set(worldScale);
-
+/*
     this.stageGroup.scale.x = worldScale;
     this.stageGroup.scale.y = worldScale;
+*/
+
+
+   // set a minimum and maximum scale value
+   var scale = Phaser.Math.clamp(this.worldScale, 0.25, 2);
+
+   // set our world scale as needed
+   this.stageGroup.scale.set(scale);
+
+    // XXX game.camera
+    //game.camera.setSize(gameWidth, gameHeight);
+    ///game.camera.update();
 };
 
 
@@ -258,8 +254,8 @@ GameState.prototype.initWebsockets = function()
 
 GameState.prototype.sendMove = function()
 {
-    var newX = Math.floor(this.playerGroup.x / tileWidth);
-    var newY = Math.floor(this.playerGroup.y / tileHeight);
+    var newX = Math.floor(this.playerGroup.x / this.tileWidth);
+    var newY = Math.floor(this.playerGroup.y / this.tileHeight);
 
     if (this.prevX == newX && this.prevY == newY) {
         // dont spam server when coords havent changed
@@ -298,13 +294,11 @@ GameState.prototype.handleXyMessage = function(cmd)
     // multiply coords with tile size to scale properly. sprite tiles are always in pixels
     this.playerName = cmd.Name;
 
-    this.playerGroup.x = cmd.X * tileWidth;
-    this.playerGroup.y = cmd.Y * tileHeight;
+    this.playerGroup.x = cmd.X * this.tileWidth;
+    this.playerGroup.y = cmd.Y * this.tileHeight;
     this.playerGroup.add(this.player);
 
-    var playerNameFont = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
-    playerNameFont.autoUpperCase = false;
-    playerNameFont.text = this.playerName;
+    var playerNameFont = this.makeAboveHeadText(this.playerName);
 
     // floating name over head of player
     var aboveHead = game.add.image(0, -10, playerNameFont);
@@ -316,6 +310,24 @@ GameState.prototype.handleXyMessage = function(cmd)
 
     this.renderLocalSpawns(cmd.LocalSpawns);
 };
+
+GameState.prototype.makeAboveHeadText = function(msg)
+{
+    var oddballFontSet = "                " + // colors
+        "                " + // cursor
+        "!\"#$%&'()  ,-./0123456789:;<=>?@" +
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" +
+        "abcdefghijklmnopqrstuvwxyz{|}~" +
+        ""; // XXX more characters
+
+    var txt = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
+    txt.autoUpperCase = false;
+    txt.text = msg;
+
+    return txt;
+};
+
+
 
 GameState.prototype.handleMoveResMessage = function(cmd)
 {
@@ -354,8 +366,8 @@ GameState.prototype.renderLocalSpawns = function(spawns)
         }
 
         var spr = game.add.sprite(0, 0, atlas);
-        spr.x = sp.X * tileWidth;
-        spr.y = sp.Y * tileHeight;
+        spr.x = sp.X * this.tileWidth;
+        spr.y = sp.Y * this.tileHeight;
         spr.frameName = values[1];
         spr.anchor.set(0.5);
 
@@ -367,8 +379,8 @@ GameState.prototype.renderLocalSpawns = function(spawns)
 
 
 var game = new Phaser.Game(
-    gameWidth,
-    gameHeight,
+    800,
+    400,
     Phaser.CANVAS,
     'game',
     {},
