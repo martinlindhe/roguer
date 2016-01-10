@@ -12,8 +12,9 @@ var worldScale = 1.0;
 var GameState = function GameState(game) {};
 
 GameState.prototype.preload = function () {
-    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.scale.setGameSize(gameWidth, gameHeight);
+    // SCALE TO FIT SCREEN:
+    //game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    //game.scale.setGameSize(gameWidth, gameHeight);
 
     game.time.advancedTiming = true; // required for fps counter
 
@@ -33,7 +34,6 @@ GameState.prototype.preload = function () {
     game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 };
 
-var layer;
 var player;
 var playerName;
 var playerGroup;
@@ -47,18 +47,15 @@ var oddballFontSet = "                " + // colors
 "!\"#$%&'()  ,-./0123456789:;<=>?@" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" + "abcdefghijklmnopqrstuvwxyz{|}~" + ""; // XXX more characters
 
 GameState.prototype.create = function () {
-    // A Tilemap object just holds the data needed to describe the map
-    // You can add your own data or manipulate the data (swap tiles around, etc)
-    // but in order to display it you need to create a TilemapLayer.
+    // world (except UI) is in this group, so it can be scaled
+    this.stageGroup = game.add.group();
+
     this.groundMap = game.add.tilemap('islandMap');
     this.groundMap.addTilesetImage('island_tiles', 'ground');
+    this.groundLayer = this.groundMap.createLayer(0);
+    this.groundLayer.resizeWorld();
 
-    layer = this.groundMap.createLayer(0);
-
-    // Basically this sets EVERY SINGLE tile to fully collide on all faces
-    // map.setCollisionByExclusion([7, 32, 35, 36, 47]);
-
-    layer.resizeWorld();
+    this.stageGroup.add(this.groundLayer);
 
     this.music = game.add.audio('bgSound');
     this.music.volume = 0.5; // 50%
@@ -66,6 +63,7 @@ GameState.prototype.create = function () {
 
     spawnLayer = game.add.group();
     spawnLayer.z = 5;
+    this.stageGroup.add(spawnLayer);
 
     this.cursors = game.input.keyboard.createCursorKeys();
 
@@ -102,7 +100,7 @@ GameState.prototype.update = function () {
     // Update the shadow texture each frame
     //this.updateShadowTexture();
 
-    game.physics.arcade.collide(player, layer);
+    game.physics.arcade.collide(player, this.groundLayer);
 
     var steppingVert = 2;
     var steppingHoriz = 4;
@@ -139,7 +137,10 @@ GameState.prototype.update = function () {
     }
 
     // set our world scale as needed
-    game.world.scale.set(worldScale);
+    //game.world.scale.set(worldScale);
+
+    this.stageGroup.scale.x = worldScale;
+    this.stageGroup.scale.y = worldScale;
 };
 
 GameState.prototype.render = function () {
@@ -242,6 +243,8 @@ function onSocketConnected() {
 function handleXyMessage(cmd) {
     playerGroup = game.add.group();
     playerGroup.z = 10;
+
+    //this.stageGroup.add(playerGroup);       // XXX neeed this..
 
     player = game.add.sprite(0, 0, 'characterAtlas');
     player.frameName = 'dwarf';
