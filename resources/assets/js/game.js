@@ -35,13 +35,6 @@ GameState.prototype.preload = function()
 };
 
 
-var player;
-var playerName;
-var playerGroup;
-
-var token;
-
-var spawnLayer;        // this group holds all nearby spawns
 
 
 
@@ -76,9 +69,9 @@ GameState.prototype.create = function()
     this.music.play();
 
 
-    spawnLayer = game.add.group();
-    spawnLayer.z = 5;
-    this.stageGroup.add(spawnLayer);
+    this.spawnLayer = game.add.group();
+    this.spawnLayer.z = 5;
+    this.stageGroup.add(this.spawnLayer);
 
 
 
@@ -119,7 +112,7 @@ GameState.prototype.create = function()
 
 GameState.prototype.update = function()
 {
-    if (!playerGroup) {
+    if (!this.playerGroup) {
         return;
     }
 
@@ -127,36 +120,35 @@ GameState.prototype.update = function()
     //this.updateShadowTexture();
 
 
-    game.physics.arcade.collide(player, this.groundLayer);
+    game.physics.arcade.collide(this.player, this.groundLayer);
 
     var steppingVert = 2;
     var steppingHoriz = 4;
 
     // flip horizontally
-    if (player.body.velocity.x == this.cursors.left.isDown) {
-        player.scale.x = -1;
-    } else if (player.body.velocity.x == this.cursors.right.isDown) {
-        player.scale.x = 1;
+    if (this.player.body.velocity.x == this.cursors.left.isDown) {
+        this.player.scale.x = -1;
+    } else if (this.player.body.velocity.x == this.cursors.right.isDown) {
+        this.player.scale.x = 1;
     }
 
 
     if (this.cursors.up.isDown) {
-        playerGroup.y -= steppingVert;
+        this.playerGroup.y -= steppingVert;
         this.sendMove();
     } else if (this.cursors.down.isDown) {
-        playerGroup.y += steppingVert;
+        this.playerGroup.y += steppingVert;
         this.sendMove();
     }
 
     if (this.cursors.left.isDown) {
-        playerGroup.x -= steppingHoriz;
+        this.playerGroup.x -= steppingHoriz;
         this.sendMove();
     } else if (this.cursors.right.isDown) {
-        playerGroup.x += steppingHoriz;
+        this.playerGroup.x += steppingHoriz;
         this.sendMove();
     }
 
-    // XXX  zoom is broken
     // zoom
     if (game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
         worldScale += 0.05;
@@ -200,16 +192,21 @@ GameState.prototype.updateShadowTexture = function()
 
     // Draw circle of light with a soft edge
     var gradient = this.shadowTexture.context.createRadialGradient(
-        playerGroup.x, playerGroup.y, this.LIGHT_RADIUS * 0.75,
-        playerGroup.x, playerGroup.y, this.LIGHT_RADIUS
+        this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS * 0.75,
+        this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS
     );
     gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
     this.shadowTexture.context.beginPath();
     this.shadowTexture.context.fillStyle = gradient;
-    this.shadowTexture.context.arc(playerGroup.x, playerGroup.y,
-        this.LIGHT_RADIUS, 0, Math.PI*2);
+    this.shadowTexture.context.arc(
+        this.playerGroup.x,
+        this.playerGroup.y,
+        this.LIGHT_RADIUS,
+        0,
+        Math.PI * 2
+    );
     this.shadowTexture.context.fill();
 
     // This just tells the engine it should update the texture cache
@@ -219,19 +216,17 @@ GameState.prototype.updateShadowTexture = function()
 
 
 
-var socket;
-
 GameState.prototype.initWebsockets = function()
 {
     var url = 'ws://localhost:3322/ws';
-    socket = new WebSocket(url);
+    this.socket = new WebSocket(url);
 
     parent = this;
 
     /**
      * @param msg MessageEvent
      */
-    socket.onmessage = function(msg)
+    this.socket.onmessage = function(msg)
     {
         var cmd = JSON.parse(msg.data);
 
@@ -253,25 +248,25 @@ GameState.prototype.initWebsockets = function()
         }
     };
 
-    socket.onopen = function()
+    this.socket.onopen = function()
     {
         //console.log('Websocket connected');
-        socket.send("new_player mrcool");
+        this.send("new_player mrcool");
     };
 };
 
 
 GameState.prototype.sendMove = function()
 {
-    var newX = Math.floor(playerGroup.x / tileWidth);
-    var newY = Math.floor(playerGroup.y / tileHeight);
+    var newX = Math.floor(this.playerGroup.x / tileWidth);
+    var newY = Math.floor(this.playerGroup.y / tileHeight);
 
     if (this.prevX == newX && this.prevY == newY) {
         // dont spam server when coords havent changed
         return;
     }
 
-    socket.send("move " + newX + " " + newY + " " + token);
+    this.socket.send("move " + newX + " " + newY + " " + this.token);
 
     this.prevX = newX;
     this.prevY = newY;
@@ -281,41 +276,43 @@ GameState.prototype.sendMove = function()
 
 GameState.prototype.handleXyMessage = function(cmd)
 {
-    playerGroup = game.add.group();
-    playerGroup.z = 10;
-    this.stageGroup.add(playerGroup);
+    this.playerGroup = game.add.group();
+    this.playerGroup.z = 10;
+    this.stageGroup.add(this.playerGroup);
 
 
-    player = game.add.sprite(0, 0, 'characterAtlas');
-    player.frameName = 'dwarf';
-    player.anchor.set(0.5);
-    game.camera.follow(playerGroup);
-    game.physics.enable(player);
+    this.player = game.add.sprite(0, 0, 'characterAtlas');
+    this.player.frameName = 'dwarf';
+    this.player.anchor.set(0.5);
+    game.camera.follow(this.playerGroup);
+
+    game.physics.enable(this.player);
 
 
     //  Because both our body and our tiles are so tiny,
     //  and the body is moving pretty fast, we need to add
     //  some tile padding to the body. WHat this does
-    player.body.tilePadding.set(32, 32);
+    this.player.body.tilePadding.set(32, 32);
+
 
     // multiply coords with tile size to scale properly. sprite tiles are always in pixels
-    playerName = cmd.Name;
+    this.playerName = cmd.Name;
 
-    playerGroup.x = cmd.X * tileWidth;
-    playerGroup.y = cmd.Y * tileHeight;
-    playerGroup.add(player);
+    this.playerGroup.x = cmd.X * tileWidth;
+    this.playerGroup.y = cmd.Y * tileHeight;
+    this.playerGroup.add(this.player);
 
     var playerNameFont = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
     playerNameFont.autoUpperCase = false;
-    playerNameFont.text = playerName;
+    playerNameFont.text = this.playerName;
 
     // floating name over head of player
     var aboveHead = game.add.image(0, -10, playerNameFont);
     aboveHead.anchor.set(0.5);
-    playerGroup.add(aboveHead);
+    this.playerGroup.add(aboveHead);
     console.log("spawned at " + cmd.X + ", " + cmd.Y);
 
-    token = cmd.Token;
+    this.token = cmd.Token;
 
     this.renderLocalSpawns(cmd.LocalSpawns);
 };
@@ -329,13 +326,13 @@ GameState.prototype.handleMoveResMessage = function(cmd)
 
 GameState.prototype.renderLocalSpawns = function(spawns)
 {
-    spawnLayer.removeAll();
+    this.spawnLayer.removeAll();
 
     var atlas = "";
 
     for (var i = 0; i < spawns.length; i++) {
         var sp = spawns[i];
-        if (sp.Class == "player" && sp.Name == playerName) {
+        if (sp.Class == "player" && sp.Name == this.playerName) {
             continue;
         }
 
@@ -362,7 +359,7 @@ GameState.prototype.renderLocalSpawns = function(spawns)
         spr.frameName = values[1];
         spr.anchor.set(0.5);
 
-        spawnLayer.add(spr);
+        this.spawnLayer.add(spr);
     }
 };
 
