@@ -32,15 +32,10 @@ GameState.prototype.preload = function () {
     game.world.scale.set(worldScale);
 };
 
-var map;
 var layer;
-var cursors;
 var player;
 var playerName;
 var playerGroup;
-var music;
-var minimap;
-var retroFont;
 
 var token;
 
@@ -54,32 +49,31 @@ GameState.prototype.create = function () {
     // A Tilemap object just holds the data needed to describe the map
     // You can add your own data or manipulate the data (swap tiles around, etc)
     // but in order to display it you need to create a TilemapLayer.
-    map = game.add.tilemap('islandMap');
-    map.addTilesetImage('island_tiles', 'ground');
+    this.groundMap = game.add.tilemap('islandMap');
+    this.groundMap.addTilesetImage('island_tiles', 'ground');
 
-    layer = map.createLayer(0);
+    layer = this.groundMap.createLayer(0);
 
     // Basically this sets EVERY SINGLE tile to fully collide on all faces
     // map.setCollisionByExclusion([7, 32, 35, 36, 47]);
 
     layer.resizeWorld();
 
-    music = game.add.audio('bgSound');
-    music.volume = 0.5; // 50%
-    music.play();
+    this.music = game.add.audio('bgSound');
+    this.music.volume = 0.5; // 50%
+    this.music.play();
 
     spawnLayer = game.add.group();
     spawnLayer.z = 5;
 
-    cursors = game.input.keyboard.createCursorKeys();
+    this.cursors = game.input.keyboard.createCursorKeys();
 
     var minimapScale = 3;
-    minimap = game.add.sprite(gameWidth - game.cache.getImage('minimap').width / minimapScale, 0, 'minimap');
-    minimap.fixedToCamera = true;
-    minimap.scale.set(1.0 / minimapScale);
-    minimap.alpha = 0.8;
-
-    minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
+    this.minimap = game.add.sprite(gameWidth - game.cache.getImage('minimap').width / minimapScale, 0, 'minimap');
+    this.minimap.fixedToCamera = true;
+    this.minimap.scale.set(1.0 / minimapScale);
+    this.minimap.alpha = 0.8;
+    this.minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
 
     // fog of war
 
@@ -105,7 +99,7 @@ GameState.prototype.update = function () {
     }
 
     // Update the shadow texture each frame
-    this.updateShadowTexture();
+    //this.updateShadowTexture();
 
     game.physics.arcade.collide(player, layer);
 
@@ -113,24 +107,24 @@ GameState.prototype.update = function () {
     var steppingHoriz = 4;
 
     // flip horizontally
-    if (player.body.velocity.x == cursors.left.isDown) {
+    if (player.body.velocity.x == this.cursors.left.isDown) {
         player.scale.x = -1;
-    } else if (player.body.velocity.x == cursors.right.isDown) {
+    } else if (player.body.velocity.x == this.cursors.right.isDown) {
         player.scale.x = 1;
     }
 
-    if (cursors.up.isDown) {
+    if (this.cursors.up.isDown) {
         playerGroup.y -= steppingVert;
         sendSocketMove();
-    } else if (cursors.down.isDown) {
+    } else if (this.cursors.down.isDown) {
         playerGroup.y += steppingVert;
         sendSocketMove();
     }
 
-    if (cursors.left.isDown) {
+    if (this.cursors.left.isDown) {
         playerGroup.x -= steppingHoriz;
         sendSocketMove();
-    } else if (cursors.right.isDown) {
+    } else if (this.cursors.right.isDown) {
         playerGroup.x += steppingHoriz;
         sendSocketMove();
     }
@@ -266,12 +260,12 @@ function handleXyMessage(cmd) {
     playerGroup.y = cmd.Y * tileHeight;
     playerGroup.add(player);
 
-    retroFont = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
-    retroFont.autoUpperCase = false;
-    retroFont.text = playerName;
+    var playerNameFont = game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
+    playerNameFont.autoUpperCase = false;
+    playerNameFont.text = playerName;
 
     // floating name over head of player
-    var aboveHead = game.add.image(0, -10, retroFont);
+    var aboveHead = game.add.image(0, -10, playerNameFont);
     aboveHead.anchor.set(0.5);
     playerGroup.add(aboveHead);
     console.log("spawned at " + cmd.X + ", " + cmd.Y);
