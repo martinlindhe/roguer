@@ -31,6 +31,10 @@ GameState.prototype.create = function()
     this.worldScale = 1.0;
     this.tileWidth = 8;
     this.tileHeight = 4;
+    this.playerName = "Jimpson";
+
+    // scale to whole window
+    game.scale.setGameSize(window.innerWidth, window.innerHeight);
 
     var boundsPoint = new Phaser.Point(0, 0);
     var viewRect = new Phaser.Rectangle(0, 0, game.width, game.height);
@@ -48,9 +52,6 @@ GameState.prototype.create = function()
     this.stageGroup.add(this.groundLayer);
 
 
-
-
-
 /*
     this.music = game.add.audio('bgSound');
     this.music.volume = 0.5; // 50%
@@ -60,8 +61,6 @@ GameState.prototype.create = function()
     this.spawnLayer = game.add.group();
     this.spawnLayer.z = 5;
     this.stageGroup.add(this.spawnLayer);
-
-
 
 
     this.cursors = game.input.keyboard.createCursorKeys();
@@ -94,7 +93,6 @@ GameState.prototype.create = function()
 
 
 
-
     this.initWebsockets();
 };
 
@@ -108,7 +106,6 @@ GameState.prototype.update = function()
     // Update the shadow texture each frame
     //this.updateShadowTexture();
 
-
     game.physics.arcade.collide(this.player, this.groundLayer);
 
     var steppingVert = 2;
@@ -120,7 +117,6 @@ GameState.prototype.update = function()
     } else if (this.player.body.velocity.x == this.cursors.right.isDown) {
         this.player.scale.x = 1;
     }
-
 
     if (this.cursors.up.isDown) {
         this.playerGroup.y -= steppingVert;
@@ -143,21 +139,21 @@ GameState.prototype.update = function()
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
         this.worldScale -= 0.05;
     }
-/*
-    this.stageGroup.scale.x = worldScale;
-    this.stageGroup.scale.y = worldScale;
-*/
 
+    // set a minimum and maximum scale value
+    this.worldScale = Phaser.Math.clamp(this.worldScale, 0.25, 2);
 
-   // set a minimum and maximum scale value
-   var scale = Phaser.Math.clamp(this.worldScale, 0.25, 2);
-
-   // set our world scale as needed
-   this.stageGroup.scale.set(scale);
+    // set our world scale as needed
+    this.stageGroup.scale.set(this.worldScale);
 
     // XXX game.camera
     //game.camera.setSize(gameWidth, gameHeight);
     ///game.camera.update();
+
+    //game.camera.setBoundsToWorld();
+    game.camera.follow(this.playerGroup);
+
+    this.groundLayer.resizeWorld();
 };
 
 
@@ -166,7 +162,7 @@ GameState.prototype.render = function()
     game.debug.text(game.time.fps || '--', 1, 14, "#00ff00");
 
     //game.debug.spriteInfo(player, 32, 32);
-    //game.debug.cameraInfo(game.camera, 32, 32);
+    game.debug.cameraInfo(game.camera, 32, 32);
 
     //game.debug.soundInfo(music, 20, 32);
 };
@@ -247,7 +243,7 @@ GameState.prototype.initWebsockets = function()
     this.socket.onopen = function()
     {
         //console.log('Websocket connected');
-        this.send("new_player mrcool");
+        this.send("new_player " + this.playerName);
     };
 };
 
@@ -263,7 +259,6 @@ GameState.prototype.sendMove = function()
     }
 
     this.socket.send("move " + newX + " " + newY + " " + this.token);
-
     this.prevX = newX;
     this.prevY = newY;
 };
@@ -291,9 +286,8 @@ GameState.prototype.handleXyMessage = function(cmd)
     this.player.body.tilePadding.set(32, 32);
 
 
-    // multiply coords with tile size to scale properly. sprite tiles are always in pixels
-    this.playerName = cmd.Name;
-
+    // multiply coords with tile size to scale properly.
+    // sprite tiles are always in pixels
     this.playerGroup.x = cmd.X * this.tileWidth;
     this.playerGroup.y = cmd.Y * this.tileHeight;
     this.playerGroup.add(this.player);

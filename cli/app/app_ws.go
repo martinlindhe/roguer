@@ -24,7 +24,6 @@ type wsResponse struct {
 type newPlayerResponse struct {
 	moveResponse
 	Token string
-	Name  string
 }
 
 type moveResponse struct {
@@ -60,7 +59,6 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			res.Type = "xy"
 			res.X = pos.X
 			res.Y = pos.Y
-			res.Name = parts[1]
 			res.Token = token
 			res.LocalSpawns = island.DescribeLocalArea(pos)
 
