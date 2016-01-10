@@ -283,8 +283,7 @@ GameState.prototype.handleXyMessage = function(cmd)
 {
     playerGroup = game.add.group();
     playerGroup.z = 10;
-
-    //this.stageGroup.add(playerGroup);       // XXX neeed this..
+    this.stageGroup.add(playerGroup);
 
 
     player = game.add.sprite(0, 0, 'characterAtlas');
