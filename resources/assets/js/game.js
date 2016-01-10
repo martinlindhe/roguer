@@ -2,11 +2,6 @@ var GameState = function(game) {};
 
 GameState.prototype.preload = function()
 {
-    // SCALE TO FIT SCREEN:
-    //game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    //game.scale.setGameSize(gameWidth, gameHeight);
-
-
     game.time.advancedTiming = true; // required for fps counter
 
     game.stage.backgroundColor = '#262f71';  // deep water
@@ -20,10 +15,11 @@ GameState.prototype.preload = function()
     game.load.atlas('itemAtlas', 'img/tileset/oddball/items.png', 'sprite/item');
     game.load.atlas('ground2Atlas', 'img/tileset/oddball/ground2.png', 'sprite/ground2');
 
+    game.load.spritesheet('button', 'img/tileset/ui/buttons.png', 27, 24);
 
     game.load.image('oddballFont', 'img/tileset/oddball/font.png');
 
-    //game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
+    game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 };
 
 GameState.prototype.create = function()
@@ -52,11 +48,10 @@ GameState.prototype.create = function()
     this.stageGroup.add(this.groundLayer);
 
 
-/*
+
     this.music = game.add.audio('bgSound');
-    this.music.volume = 0.5; // 50%
-    this.music.play();
-*/
+    this.music.volume = 0.20; // 20%
+
 
     this.spawnLayer = game.add.group();
     this.spawnLayer.z = 5;
@@ -73,6 +68,28 @@ GameState.prototype.create = function()
     this.minimap.scale.set(1.0 / minimapScale);
     this.minimap.alpha = 0.8;
     this.minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
+
+
+
+    var button = game.add.button(
+        game.width - 102,
+        2,
+        'button',
+        function() { // onClick
+            if (this.music.isPlaying) {
+                this.music.stop();
+            } else {
+                this.music.play();
+            }
+        },
+        this,
+        0,
+        0,
+        0
+    );
+
+    button.fixedToCamera = true;
+
 
 
 
@@ -95,6 +112,8 @@ GameState.prototype.create = function()
 
     this.initWebsockets();
 };
+
+
 
 
 GameState.prototype.update = function()
@@ -147,11 +166,10 @@ GameState.prototype.update = function()
     this.stageGroup.scale.set(this.worldScale);
 
     // XXX game.camera
-    //game.camera.setSize(gameWidth, gameHeight);
-    ///game.camera.update();
-
-    //game.camera.setBoundsToWorld();
+    game.camera.setSize(game.width, game.height);
+    game.camera.setBoundsToWorld();
     game.camera.follow(this.playerGroup);
+    game.camera.update();
 
     this.groundLayer.resizeWorld();
 };
@@ -161,10 +179,10 @@ GameState.prototype.render = function()
 {
     game.debug.text(game.time.fps || '--', 1, 14, "#00ff00");
 
-    //game.debug.spriteInfo(player, 32, 32);
-    game.debug.cameraInfo(game.camera, 32, 32);
+    //game.debug.spriteInfo(this.player, 32, 32);
+    //game.debug.cameraInfo(game.camera, 10, 32);
 
-    //game.debug.soundInfo(music, 20, 32);
+    //game.debug.soundInfo(this.music, 10, 140);
 };
 
 

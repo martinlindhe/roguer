@@ -60,7 +60,7 @@ func main() {
 	outWidth := *tilesPerRow * tileWidth
 	outHeight := (tileCount / *tilesPerRow) * tileHeight
 
-	fmt.Printf("Creating tileset of %d tiles with %d,%d pixels, %d tiles per row. Output is image is %d,%d pixels\n", tileCount, tileWidth, tileHeight, *tilesPerRow, outWidth, outWidth)
+	fmt.Printf("Creating tileset of %d tiles with %dx%d pixels, %d tiles per row. Output is image is %d,%d pixels\n", tileCount, tileWidth, tileHeight, *tilesPerRow, outWidth, outWidth)
 
 	dst := image.NewRGBA(image.Rect(0, 0, outWidth, outHeight))
 	for i, img := range images {
