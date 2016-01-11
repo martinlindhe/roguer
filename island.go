@@ -53,6 +53,20 @@ func (i *Island) NewPlayer(name string) (Point, string) {
 	return pos, token
 }
 
+// ContinuePlayer resumes a game, given a valid token
+func (i *Island) ContinuePlayer(token string) (*Point, string, error) {
+
+	for i, pl := range island.Players {
+		if pl.Token == token {
+			// give the client a fresh token
+			island.Players[i].Token = newJwt()
+			return &pl.Spawn.Position, island.Players[i].Token, nil
+		}
+	}
+
+	return nil, token, fmt.Errorf("Session not found")
+}
+
 // Add ...
 func (i *Island) addSpawn(o *Obj) {
 	i.Spawns = append(i.Spawns, o)

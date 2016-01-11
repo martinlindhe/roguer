@@ -80,6 +80,7 @@ var Client = (function () {
             this.gameState.spawnPlayer(cmd);
 
             this.sessionToken = cmd.Token;
+            console.log("got token " + this.sessionToken);
             window.sessionStorage.setItem('_token', cmd.Token);
         }
     }, {

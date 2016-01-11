@@ -21,7 +21,7 @@ type wsResponse struct {
 	Type string
 }
 
-type newPlayerResponse struct {
+type playerSpawnResponse struct {
 	moveResponse
 	Token string
 }
@@ -55,7 +55,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		case "new_player":
 			pos, token := island.NewPlayer(parts[1])
 
-			var res newPlayerResponse
+			var res playerSpawnResponse
 			res.Type = "xy"
 			res.X = pos.X
 			res.Y = pos.Y
@@ -66,6 +66,24 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("new player %s spawned at %s", parts[1], pos)
 
 			// XXX broadcast a "new player" event to all
+
+		case "continue":
+			pos, token, err := island.ContinuePlayer(parts[1])
+			if err != nil {
+				errMsg := fmt.Sprintf("%v", err)
+				b = []byte(`{"Type": "error", "Message": "` + errMsg + `"}`)
+				break
+			}
+
+			var res playerSpawnResponse
+			res.Type = "xy"
+			res.X = pos.X
+			res.Y = pos.Y
+			res.Token = token
+			res.LocalSpawns = island.DescribeLocalArea(*pos)
+
+			b, _ = json.Marshal(res)
+			log.Printf("continuing player %s spawned at %s", parts[1], pos)
 
 		case "move":
 			subcommand := strings.SplitN(parts[1], " ", 3)
