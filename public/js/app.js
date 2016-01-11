@@ -80,7 +80,7 @@ var Client = (function () {
             this.gameState.spawnPlayer(cmd);
 
             this.sessionToken = cmd.Token;
-            console.log("got token " + this.sessionToken);
+            // console.log("got token " + this.sessionToken);
             window.sessionStorage.setItem('_token', cmd.Token);
         }
     }, {
@@ -173,24 +173,17 @@ var GameState = (function (_Phaser$State) {
             this.groundMap.addTilesetImage('island_tiles', 'ground');
             this.groundLayer = this.groundMap.createLayer(0);
             this.groundLayer.resizeWorld();
-
             this.stageGroup.add(this.groundLayer);
 
             this.playerGroup = this.game.add.group();
-            this.playerGroup.z = 10;
+            //this.playerGroup.z = 10;
             this.stageGroup.add(this.playerGroup);
 
             this.spawnLayer = this.game.add.group();
-            this.spawnLayer.z = 5;
+            //this.spawnLayer.z = 0;
             this.stageGroup.add(this.spawnLayer);
 
-            var minimapScale = 3;
-            var minimapX = this.game.width - this.game.cache.getImage('minimap').width / minimapScale;
-            this.minimap = this.game.add.sprite(minimapX, 0, 'minimap');
-            this.minimap.fixedToCamera = true;
-            this.minimap.scale.set(1.0 / minimapScale);
-            this.minimap.alpha = 0.8;
-            this.minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
+            this.initUi();
 
             /*
                     // fog of war
@@ -208,19 +201,6 @@ var GameState = (function (_Phaser$State) {
                     lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
             */
 
-            this.cursors = this.game.input.keyboard.createCursorKeys();
-
-            var button = this.game.add.button(this.game.width - 102, 2, 'button', function () {
-                // onClick
-                if (this.music.isPlaying) {
-                    this.music.stop();
-                } else {
-                    this.music.play();
-                }
-            }, this, 0, 0, 0);
-
-            button.fixedToCamera = true;
-
             this.client = new _ClientJs2['default'](this);
             this.redrawLogMessages();
         }
@@ -236,8 +216,8 @@ var GameState = (function (_Phaser$State) {
 
             this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
 
-            var steppingVert = 2;
-            var steppingHoriz = 4;
+            var steppingHoriz = 1;
+            var steppingVert = steppingHoriz / 2;
 
             // flip horizontally
             if (this.playerSprite.body.velocity.x == this.cursors.left.isDown) {
@@ -293,6 +273,30 @@ var GameState = (function (_Phaser$State) {
             //game.debug.cameraInfo(game.camera, 10, 32);
 
             //game.debug.soundInfo(this.music, 10, 140);
+        }
+    }, {
+        key: 'initUi',
+        value: function initUi() {
+            this.cursors = this.game.input.keyboard.createCursorKeys();
+
+            var minimapScale = 3;
+            var minimapX = this.game.width - this.game.cache.getImage('minimap').width / minimapScale;
+            this.minimap = this.game.add.sprite(minimapX, 0, 'minimap');
+            this.minimap.fixedToCamera = true;
+            this.minimap.scale.set(1.0 / minimapScale);
+            this.minimap.alpha = 0.8;
+            this.minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
+
+            var button = this.game.add.button(this.game.width - 102, 2, 'button', function () {
+                // onClick
+                if (this.music.isPlaying) {
+                    this.music.stop();
+                } else {
+                    this.music.play();
+                }
+            }, this, 0, 0, 0);
+
+            button.fixedToCamera = true;
         }
     }, {
         key: 'spawnPlayer',
