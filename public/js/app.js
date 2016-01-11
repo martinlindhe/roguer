@@ -249,7 +249,7 @@ var GameState = (function (_Phaser$State) {
             }
 
             // set a minimum and maximum scale value
-            this.worldScale = Phaser.Math.clamp(this.worldScale, 0.25, 2);
+            this.worldScale = Phaser.Math.clamp(this.worldScale, 0.5, 4);
 
             // set our world scale as needed
             this.stageGroup.scale.set(this.worldScale);
@@ -493,7 +493,7 @@ var Game = (function (_Phaser$Game) {
   function Game() {
     _classCallCheck(this, Game);
 
-    _get(Object.getPrototypeOf(Game.prototype), 'constructor', this).call(this, 800, 400, Phaser.CANVAS, 'content', null);
+    _get(Object.getPrototypeOf(Game.prototype), 'constructor', this).call(this, 800, 400, Phaser.CANVAS, 'content', null, false, false);
     this.state.add('GameState', _GameStateJs2['default'], false);
     this.state.start('GameState');
   }

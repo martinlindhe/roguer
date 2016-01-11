@@ -138,7 +138,7 @@ class GameState extends Phaser.State
         }
 
         // set a minimum and maximum scale value
-        this.worldScale = Phaser.Math.clamp(this.worldScale, 0.25, 2);
+        this.worldScale = Phaser.Math.clamp(this.worldScale, 0.5, 4);
 
         // set our world scale as needed
         this.stageGroup.scale.set(this.worldScale);
