@@ -7,12 +7,6 @@ $fa-font-path: "/fonts/font-awesome";
 @import "./../../../node_modules/font-awesome/scss/font-awesome";
 @import "_fonts";
 
-// flag icons
-$flag-icon-css-path: "/flags";
-$flag-icon-rect-path: "/4x3";
-$flag-icon-square-path: "/1x1";
-@import "./../../../node_modules/flag-icon-css/sass/flag-icon-base.scss";
-@import "./../../../node_modules/flag-icon-css/sass/flag-icon-list.scss";
 
 // misc
 @import "_nav";

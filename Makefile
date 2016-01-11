@@ -43,3 +43,6 @@ validate-json:
 
 validate-js:
 	jshint resources/assets/js
+
+watch:
+	gulp watch --production
