@@ -1,12 +1,11 @@
 {
-  "private": true,
   "dependencies": {
-    "bootstrap-sass": "^3.0",
-    "font-awesome": "^4.4",
+    "bootstrap-sass": "^3.3",
+    "font-awesome": "^4.5",
     "phaser": "^2.4"
   },
   "devDependencies": {
     "gulp": "^3.9",
-    "laravel-elixir": "^3.0"
+    "laravel-elixir": "^4.2"
   }
 }

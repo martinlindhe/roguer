@@ -1,4 +1,4 @@
-import elixir from 'laravel-elixir';
+var elixir = require('laravel-elixir');
 
 elixir.config.sourcemaps = true;
 
