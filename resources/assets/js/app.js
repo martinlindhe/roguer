@@ -1,6 +1,6 @@
 
 import GameState from './GameState.js';
-
+/*
 var game = new Phaser.Game(
     800,
     400,
@@ -12,3 +12,19 @@ var game = new Phaser.Game(
 );
 
 game.state.add('game', GameState, true);
+*/
+
+
+
+
+class Game extends Phaser.Game {
+
+	constructor() {
+		super(800, 400, Phaser.CANVAS, 'content', null);
+		this.state.add('GameState', GameState, false);
+		this.state.start('GameState');
+	}
+
+}
+
+new Game();
