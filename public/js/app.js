@@ -1,4 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/**
+ * Websocket client
+ */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -46,7 +49,7 @@ var Client = (function () {
 
         this.socket.onopen = function () {
             console.log('Websocket connected');
-            this.send("new_player " + this.playerName);
+            this.send("new_player " + parent.gameState.playerName);
         };
     }
 
@@ -263,13 +266,15 @@ var GameState = (function (_Phaser$State) {
             // set our world scale as needed
             this.stageGroup.scale.set(this.worldScale);
 
-            // XXX game.camera
-            this.game.camera.setSize(this.game.width, this.game.height);
-            this.game.camera.setBoundsToWorld();
-            this.game.camera.follow(this.playerGroup);
-            this.game.camera.update();
-
-            this.groundLayer.resizeWorld();
+            /*
+                    // XXX game.camera
+                    this.game.camera.setSize(this.game.width, this.game.height);
+                    this.game.camera.setBoundsToWorld();
+                    this.game.camera.follow(this.playerGroup);
+                    this.game.camera.update();
+            
+                    this.groundLayer.resizeWorld();
+            */
         }
     }, {
         key: 'render',

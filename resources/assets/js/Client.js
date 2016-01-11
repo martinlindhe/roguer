@@ -1,3 +1,6 @@
+/**
+ * Websocket client
+ */
 class Client
 {
     constructor(gameState)
@@ -37,7 +40,7 @@ class Client
         this.socket.onopen = function()
         {
             console.log('Websocket connected');
-            this.send("new_player " + this.playerName);
+            this.send("new_player " + parent.gameState.playerName);
         };
     }
 

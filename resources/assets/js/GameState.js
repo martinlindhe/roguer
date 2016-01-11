@@ -174,6 +174,7 @@ class GameState extends Phaser.State
         // set our world scale as needed
         this.stageGroup.scale.set(this.worldScale);
 
+/*
         // XXX game.camera
         this.game.camera.setSize(this.game.width, this.game.height);
         this.game.camera.setBoundsToWorld();
@@ -181,6 +182,7 @@ class GameState extends Phaser.State
         this.game.camera.update();
 
         this.groundLayer.resizeWorld();
+*/
     }
 
     render()
