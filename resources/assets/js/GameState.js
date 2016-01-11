@@ -178,15 +178,19 @@ class GameState extends Phaser.State
 
     initUi()
     {
+        this.uiGroup = this.game.add.group();
+
+
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         var minimapScale = 3;
         var minimapX = this.game.width - this.game.cache.getImage('minimap').width / minimapScale;
-        this.minimap = this.game.add.sprite(minimapX, 0, 'minimap');
-        this.minimap.fixedToCamera = true;
-        this.minimap.scale.set(1.0 / minimapScale);
-        this.minimap.alpha = 0.8;
-        this.minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
+        var minimap = this.game.add.sprite(minimapX, 0, 'minimap');
+        minimap.fixedToCamera = true;
+        minimap.scale.set(1.0 / minimapScale);
+        minimap.alpha = 0.8;
+        minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
+        this.uiGroup.add(minimap);
 
         var button = this.game.add.button(
             this.game.width - 102,
@@ -204,8 +208,18 @@ class GameState extends Phaser.State
             0,
             0
         );
-
         button.fixedToCamera = true;
+        this.uiGroup.add(button);
+
+
+
+        this.logMessageWindow = this.game.add.group();
+        this.logMessageWindow.x = 10;
+        this.logMessageWindow.y = 10;
+        this.logMessageWindow.z = 20;
+        this.logMessageWindow.fixedToCamera = true;
+
+        this.uiGroup.add(this.logMessageWindow);
     }
 
     spawnPlayer(cmd)
@@ -300,20 +314,14 @@ class GameState extends Phaser.State
 
     redrawLogMessages()
     {
-        this.logMessageWindow = this.game.add.group();
-        this.logMessageWindow.x = 100;
-        this.logMessageWindow.y = 100;
-        this.logMessageWindow.z = 20;
-        this.logMessageWindow.fixedToCamera = true;
+        this.logMessageWindow.removeAll();
 
-
-        // XXX make some pretty log window with scroll
+        // XXX log window with scroll
         for (let msg of this.logMessages) {
             console.log(msg);
 
             var txt = this.makeText(msg.text);
 
-            // floating name over head of player
             var img = this.game.add.image(0, -10, txt);
             this.logMessageWindow.add(img);
         }

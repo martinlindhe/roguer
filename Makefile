@@ -9,7 +9,7 @@ run:
 shrink-png:
 	find ./public/img -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
 
-# generates sliced up tilesets (result is already in git)
+# generate sliced up tilesets from source images
 tiles:
 	go run cli/tileslicer/tileslicer.go resources/assets/tilesets/oddball/source/font.png       resources/assets/tilesets/oddball/font 8 8
 	go run cli/tileslicer/tileslicer.go resources/assets/tilesets/oddball/source/characters.png resources/assets/tilesets/oddball/characters 8 8
@@ -22,7 +22,7 @@ tiles:
 	go run cli/tilecutter/tilecutter.go resources/assets/tilesets/oddball/ground/8x4
 	find resources/assets/tilesets/oddball -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
 
-
+# produce our tilesets
 jointiles:
 	mkdir -p public/img/tileset/oddball
 	go run cli/tilejoiner/tilejoiner.go resources/assets/tilesets/oddball/ground/8x4  resources/assets/tilesets/oddball/ground.png 8;      imgcat resources/assets/tilesets/oddball/ground.png

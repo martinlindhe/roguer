@@ -9,9 +9,10 @@ rogue-like with go and phaser.io, using websockets
 go get -u github.com/martinlindhe/roguer
 ```
 
+Start the server:
 ```
 cd $GOROOT/src/github.com/martinlindhe/rouger
-go run cli/app/app.go
+make run
 ```
 
 Finally, visit <http://localhost:3322>
