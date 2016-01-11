@@ -7,11 +7,105 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var Client = (function () {
+    function Client(gameState) {
+        _classCallCheck(this, Client);
+
+        this.gameState = gameState;
+        this.socket = new WebSocket('ws://localhost:3322/ws');
+
+        this.sessionToken = "";
+
+        var parent = this;
+
+        /**
+         * @param msg MessageEvent
+         */
+        this.socket.onmessage = function (msg) {
+            var cmd = JSON.parse(msg.data);
+
+            switch (cmd.Type) {
+                case 'xy':
+                    parent.handleXyMessage(cmd);
+                    break;
+                case 'move_res':
+                    parent.handleMoveResMessage(cmd);
+                    break;
+
+                case 'ok':
+                    console.log("server OK: " + msg.data);
+                    break;
+
+                default:
+                    console.log("<-recv- " + msg.data);
+                    console.log("unknown command from server: " + cmd.Type);
+            }
+        };
+
+        this.socket.onopen = function () {
+            console.log('Websocket connected');
+            this.send("new_player " + this.playerName);
+        };
+    }
+
+    _createClass(Client, [{
+        key: 'sendMove',
+        value: function sendMove() {
+            var newX = Math.floor(this.gameState.playerGroup.x / this.gameState.tileWidth);
+            var newY = Math.floor(this.gameState.playerGroup.y / this.gameState.tileHeight);
+
+            if (this.prevX == newX && this.prevY == newY) {
+                // dont spam server when coords havent changed
+                return;
+            }
+
+            this.socket.send("move " + newX + " " + newY + " " + this.sessionToken);
+            this.prevX = newX;
+            this.prevY = newY;
+        }
+    }, {
+        key: 'handleXyMessage',
+        value: function handleXyMessage(cmd) {
+            this.gameState.spawnPlayer(cmd);
+
+            this.sessionToken = cmd.Token;
+        }
+    }, {
+        key: 'handleMoveResMessage',
+        value: function handleMoveResMessage(cmd) {
+            // console.log("Rendering " + cmd.LocalSpawns.length + " spawns at " + cmd.X + ", " + cmd.Y);
+            this.gameState.renderLocalSpawns(cmd.LocalSpawns);
+        }
+    }]);
+
+    return Client;
+})();
+
+exports['default'] = Client;
+module.exports = exports['default'];
+
+},{}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _ClientJs = require('./Client.js');
+
+var _ClientJs2 = _interopRequireDefault(_ClientJs);
 
 var GameState = (function (_Phaser$State) {
     _inherits(GameState, _Phaser$State);
@@ -47,15 +141,19 @@ var GameState = (function (_Phaser$State) {
     }, {
         key: 'create',
         value: function create() {
+            this.playerName = "Jimpson";
+
             this.worldScale = 1.0;
             this.tileWidth = 8;
             this.tileHeight = 4;
-            this.playerName = "Jimpson";
 
             this.logMessages = [{ text: "hello there", time: 1222 }, { text: "later on", time: 1234 }];
 
             // scale to whole window
             this.game.scale.setGameSize(window.innerWidth, window.innerHeight);
+
+            this.music = this.game.add.audio('bgSound');
+            this.music.volume = 0.20; // 20%
 
             // world (except UI) is in this group, so it can be scaled
             this.stageGroup = this.game.add.group();
@@ -67,14 +165,13 @@ var GameState = (function (_Phaser$State) {
 
             this.stageGroup.add(this.groundLayer);
 
-            this.music = this.game.add.audio('bgSound');
-            this.music.volume = 0.20; // 20%
+            this.playerGroup = this.game.add.group();
+            this.playerGroup.z = 10;
+            this.stageGroup.add(this.playerGroup);
 
             this.spawnLayer = this.game.add.group();
             this.spawnLayer.z = 5;
             this.stageGroup.add(this.spawnLayer);
-
-            this.cursors = this.game.input.keyboard.createCursorKeys();
 
             var minimapScale = 3;
             var minimapX = this.game.width - this.game.cache.getImage('minimap').width / minimapScale;
@@ -83,6 +180,24 @@ var GameState = (function (_Phaser$State) {
             this.minimap.scale.set(1.0 / minimapScale);
             this.minimap.alpha = 0.8;
             this.minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
+
+            /*
+                    // fog of war
+                    // The radius of the circle of light
+                    this.LIGHT_RADIUS = 100;
+            
+                    // Create the shadow texture
+                    this.shadowTexture = this.game.add.bitmapData(this.game.width, this.game.height);
+            
+                    // Create an object that will use the bitmap as a texture
+                    var lightSprite = this.game.add.image(0, 0, this.shadowTexture);
+            
+                    // Set the blend mode to MULTIPLY. This will darken the colors of
+                    // everything below this sprite.
+                    lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
+            */
+
+            this.cursors = this.game.input.keyboard.createCursorKeys();
 
             var button = this.game.add.button(this.game.width - 102, 2, 'button', function () {
                 // onClick
@@ -95,24 +210,160 @@ var GameState = (function (_Phaser$State) {
 
             button.fixedToCamera = true;
 
-            // fog of war
-
-            // The radius of the circle of light
-            this.LIGHT_RADIUS = 100;
-
-            // Create the shadow texture
-            this.shadowTexture = this.game.add.bitmapData(this.game.width, this.game.height);
-
-            // Create an object that will use the bitmap as a texture
-            var lightSprite = this.game.add.image(0, 0, this.shadowTexture);
-
-            // Set the blend mode to MULTIPLY. This will darken the colors of
-            // everything below this sprite.
-            lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
-
+            this.client = new _ClientJs2['default'](this);
             this.redrawLogMessages();
+        }
+    }, {
+        key: 'update',
+        value: function update() {
+            if (!this.playerSprite) {
+                return;
+            }
 
-            this.initWebsockets();
+            // Update the shadow texture each frame
+            //this.updateShadowTexture();
+
+            this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
+
+            var steppingVert = 2;
+            var steppingHoriz = 4;
+
+            // flip horizontally
+            if (this.playerSprite.body.velocity.x == this.cursors.left.isDown) {
+                this.playerSprite.scale.x = -1;
+            } else if (this.playerSprite.body.velocity.x == this.cursors.right.isDown) {
+                this.playerSprite.scale.x = 1;
+            }
+
+            if (this.cursors.up.isDown) {
+                this.playerGroup.y -= steppingVert;
+                this.client.sendMove();
+            } else if (this.cursors.down.isDown) {
+                this.playerGroup.y += steppingVert;
+                this.client.sendMove();
+            }
+
+            if (this.cursors.left.isDown) {
+                this.playerGroup.x -= steppingHoriz;
+                this.client.sendMove();
+            } else if (this.cursors.right.isDown) {
+                this.playerGroup.x += steppingHoriz;
+                this.client.sendMove();
+            }
+
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
+                this.worldScale += 0.05;
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+                this.worldScale -= 0.05;
+            }
+
+            // set a minimum and maximum scale value
+            this.worldScale = Phaser.Math.clamp(this.worldScale, 0.25, 2);
+
+            // set our world scale as needed
+            this.stageGroup.scale.set(this.worldScale);
+
+            // XXX game.camera
+            this.game.camera.setSize(this.game.width, this.game.height);
+            this.game.camera.setBoundsToWorld();
+            this.game.camera.follow(this.playerGroup);
+            this.game.camera.update();
+
+            this.groundLayer.resizeWorld();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            this.game.debug.text(this.game.time.fps || '--', 1, 14, "#00ff00");
+
+            //game.debug.spriteInfo(this.player, 32, 32);
+            //game.debug.cameraInfo(game.camera, 10, 32);
+
+            //game.debug.soundInfo(this.music, 10, 140);
+        }
+    }, {
+        key: 'spawnPlayer',
+        value: function spawnPlayer(cmd) {
+            this.game.camera.follow(this.playerGroup);
+
+            this.playerSprite = this.game.add.sprite(0, 0, 'characterAtlas');
+            this.playerSprite.frameName = 'dwarf';
+            this.playerSprite.anchor.set(0.5);
+
+            this.game.physics.enable(this.playerSprite);
+
+            //  Because both our body and our tiles are so tiny,
+            //  and the body is moving pretty fast, we need to add
+            //  some tile padding to the body. WHat this does
+            this.playerSprite.body.tilePadding.set(32, 32);
+
+            // multiply coords with tile size to scale properly.
+            // sprite tiles are always in pixels
+            this.playerGroup.x = cmd.X * this.tileWidth;
+            this.playerGroup.y = cmd.Y * this.tileHeight;
+            this.playerGroup.add(this.playerSprite);
+
+            var txt = this.makeText(this.playerName);
+
+            // floating name over head of player
+            var aboveHead = this.game.add.image(0, -10, txt);
+            aboveHead.anchor.set(0.5);
+            this.playerGroup.add(aboveHead);
+            console.log("spawned at " + cmd.X + ", " + cmd.Y);
+
+            this.renderLocalSpawns(cmd.LocalSpawns);
+        }
+    }, {
+        key: 'renderLocalSpawns',
+        value: function renderLocalSpawns(spawns) {
+            this.spawnLayer.removeAll();
+
+            var atlas = "";
+
+            for (var i = 0; i < spawns.length; i++) {
+                var sp = spawns[i];
+                if (sp.Class == "player" && sp.Name == this.playerName) {
+                    continue;
+                }
+
+                var values = sp.Sprite.split(':');
+                switch (values[0]) {
+                    case 'c':
+                        atlas = 'characterAtlas';
+                        break;
+                    case 'i':
+                        atlas = 'itemAtlas';
+                        break;
+                    case 'g':
+                        atlas = 'ground2Atlas';
+                        break;
+                    default:
+                        console.log('ERROR unknown sprite: ' + sp.Sprite);
+                        console.log(sp);
+                        continue;
+                }
+
+                var spr = this.game.add.sprite(0, 0, atlas);
+                spr.x = sp.X * this.tileWidth;
+                spr.y = sp.Y * this.tileHeight;
+                spr.frameName = values[1];
+                spr.anchor.set(0.5);
+
+                this.spawnLayer.add(spr);
+            }
+        }
+    }, {
+        key: 'makeText',
+        value: function makeText(msg) {
+            var oddballFontSet = "                " + // colors
+            "                " + // cursor
+            "!\"#$%&'()  ,-./0123456789:;<=>?@" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" + "abcdefghijklmnopqrstuvwxyz{|}~" + ""; // XXX more characters
+
+            var o = this.game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
+            o.autoUpperCase = false;
+            o.text = msg;
+
+            return o;
         }
     }, {
         key: 'redrawLogMessages',
@@ -156,74 +407,6 @@ var GameState = (function (_Phaser$State) {
             }
         }
     }, {
-        key: 'update',
-        value: function update() {
-            if (!this.playerGroup) {
-                return;
-            }
-
-            // Update the shadow texture each frame
-            //this.updateShadowTexture();
-
-            this.game.physics.arcade.collide(this.player, this.groundLayer);
-
-            var steppingVert = 2;
-            var steppingHoriz = 4;
-
-            // flip horizontally
-            if (this.player.body.velocity.x == this.cursors.left.isDown) {
-                this.player.scale.x = -1;
-            } else if (this.player.body.velocity.x == this.cursors.right.isDown) {
-                this.player.scale.x = 1;
-            }
-
-            if (this.cursors.up.isDown) {
-                this.playerGroup.y -= steppingVert;
-                this.sendMove();
-            } else if (this.cursors.down.isDown) {
-                this.playerGroup.y += steppingVert;
-                this.sendMove();
-            }
-
-            if (this.cursors.left.isDown) {
-                this.playerGroup.x -= steppingHoriz;
-                this.sendMove();
-            } else if (this.cursors.right.isDown) {
-                this.playerGroup.x += steppingHoriz;
-                this.sendMove();
-            }
-
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
-                this.worldScale += 0.05;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-                this.worldScale -= 0.05;
-            }
-
-            // set a minimum and maximum scale value
-            this.worldScale = Phaser.Math.clamp(this.worldScale, 0.25, 2);
-
-            // set our world scale as needed
-            this.stageGroup.scale.set(this.worldScale);
-
-            // XXX game.camera
-            this.game.camera.setSize(this.game.width, this.game.height);
-            this.game.camera.setBoundsToWorld();
-            this.game.camera.follow(this.playerGroup);
-            this.game.camera.update();
-
-            this.groundLayer.resizeWorld();
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            this.game.debug.text(this.game.time.fps || '--', 1, 14, "#00ff00");
-
-            //game.debug.spriteInfo(this.player, 32, 32);
-            //game.debug.cameraInfo(game.camera, 10, 32);
-
-            //game.debug.soundInfo(this.music, 10, 140);
-        }
-    }, {
         key: 'updateShadowTexture',
         value: function updateShadowTexture() {
             // This function updates the shadow texture (this.shadowTexture).
@@ -250,153 +433,6 @@ var GameState = (function (_Phaser$State) {
             // This just tells the engine it should update the texture cache
             this.shadowTexture.dirty = true;
         }
-    }, {
-        key: 'initWebsockets',
-        value: function initWebsockets() {
-            var url = 'ws://localhost:3322/ws';
-            this.socket = new WebSocket(url);
-
-            var parent = this;
-
-            /**
-             * @param msg MessageEvent
-             */
-            this.socket.onmessage = function (msg) {
-                var cmd = JSON.parse(msg.data);
-
-                switch (cmd.Type) {
-                    case 'xy':
-                        parent.handleXyMessage(cmd);
-                        break;
-                    case 'move_res':
-                        parent.handleMoveResMessage(cmd);
-                        break;
-
-                    case 'ok':
-                        console.log("server OK: " + msg.data);
-                        break;
-
-                    default:
-                        console.log("<-recv- " + msg.data);
-                        console.log("unknown command from server: " + cmd.Type);
-                }
-            };
-
-            this.socket.onopen = function () {
-                //console.log('Websocket connected');
-                this.send("new_player " + this.playerName);
-            };
-        }
-    }, {
-        key: 'sendMove',
-        value: function sendMove() {
-            var newX = Math.floor(this.playerGroup.x / this.tileWidth);
-            var newY = Math.floor(this.playerGroup.y / this.tileHeight);
-
-            if (this.prevX == newX && this.prevY == newY) {
-                // dont spam server when coords havent changed
-                return;
-            }
-
-            this.socket.send("move " + newX + " " + newY + " " + this.token);
-            this.prevX = newX;
-            this.prevY = newY;
-        }
-    }, {
-        key: 'handleXyMessage',
-        value: function handleXyMessage(cmd) {
-            this.playerGroup = this.game.add.group();
-            this.playerGroup.z = 10;
-            this.stageGroup.add(this.playerGroup);
-
-            this.player = this.game.add.sprite(0, 0, 'characterAtlas');
-            this.player.frameName = 'dwarf';
-            this.player.anchor.set(0.5);
-            this.game.camera.follow(this.playerGroup);
-
-            this.game.physics.enable(this.player);
-
-            //  Because both our body and our tiles are so tiny,
-            //  and the body is moving pretty fast, we need to add
-            //  some tile padding to the body. WHat this does
-            this.player.body.tilePadding.set(32, 32);
-
-            // multiply coords with tile size to scale properly.
-            // sprite tiles are always in pixels
-            this.playerGroup.x = cmd.X * this.tileWidth;
-            this.playerGroup.y = cmd.Y * this.tileHeight;
-            this.playerGroup.add(this.player);
-
-            var txt = this.makeText(this.playerName);
-
-            // floating name over head of player
-            var aboveHead = this.game.add.image(0, -10, txt);
-            aboveHead.anchor.set(0.5);
-            this.playerGroup.add(aboveHead);
-            console.log("spawned at " + cmd.X + ", " + cmd.Y);
-
-            this.token = cmd.Token;
-
-            this.renderLocalSpawns(cmd.LocalSpawns);
-        }
-    }, {
-        key: 'makeText',
-        value: function makeText(msg) {
-            var oddballFontSet = "                " + // colors
-            "                " + // cursor
-            "!\"#$%&'()  ,-./0123456789:;<=>?@" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`" + "abcdefghijklmnopqrstuvwxyz{|}~" + ""; // XXX more characters
-
-            var o = this.game.add.retroFont('oddballFont', 8, 8, oddballFontSet, 16);
-            o.autoUpperCase = false;
-            o.text = msg;
-
-            return o;
-        }
-    }, {
-        key: 'handleMoveResMessage',
-        value: function handleMoveResMessage(cmd) {
-            // console.log("Rendering " + cmd.LocalSpawns.length + " spawns at " + cmd.X + ", " + cmd.Y);
-            this.renderLocalSpawns(cmd.LocalSpawns);
-        }
-    }, {
-        key: 'renderLocalSpawns',
-        value: function renderLocalSpawns(spawns) {
-            this.spawnLayer.removeAll();
-
-            var atlas = "";
-
-            for (var i = 0; i < spawns.length; i++) {
-                var sp = spawns[i];
-                if (sp.Class == "player" && sp.Name == this.playerName) {
-                    continue;
-                }
-
-                var values = sp.Sprite.split(':');
-                switch (values[0]) {
-                    case 'c':
-                        atlas = 'characterAtlas';
-                        break;
-                    case 'i':
-                        atlas = 'itemAtlas';
-                        break;
-                    case 'g':
-                        atlas = 'ground2Atlas';
-                        break;
-                    default:
-                        console.log('ERROR unknown sprite: ' + sp.Sprite);
-                        console.log(sp);
-                        continue;
-                }
-
-                var spr = this.game.add.sprite(0, 0, atlas);
-                spr.x = sp.X * this.tileWidth;
-                spr.y = sp.Y * this.tileHeight;
-                spr.frameName = values[1];
-                spr.anchor.set(0.5);
-
-                this.spawnLayer.add(spr);
-            }
-        }
     }]);
 
     return GameState;
@@ -405,7 +441,7 @@ var GameState = (function (_Phaser$State) {
 exports['default'] = GameState;
 module.exports = exports['default'];
 
-},{}],2:[function(require,module,exports){
+},{"./Client.js":1}],3:[function(require,module,exports){
 'use strict';
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -450,4 +486,4 @@ var Game = (function (_Phaser$Game) {
 
 new Game();
 
-},{"./GameState.js":1}]},{},[2]);
+},{"./GameState.js":2}]},{},[3]);
