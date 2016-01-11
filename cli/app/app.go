@@ -58,7 +58,7 @@ func getRouter() *ace.Ace {
 	r.GET("/sprite/ground2", getTexturePackGround2Controller)
 
 	r.GET("/ws", func(c *ace.C) {
-		wsHandler(c.Writer, c.Request)
+		serveWs(c.Writer, c.Request)
 	})
 
 	r.Static("/js", "./public/js")

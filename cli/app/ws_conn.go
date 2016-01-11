@@ -6,16 +6,26 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
 	"github.com/martinlindhe/roguer"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
+const (
+	// Time allowed to write a message to the peer.
+	writeWait = 10 * time.Second
+
+	// Maximum message size allowed from peer.
+	maxMessageSize = 8192
+
+	// Time allowed to read the next pong message from the peer.
+	pongWait = 60 * time.Second
+
+	// Send pings to peer with this period. Must be less than pongWait.
+	pingPeriod = (pongWait * 9) / 10
+)
 
 type messageResponse struct {
 	Type    string
@@ -34,16 +44,14 @@ type playerSpawnResponse struct {
 	Token string
 }
 
-func wsHandler(w http.ResponseWriter, r *http.Request) {
-
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Fatalf("Failed to set websocket upgrade: %+v", err)
-		return
-	}
+func reader(ws *websocket.Conn) {
+	defer ws.Close()
+	ws.SetReadLimit(512)
+	ws.SetReadDeadline(time.Now().Add(pongWait))
+	ws.SetPongHandler(func(string) error { ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
 	for {
-		t, msg, err := conn.ReadMessage()
+		t, msg, err := ws.ReadMessage()
 		if err != nil {
 			break
 		}
@@ -126,6 +134,39 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			b, _ = json.Marshal(res)
 		}
 
-		conn.WriteMessage(t, b)
+		ws.WriteMessage(t, b)
 	}
+}
+
+func writer(ws *websocket.Conn) {
+
+	pingTicker := time.NewTicker(pingPeriod)
+
+	defer func() {
+		pingTicker.Stop()
+		ws.Close()
+	}()
+	for {
+		select {
+
+		case <-pingTicker.C:
+			ws.SetWriteDeadline(time.Now().Add(writeWait))
+			if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+				return
+			}
+		}
+	}
+}
+
+var upgrader = websocket.Upgrader{}
+
+func serveWs(w http.ResponseWriter, r *http.Request) {
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("upgrade:", err)
+		return
+	}
+
+	go writer(ws)
+	reader(ws)
 }
