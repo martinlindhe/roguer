@@ -7,6 +7,15 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
+// Announce to nearby players that something happened
+func (n *Obj) Announce(format string, a ...interface{}) {
+
+	str := fmt.Sprintf(format, a...)
+	log.Println(str)
+
+	// XXX broadcast to all nearby
+}
+
 // Tick until it returns false
 func (n *Obj) Tick() bool {
 	n.Age++
@@ -14,19 +23,19 @@ func (n *Obj) Tick() bool {
 	// log.Println("[tick]", n.Name, n.Age)
 
 	if n.isAboveMaxAge() {
-		log.Infof("%s dies of old age", n.Name)
+		n.Announce("%s dies of old age", n.Name)
 		return false
 	}
 
 	n.treeTick()
 
 	if n.Type == "fireplace" && n.Activated {
-		log.Printf("%s is burning (%d energy left)", n.Name, n.Energy)
+		n.Announce("%s is burning (%d energy left)", n.Name, n.Energy)
 		n.Energy--
 		if n.Energy <= 0 {
 			n.Energy = 0
 			n.Activated = false
-			log.Printf("%s burned out", n.Name)
+			n.Announce("%s burned out", n.Name)
 		}
 	}
 
@@ -46,12 +55,12 @@ func (n *Obj) treeTick() {
 		//log.Debugf("Rolled %f for check if %s is spawned, %f chance", roll, drop.Name, drop.Chance)
 
 		if roll <= drop.Chance {
-			log.Printf("%s drops a %s", n, drop.Name)
+			n.Announce("%s drops a %s", n, drop.Name)
 
 			spawnPos, err := n.Position.randomNearby()
 			if err == nil {
 				if n.Position != spawnPos {
-					log.Debugf("%s lands at %s, from %s", drop.Name, spawnPos, n)
+					n.Announce("%s lands at %s, from %s", drop.Name, spawnPos, n)
 				}
 
 				island.addNpcFromName(drop.Name, spawnPos)
@@ -97,7 +106,7 @@ func (n *Obj) npcTick() bool {
 				if n.Coldness < 0 {
 					n.Coldness = 0
 				}
-				log.Printf("%s is getting warmed up by the %s (coldness -%d)", n, fireplace, prevColdness-n.Coldness)
+				n.Announce("%s is getting warmed up by the %s (coldness -%d)", n, fireplace, prevColdness-n.Coldness)
 			} else {
 
 				// NOTE: some max capacity for the fireplace is required
@@ -106,14 +115,14 @@ func (n *Obj) npcTick() bool {
 					if err == nil {
 						item := n.removeFromInventory(itemIdx)
 
-						log.Printf("%s is putting %s in the %s", n, item.Name, fireplace)
+						n.Announce("%s is putting %s in the %s", n, item.Name, fireplace)
 						// NOTE: to simplify, we just get the energy from the wood directly
 						fireplace.Energy += item.Energy
 					}
 				}
 
 				if fireplace.Energy > 0 {
-					log.Printf("%s lights the %s", n, fireplace)
+					n.Announce("%s lights the %s", n, fireplace)
 					fireplace.Activate()
 
 					// stay here for a bit
@@ -127,7 +136,7 @@ func (n *Obj) npcTick() bool {
 
 			if len(fireplaces) > 0 {
 				if n.distanceTo(fireplaces[0].Position) > 1 {
-					log.Printf("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
+					n.Announce("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
 					n.planAction("walk", fireplaces[0].Position)
 				}
 			}
@@ -155,7 +164,7 @@ func (n *Obj) npcTick() bool {
 		n.CurrentAction = &n.PlannedActions[0]
 		n.PlannedActions = n.PlannedActions[1:]
 
-		log.Println(n.Name, "started to", n.CurrentAction.Name)
+		n.Announce("%s started to %s", n.Name, n.CurrentAction.Name)
 	}
 
 	n.performCurrentAction()
@@ -238,26 +247,26 @@ func (n *Obj) tiredTick() bool {
 	if n.isTired() && !n.hasPlannedType("sleep") && !n.hasPlannedType("travel") {
 
 		if shelterType == "" {
-			log.Printf("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
+			n.Announce("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
 			n.planAction("sleep")
 			return true
 		}
 
 		nearbyShelters := n.Position.spawnsByType(shelterType, 0)
 		if len(nearbyShelters) > 0 {
-			log.Printf("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", n.Name, nearbyShelters[0].Name, n.Tiredness, n.tirednessCap())
+			n.Announce("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", n.Name, nearbyShelters[0].Name, n.Tiredness, n.tirednessCap())
 			n.planAction("sleep")
 			return true
 		}
 
 		shelters := n.Position.spawnsByType(shelterType, 30)
 		if len(shelters) == 0 {
-			log.Printf("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
+			n.Announce("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
 			n.planAction("sleep")
 			return true
 		}
 
-		log.Printf("%s is feeling tired, decided to go to %s for sleeping", n.Name, shelters[0].Name)
+		n.Announce("%s is feeling tired, decided to go to %s for sleeping", n.Name, shelters[0].Name)
 		n.planAction("walk", shelters[0].Position)
 	}
 
@@ -282,12 +291,12 @@ func (n *Obj) hungerThirstTick() bool {
 			}
 
 			energyDiff := prevHunger - n.Hunger
-			log.Printf("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
+			n.Announce("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
 			return true
 		}
 
 		if n.isHungry() && !n.hasPlanned("find food") {
-			log.Printf("%s is feeling hungry (%d hunger)", n.Name, n.Hunger)
+			n.Announce("%s is feeling hungry (%d hunger)", n.Name, n.Hunger)
 			n.planAction("find food")
 		}
 	}
@@ -308,11 +317,11 @@ func (n *Obj) hungerThirstTick() bool {
 			}
 
 			energyDiff := prevThirst - n.Thirst
-			log.Printf("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
+			n.Announce("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
 			return true
 		}
 		if n.isThirsty() && !n.hasPlanned("find water") {
-			log.Printf("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
+			n.Announce("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
 			n.planAction("find water")
 		}
 	}

@@ -31,6 +31,9 @@ func main() {
 
 	go r.Run(listenAt)
 
+	// initial tick
+	island.Tick()
+
 	c := time.Tick(3 * time.Second)
 	for range c {
 		// progress game world

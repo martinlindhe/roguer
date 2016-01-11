@@ -69,9 +69,9 @@ func (n *Obj) planAction(params ...interface{}) {
 	n.PlannedActions = append(n.PlannedActions, a)
 
 	if a.Destination.empty() {
-		log.Printf("%s decided to %s", n, a.Name)
+		n.Announce("%s decided to %s", n, a.Name)
 	} else {
-		log.Printf("%s decided to %s (%s)", n, a.Name, a.Destination)
+		n.Announce("%s decided to %s (%s)", n, a.Name, a.Destination)
 	}
 
 }
@@ -121,11 +121,11 @@ func (i *Island) findActionByName(n string) actionSpec {
 
 func (n *Obj) performWait() bool {
 
-	log.Debugln("%s is waiting", n.Name)
+	n.Announce("%s is waiting", n.Name)
 	n.CurrentAction.Duration--
 
 	if n.CurrentAction.Duration < 0 {
-		log.Printf("%s finished waiting", n.Name)
+		n.Announce("%s finished waiting", n.Name)
 		return true
 	}
 
@@ -161,7 +161,7 @@ func (n *Obj) performTravel(energy int) bool {
 	}
 
 	if moved {
-		log.Printf("%s is performing %s from %v to %v  with step %f dst= %v", n.Name, n.CurrentAction.Name, oldPos, n.Position, distance, n.CurrentAction.Destination)
+		n.Announce("%s is performing %s from %v to %v  with step %f dst= %v", n.Name, n.CurrentAction.Name, oldPos, n.Position, distance, n.CurrentAction.Destination)
 	}
 
 	if n.Position.intMatches(n.CurrentAction.Destination) {
@@ -184,24 +184,24 @@ func (n *Obj) performSleep() bool {
 			// give bonus from nearby shelter
 			mult = shelters[0].Energy
 
-			log.Printf("%s gets sleeping bonus %d from %s", n.Name, mult, shelters[0].Name)
+			n.Announce("%s gets sleeping bonus %d from %s", n.Name, mult, shelters[0].Name)
 		}
 		energy = mult * n.CurrentAction.Energy
 	}
 
-	log.Printf("%s is sleeping (tiredness = %d, energy gain = %d)", n.Name, n.Tiredness, energy)
+	n.Announce("%s is sleeping (tiredness = %d, energy gain = %d)", n.Name, n.Tiredness, energy)
 	n.CurrentAction.Duration--
 	n.Tiredness -= energy
 
 	if n.Tiredness <= 0 {
 		n.Tiredness = 0
-		log.Printf("%s woke up, no longer tired", n.Name)
+		n.Announce("%s woke up, no longer tired", n.Name)
 		return true
 	}
 
 	if n.CurrentAction.Duration < 0 {
 		// XXX some rested-bonus buff?
-		log.Printf("%s woke up, slept through full duration", n.Name)
+		n.Announce("%s woke up, slept through full duration", n.Name)
 		return true
 	}
 
@@ -210,7 +210,7 @@ func (n *Obj) performSleep() bool {
 
 func (n *Obj) performForage() bool {
 
-	log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
+	n.Announce("%s is performing %s", n.Name, n.CurrentAction.Name)
 
 	p := Point{0, 0}
 
@@ -223,7 +223,7 @@ func (n *Obj) performForage() bool {
 			rnd := list[rand.Intn(len(list))]
 
 			n.CurrentAction.Destination = &rnd.Position
-			log.Printf("%s decided to go pick up %s", n, rnd)
+			n.Announce("%s decided to go pick up %s", n, rnd)
 		}
 	} else {
 		// progress towards target
@@ -233,7 +233,7 @@ func (n *Obj) performForage() bool {
 		list := n.Position.spawnsByType(n.CurrentAction.Result, 0.9)
 
 		for _, it := range list {
-			log.Printf("%s picked up %s", n.Name, it.Name)
+			n.Announce("%s picked up %s", n.Name, it.Name)
 			n.addItemToInventory(*it)
 
 			// remove spawn from world
@@ -267,9 +267,10 @@ func (n *Obj) performBuild() bool {
 
 	// if not at destination, move there
 	// XXX 1=walking speed
-	if n.performTravel(1) {
+	if !n.performTravel(1) {
+		return false
 
-		log.Debugln(n.Name, "is performing", n.CurrentAction.Name)
+		n.Announce("%s is performing %s", n.Name, n.CurrentAction.Name)
 
 		n.CurrentAction.Duration--
 		if n.CurrentAction.Duration < 0 {
@@ -281,7 +282,7 @@ func (n *Obj) performBuild() bool {
 
 			// if object is a shelter, make it my home
 			if spec.Type == "shelter" || spec.Type == "burrow" {
-				log.Printf("%s made %s their home", n, o)
+				n.Announce("%s has declared %s their home", n, o)
 				n.Home = o
 			}
 
