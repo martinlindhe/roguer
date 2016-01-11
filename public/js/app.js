@@ -19,7 +19,10 @@ var Client = (function () {
         this.gameState = gameState;
         this.socket = new WebSocket('ws://localhost:3322/ws');
 
-        this.sessionToken = "";
+        this.sessionToken = window.sessionStorage.getItem('_token');
+        if (this.sessionToken) {
+            console.log("Re-used previous token " + this.sessionToken);
+        }
 
         var parent = this;
 
@@ -74,6 +77,7 @@ var Client = (function () {
             this.gameState.spawnPlayer(cmd);
 
             this.sessionToken = cmd.Token;
+            window.sessionStorage.setItem('_token', cmd.Token);
         }
     }, {
         key: 'handleMoveResMessage',

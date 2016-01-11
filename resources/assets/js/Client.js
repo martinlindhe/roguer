@@ -8,7 +8,10 @@ class Client
         this.gameState = gameState;
         this.socket = new WebSocket('ws://localhost:3322/ws');
 
-        this.sessionToken = "";
+        this.sessionToken = window.sessionStorage.getItem('_token');
+        if (this.sessionToken) {
+            console.log("Re-used previous token " + this.sessionToken);
+        }
 
         var parent = this;
 
@@ -64,6 +67,7 @@ class Client
         this.gameState.spawnPlayer(cmd);
 
         this.sessionToken = cmd.Token;
+        window.sessionStorage.setItem('_token', cmd.Token);
     }
 
     handleMoveResMessage(cmd)
@@ -71,8 +75,6 @@ class Client
         // console.log("Rendering " + cmd.LocalSpawns.length + " spawns at " + cmd.X + ", " + cmd.Y);
         this.gameState.renderLocalSpawns(cmd.LocalSpawns);
     }
-
-
 }
 
 export default Client;

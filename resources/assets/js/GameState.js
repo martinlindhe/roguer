@@ -48,8 +48,6 @@ class GameState extends Phaser.State
 
 
 
-
-
         // world (except UI) is in this group, so it can be scaled
         this.stageGroup = this.game.add.group();
 
