@@ -47,6 +47,8 @@ func parseGroundTilesetDefinition(defFileName string) (tilesetSpec, error) {
 
 func PrecalcTilemap() []byte {
 
+	// XXX also contain collision data
+
 	tiles, err := parseGroundTilesetDefinition("resources/assets/tilesets/oddball/ground.yml")
 	if err != nil {
 		panic(err)

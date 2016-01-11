@@ -37,6 +37,7 @@ class GameState extends Phaser.State
             {text: "later on", time: 1234},
         ];
 
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // scale to whole window
         this.game.scale.setGameSize(window.innerWidth, window.innerHeight);
@@ -53,12 +54,21 @@ class GameState extends Phaser.State
 
         this.groundMap = this.game.add.tilemap('islandMap');
         this.groundMap.addTilesetImage('island_tiles', 'ground');
+
+        this.groundMap.setCollisionBetween(0, 112); // 112 = beach line
+
         this.groundLayer = this.groundMap.createLayer(0);
         this.groundLayer.resizeWorld();
+
+        // Un-comment this on to see the collision tiles
+        //this.groundLayer.debug = true;
+
         this.stageGroup.add(this.groundLayer);
 
 
         this.playerGroup = this.game.add.group();
+        this.game.camera.follow(this.playerGroup);
+
         //this.playerGroup.z = 10;
         this.stageGroup.add(this.playerGroup);
 
@@ -103,17 +113,19 @@ class GameState extends Phaser.State
         // Update the shadow texture each frame
         //this.updateShadowTexture();
 
-        this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
+        this.game.physics.arcade.collide(this.playerGroup, this.groundLayer);
 
         var steppingHoriz = 1;
         var steppingVert = steppingHoriz / 2;
 
-        // flip horizontally
+        /*
+        // flip horizontally, XXX this should be done on all npc movements to show facing direction
         if (this.playerSprite.body.velocity.x == this.cursors.left.isDown) {
             this.playerSprite.scale.x = -1;
         } else if (this.playerSprite.body.velocity.x == this.cursors.right.isDown) {
             this.playerSprite.scale.x = 1;
         }
+        */
 
         if (this.cursors.up.isDown) {
             this.playerGroup.y -= steppingVert;
@@ -168,7 +180,6 @@ class GameState extends Phaser.State
     {
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
-
         var minimapScale = 3;
         var minimapX = this.game.width - this.game.cache.getImage('minimap').width / minimapScale;
         this.minimap = this.game.add.sprite(minimapX, 0, 'minimap');
@@ -199,19 +210,16 @@ class GameState extends Phaser.State
 
     spawnPlayer(cmd)
     {
-        this.game.camera.follow(this.playerGroup);
-
         this.playerSprite = this.game.add.sprite(0, 0, 'characterAtlas');
         this.playerSprite.frameName = 'dwarf';
         this.playerSprite.anchor.set(0.5);
 
-        this.game.physics.enable(this.playerSprite);
 
 
         //  Because both our body and our tiles are so tiny,
         //  and the body is moving pretty fast, we need to add
         //  some tile padding to the body. WHat this does
-        this.playerSprite.body.tilePadding.set(32, 32);
+        //this.playerSprite.body.tilePadding.set(32, 32);
 
 
         // multiply coords with tile size to scale properly.
@@ -220,13 +228,16 @@ class GameState extends Phaser.State
         this.playerGroup.y = cmd.Y * this.tileHeight;
         this.playerGroup.add(this.playerSprite);
 
-        var txt = this.makeText(this.playerName);
 
         // floating name over head of player
+        var txt = this.makeText(this.playerName);
         var aboveHead = this.game.add.image(0, -10, txt);
         aboveHead.anchor.set(0.5);
         this.playerGroup.add(aboveHead);
+
         console.log("spawned at " + cmd.X + ", " + cmd.Y);
+
+        this.game.physics.enable(this.playerGroup);
 
         this.renderLocalSpawns(cmd.LocalSpawns);
     }

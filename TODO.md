@@ -51,3 +51,7 @@ generate island:
 
 
     collision detection (dont walk on water...)
+
+
+
+    - server: let object broadcast stuff that is happening to nearby clients
