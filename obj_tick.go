@@ -11,9 +11,16 @@ import (
 func (n *Obj) Announce(format string, a ...interface{}) {
 
 	str := fmt.Sprintf(format, a...)
-	log.Println(str)
+	//log.Println(str)
 
 	// XXX broadcast to all nearby
+
+	for _, pl := range island.Players {
+		if pl.Spawn.Position.isNearby(n.Position) {
+			log.Printf("XXXX tell %s: %s", pl.Name, str)
+
+		}
+	}
 }
 
 // Tick until it returns false

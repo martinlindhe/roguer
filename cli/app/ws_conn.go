@@ -12,13 +12,21 @@ import (
 	"github.com/martinlindhe/roguer"
 )
 
-var wsUpgrader = websocket.Upgrader{
+var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
 
-type wsResponse struct {
-	Type string
+type messageResponse struct {
+	Type    string
+	Message string
+}
+
+type moveResponse struct {
+	Type        string
+	X           float64
+	Y           float64
+	LocalSpawns []rogue.LocalSpawns
 }
 
 type playerSpawnResponse struct {
@@ -26,16 +34,9 @@ type playerSpawnResponse struct {
 	Token string
 }
 
-type moveResponse struct {
-	wsResponse
-	X           float64
-	Y           float64
-	LocalSpawns []rogue.LocalSpawns
-}
-
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 
-	conn, err := wsUpgrader.Upgrade(w, r, nil)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatalf("Failed to set websocket upgrade: %+v", err)
 		return
@@ -70,8 +71,8 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		case "continue":
 			pos, token, err := island.ContinuePlayer(parts[1])
 			if err != nil {
-				errMsg := fmt.Sprintf("%v", err)
-				b = []byte(`{"Type": "error", "Message": "` + errMsg + `"}`)
+				res := messageResponse{Type: "error", Message: fmt.Sprintf("%v", err)}
+				b, _ = json.Marshal(res)
 				break
 			}
 
@@ -100,7 +101,8 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if player == nil {
 				log.Errorf("Invalid token recieved: %s", token)
-				b = []byte(`{"Type": "error", "Message": "invalid token"}`)
+				res := messageResponse{Type: "error", Message: "invalid token"}
+				b, _ = json.Marshal(res)
 				break
 			}
 
@@ -118,9 +120,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			b, _ = json.Marshal(res)
 
 		default:
-			errMsg := fmt.Sprintf("unknown command %s", parts[0])
-			b = []byte(`{"Type": "error", "Message": "` + errMsg + `"}`)
 			log.Errorf("unknown command %s", parts[0])
+
+			res := messageResponse{Type: "error", Message: fmt.Sprintf("unknown command %s", parts[0])}
+			b, _ = json.Marshal(res)
 		}
 
 		conn.WriteMessage(t, b)

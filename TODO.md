@@ -46,6 +46,9 @@ generate island:
 
 
 # phaser js game engine
+
+    websockets: fix up server part to broadcast to clients easily
+
     fog of war thing:
         only light up nearby area, ignore line of sight thing for now
 
