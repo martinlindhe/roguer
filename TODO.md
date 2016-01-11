@@ -47,8 +47,6 @@ generate island:
 
 # phaser js game engine
 
-    websockets: fix up server part to broadcast to clients easily
-
     fog of war thing:
         only light up nearby area, ignore line of sight thing for now
 
@@ -56,5 +54,11 @@ generate island:
     collision detection (dont walk on water...)
 
 
+    scaling/zoom is broken
 
-    - server: let object broadcast stuff that is happening to nearby clients
+
+    server: let object broadcast stuff that is happening to nearby clients
+        FIXME: websockets: fix up server part to broadcast to clients easily
+
+
+    message window not shown

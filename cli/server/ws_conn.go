@@ -13,6 +13,10 @@ import (
 	"github.com/martinlindhe/roguer"
 )
 
+var (
+	upgrader = websocket.Upgrader{}
+)
+
 const (
 	// Time allowed to write a message to the peer.
 	writeWait = 10 * time.Second
@@ -157,8 +161,6 @@ func writer(ws *websocket.Conn) {
 		}
 	}
 }
-
-var upgrader = websocket.Upgrader{}
 
 func serveWs(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)

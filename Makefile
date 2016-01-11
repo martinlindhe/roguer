@@ -4,7 +4,7 @@ bench:
 	go test -bench=.
 
 run:
-	go run cli/app/*
+	go run cli/server/*
 
 shrink-png:
 	find ./public/img -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
@@ -42,7 +42,10 @@ validate-json:
 	find . -name '*.json' -not -path "./node_modules/*" -print0 | xargs -0 -n1 validjson
 
 validate-js:
-	jshint resources/assets/js
+	node_modules/jshint/bin/jshint resources/assets/js
 
 watch:
-	gulp watch --production
+	node_modules/gulp/bin/gulp.js watch --production
+
+deps:
+	npm install
