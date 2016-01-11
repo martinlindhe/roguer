@@ -82,7 +82,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if player == nil {
 				log.Errorf("Invalid token recieved: %s", token)
-				b = []byte(`{"Type": "error, invalid token"}`)
+				b = []byte(`{"Type": "error", "Message": "invalid token"}`)
 				break
 			}
 
@@ -97,11 +97,11 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			res.X = player.Spawn.Position.X
 			res.Y = player.Spawn.Position.X
 			res.LocalSpawns = island.DescribeLocalArea(player.Spawn.Position)
-			//b = []byte(`{"Type": "ok"}`)
 			b, _ = json.Marshal(res)
 
 		default:
-			b = []byte(fmt.Sprintf("unknown command %s", parts[0]))
+			errMsg := fmt.Sprintf("unknown command %s", parts[0])
+			b = []byte(`{"Type": "error", "Message": "` + errMsg + `"}`)
 			log.Errorf("unknown command %s", parts[0])
 		}
 

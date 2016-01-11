@@ -20,9 +20,6 @@ var Client = (function () {
         this.socket = new WebSocket('ws://localhost:3322/ws');
 
         this.sessionToken = window.sessionStorage.getItem('_token');
-        if (this.sessionToken) {
-            console.log("Re-used previous token " + this.sessionToken);
-        }
 
         var parent = this;
 
@@ -52,7 +49,13 @@ var Client = (function () {
 
         this.socket.onopen = function () {
             console.log('Websocket connected');
-            this.send("new_player " + parent.gameState.playerName);
+
+            if (parent.sessionToken) {
+                console.log("Resuming session");
+                this.send("continue " + parent.sessionToken);
+            } else {
+                this.send("new_player " + parent.gameState.playerName);
+            }
         };
     }
 
