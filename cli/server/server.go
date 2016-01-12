@@ -66,6 +66,7 @@ func getRouter() *ace.Ace {
 	r.Static("/fonts", "./public/fonts")
 	r.Static("/img", "./public/img")
 	r.Static("/audio", "./public/audio")
+
 	return r
 }
 

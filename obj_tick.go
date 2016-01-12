@@ -5,20 +5,19 @@ import (
 	"math/rand"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/gorilla/websocket"
 )
 
 // Announce to nearby players that something happened
 func (n *Obj) Announce(format string, a ...interface{}) {
 
 	str := fmt.Sprintf(format, a...)
-	//log.Println(str)
-
-	// XXX broadcast to all nearby
 
 	for _, pl := range island.Players {
 		if pl.Spawn.Position.isNearby(n.Position) {
 			log.Printf("XXXX tell %s: %s", pl.Name, str)
-
+			b := []byte(str)
+			pl.Socket.WriteMessage(websocket.TextMessage, b)
 		}
 	}
 }

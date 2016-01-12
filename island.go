@@ -6,6 +6,8 @@ import (
 	"image/color"
 	"math/rand"
 
+	"github.com/gorilla/websocket"
+
 	log "github.com/Sirupsen/logrus"
 )
 
@@ -33,7 +35,7 @@ const (
 )
 
 // NewPlayer creates a new player
-func (i *Island) NewPlayer(name string) (Point, string) {
+func (i *Island) NewPlayer(name string, socket *websocket.Conn) (Point, string) {
 
 	pos := island.RandomPointAboveWater()
 	token := newJwt()
@@ -48,6 +50,7 @@ func (i *Island) NewPlayer(name string) (Point, string) {
 	player.Name = name
 	player.Token = token
 	player.Spawn = spawn
+	player.Socket = socket
 	island.Players = append(island.Players, player)
 
 	return pos, token
