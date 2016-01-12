@@ -36,11 +36,11 @@ garden:
 
 
 
+world:
+  - day and night
+  - seasons
+  server: each tick, send tick msg to clients
 
-
-generate island:
-  - tweak rolling particle length, default to 8
-  - generated islands is ugly
 
 
 
@@ -58,3 +58,6 @@ generate island:
 
 
     log window: scrolling
+        - remember history in client for current session
+
+    minimap: show my current position

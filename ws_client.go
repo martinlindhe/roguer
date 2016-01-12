@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gobuild/log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
 )
 

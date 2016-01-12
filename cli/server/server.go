@@ -11,23 +11,23 @@ import (
 	"github.com/plimble/ace"
 )
 
-var island *rogue.Island
-var islandMap []byte
+var (
+	island    *rogue.Island
+	islandMap []byte
+	appPort   = 3322
+)
 
 func main() {
 
 	log.SetLevel(log.DebugLevel)
 
-	log.Info("rogue started")
-
 	r := getRouter()
 	island = rogue.NewIsland()
 	islandMap = rogue.PrecalcTilemap()
 
-	appPort := 3322
 	listenAt := fmt.Sprintf(":%d", appPort)
 
-	log.Infof("Starting http server on %s", listenAt)
+	log.Info("roguer server started, listening on %s", listenAt)
 
 	go r.Run(listenAt)
 

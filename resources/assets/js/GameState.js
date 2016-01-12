@@ -35,10 +35,6 @@ class GameState extends Phaser.State
         this.maxMessages = 15;
         this.logTextHeight = 15;
 
-        this.logMessages = [
-            {time: 0, text: "Welcome to roguer!"},
-        ];
-
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // scale to whole window
@@ -80,6 +76,7 @@ class GameState extends Phaser.State
         this.stageGroup.add(this.spawnLayer);
 
 
+
         this.initUi();
 
 
@@ -107,8 +104,6 @@ class GameState extends Phaser.State
 
     update()
     {
-        this.redrawLogMessages();
-
         if (!this.playerSprite) {
             return;
         }
@@ -179,6 +174,63 @@ class GameState extends Phaser.State
         //game.debug.soundInfo(this.music, 10, 140);
     }
 
+    // XXXX refactor to MessageLog class
+    initMessageLog()
+    {
+        this.logMessages = [
+            {time: 0, text: "Welcome to roguer!"},
+        ];
+
+        var savedMessages = window.sessionStorage.getItem('_messages');
+        if (savedMessages) {
+            console.log("restoring saved msgs from " + savedMessages);
+            this.logMessages = JSON.parse(savedMessages);
+        }
+
+        this.logMessageList.text = this.renderMessageLog();
+    }
+
+    newLogMessage(o)
+    {
+        if (!this.logMessages) {
+            console.log("error: log wnd not yet ready!");
+            console.log(o);
+            return;
+        }
+
+        this.logMessages.push(o);
+
+        this.logMessageList.text = this.renderMessageLog();
+    }
+
+    saveMessageLog()
+    {
+        // XXX server should ping me, on each recieved one, there call saveMessageLog()
+        console.log("saved message log in session storage");
+
+        window.sessionStorage.setItem('_messages', JSON.stringify(this.logMessages));
+    }
+
+    renderMessageLog()
+    {
+        if (!this.logMessages) {
+            console.log("error: log messages not yet ready!");
+            return;
+        }
+
+        // TODO log window with scroll
+        // only save the last messages in this.logMessages, and ignore scroll for now
+        this.logMessages = this.logMessages.slice(-this.maxMessages);
+
+        var txt = "";
+        for (let msg of this.logMessages) {
+            txt = txt + msg.time + ": " + msg.text + "\n";
+        }
+
+        return txt.trim();
+    }
+
+
     initUi()
     {
         this.uiGroup = this.game.add.group();
@@ -228,6 +280,10 @@ class GameState extends Phaser.State
         this.logMessageList.fixedToCamera = true;
 
         this.uiGroup.add(this.logMessageList);
+
+
+        this.initMessageLog();
+        //this.MessageLog = new MessageLog();
     }
 
     spawnPlayer(cmd)
@@ -317,21 +373,6 @@ class GameState extends Phaser.State
         o.text = msg;
 
         return o;
-    }
-
-
-    redrawLogMessages()
-    {
-        // TODO log window with scroll
-        // only save the last messages in this.logMessages, and ignore scroll for now
-        this.logMessages = this.logMessages.slice(-this.maxMessages);
-
-        var txt = "";
-        for (let msg of this.logMessages) {
-            txt = txt + msg.time + ": " + msg.text + "\n";
-        }
-
-        this.logMessageList.text = txt.trim();
     }
 
     updateShadowTexture()
