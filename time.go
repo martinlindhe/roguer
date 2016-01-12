@@ -8,26 +8,22 @@ const (
 	Hour   = Minute * 60
 	Day    = Hour * 24
 	Month  = Day * 30
+	Season = Month * 3
 	Year   = Month * 12
 )
 
 // GameTime is the object representing game server time
 //
 // Server ticks every 3 real-world seconds.
+// A day has 24 hours.
+// There are 4 seasons.
+// Each season has 3 months (90 days).
 //
 // Each tick progresses the in-game time by 1 minutes,
-// giving 60 ticks for an hour, or 1440 ticks for a day (24 hour days in-game).
+// giving 60 ticks for an hour
 //
-// There are 4 seasons. Each season has 25 days,
-// making 1 year in 1440 * 100 = 144 000 ticks
-//
-// So 1 game year = 144000 * 3 = 432 000 real seconds,
-// or 120 real time hours (5 real time days).
-//
-// Some examples:
-//    day 0, hour 0, min 1: 1 ticks
-//    day 0, hour 1, min 0: 60 ticks
-//    day 1, hour 0, min 0: 1440 ticks
+// So 1 game year = 518400 * 3 = 1555200 real seconds,
+// or 25920 real time minutes (432 real hours, 7.2 real days).
 type GameTime struct {
 	time int64
 }
@@ -163,6 +159,14 @@ func (t *GameTime) DayOfYear() string {
 		return fmt.Sprintf("%s %d in year %d", months[month], day, year)
 	}
 	return fmt.Sprintf("%s %d", months[month], day)
+}
+
+// Season returns "spring" or "winter"
+func (t *GameTime) Season() string {
+	seasons := []string{"spring", "summer", "autumn", "winter"}
+
+	season := t.Month() / 4
+	return seasons[season]
 }
 
 // Plural returns "1 item" or "2 items"

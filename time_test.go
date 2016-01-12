@@ -6,7 +6,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// NOTE: 1 tick = 1 minute
+func TestTimeAssumptions(t *testing.T) {
+
+	// NOTE: 1 tick = 1 minute
+	t1 := newTime(1 * Minute)
+	assert.Equal(t, int64(1), t1.Current())
+
+	t1.Set(1 * Hour)
+	assert.Equal(t, int64(60), t1.Current())
+
+	// NOTE: 60 * 24 = 1440 ticks in a day
+	t1.Set(1 * Day)
+	assert.Equal(t, int64(1440), t1.Current())
+
+	// NOTE: 1440 * 30 = 43200 ticks in a month
+	t1.Set(1 * Month)
+	assert.Equal(t, int64(43200), t1.Current())
+
+	// NOTE: 43200 * 12 = 518400 ticks in a year
+	t1.Set(1 * Year)
+	assert.Equal(t, int64(518400), t1.Current())
+}
 
 func TestPassedSinceStart(t *testing.T) {
 
@@ -45,4 +65,10 @@ func TestDateString(t *testing.T) {
 
 	t1 := newTime(Month*1 + Day*20 + Hour*18 + Minute*20)
 	assert.Equal(t, "18:20\nfeb 20", t1.DateString())
+}
+
+func TestSeason(t *testing.T) {
+
+	t1 := newTime(Month*1 + Day*20 + Hour*18 + Minute*20)
+	assert.Equal(t, "spring", t1.Season())
 }
