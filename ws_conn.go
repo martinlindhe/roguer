@@ -1,11 +1,10 @@
-package main
+package rogue
 
 import (
 	"net/http"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
-	"github.com/martinlindhe/roguer"
 )
 
 var (
@@ -22,7 +21,7 @@ type moveResponse struct {
 	Type        string
 	X           float64
 	Y           float64
-	LocalSpawns []rogue.LocalSpawns
+	LocalSpawns []LocalSpawns
 }
 
 type playerSpawnResponse struct {
@@ -30,7 +29,7 @@ type playerSpawnResponse struct {
 	Token string
 }
 
-func serveWs(w http.ResponseWriter, r *http.Request) {
+func ServeWs(w http.ResponseWriter, r *http.Request) {
 	socket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("upgrade:", err)

@@ -1,4 +1,4 @@
-package main
+package rogue
 
 import (
 	"encoding/json"
@@ -8,7 +8,6 @@ import (
 
 	"github.com/gobuild/log"
 	"github.com/gorilla/websocket"
-	"github.com/martinlindhe/roguer"
 )
 
 // client represents a single user
@@ -23,7 +22,6 @@ type client struct {
 func (c *client) read() {
 	for {
 		if t, msg, err := c.socket.ReadMessage(); err == nil {
-			//c.room.forward <- msg
 
 			b := []byte{}
 
@@ -70,7 +68,7 @@ func (c *client) read() {
 				token := subcommand[2]
 
 				// find user by token
-				var player *rogue.Player
+				var player *Player
 				for _, u := range island.Players {
 					if u.Token == token {
 						player = &u

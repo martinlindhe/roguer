@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 
@@ -16,7 +17,10 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 	for _, pl := range island.Players {
 		if pl.Spawn.Position.isNearby(n.Position) {
 			log.Printf("XXXX tell %s: %s", pl.Name, str)
-			b := []byte(str)
+
+			res := messageResponse{Type: "message", Message: str}
+
+			b, _ := json.Marshal(res)
 			pl.Socket.WriteMessage(websocket.TextMessage, b)
 		}
 	}
