@@ -25,10 +25,10 @@ const (
 	maxMessageSize = 8192
 
 	// Time allowed to read the next pong message from the peer.
-	pongWait = 60 * time.Second
+	pongWait = 1 * time.Second
 
 	// Send pings to peer with this period. Must be less than pongWait.
-	pingPeriod = (pongWait * 9) / 10
+	pingPeriod = 2 * time.Second
 )
 
 type messageResponse struct {
@@ -150,10 +150,11 @@ func writer(ws *websocket.Conn) {
 		pingTicker.Stop()
 		ws.Close()
 	}()
+
 	for {
 		select {
-
 		case <-pingTicker.C:
+			log.Println("pingTicker")
 			ws.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
 				return

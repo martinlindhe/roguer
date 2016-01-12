@@ -45,6 +45,8 @@ validate-js:
 	node_modules/jshint/bin/jshint resources/assets/js
 
 watch:
+	# BUG: watch dont run sass.. elixir 4.2
+	node_modules/gulp/bin/gulp.js --production
 	node_modules/gulp/bin/gulp.js watch --production
 
 deps:

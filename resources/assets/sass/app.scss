@@ -9,26 +9,7 @@ $fa-font-path: "/fonts/font-awesome";
 
 
 // misc
-@import "_nav";
-@import "_navbar";
-@import "_switch";
 @import "_colors";
-@import "_footer";
-@import "_cart";
-@import "_image_upload";
-
-
-.stock_green {
-  color: $greenSuccessColor;
-}
-
-.stock_orange {
-  color: $orangeWarningColor;
-}
-
-.stock_red {
-  color: #ff5a6e;
-}
 
 body {
   background-color: $backgroundColor;
