@@ -2,13 +2,13 @@ package rogue
 
 import "fmt"
 
+// time constants
 const (
-	minute = 1
-	hour   = minute * 60
-	day    = hour * 24
-	month  = day * 30
-	season = month * 3
-	year   = season * 4
+	Minute = 1
+	Hour   = Minute * 60
+	Day    = Hour * 24
+	Month  = Day * 30
+	Year   = Month * 12
 )
 
 // GameTime is the object representing game server time
@@ -37,6 +37,11 @@ func newTime(t int64) *GameTime {
 	return &GameTime{time: t}
 }
 
+// Set sets the current time
+func (t *GameTime) Set(i int64) {
+	t.time = i
+}
+
 // Tick progress the time
 func (t *GameTime) Tick() {
 
@@ -49,39 +54,111 @@ func (t *GameTime) Current() int64 {
 	return t.time
 }
 
-// Day returns the day of the year
-func (t *GameTime) Day() int64 {
+// TimeOfDay returns time as "19:30"
+func (t *GameTime) TimeOfDay() string {
 
-	return t.time / day
+	minute, hour, _, _, _ := t.date()
+
+	return fmt.Sprintf("%02d:%02d", hour, minute)
 }
 
-// Plural returns "s" to construct english plural forms of words
-func (t *GameTime) Plural(base string) string {
+func (t *GameTime) date() (int64, int64, int64, int64, int64) {
 
-	if t.time == 1 {
-		return base
+	rest := t.time
+
+	year := rest / Year
+	if year > 0 {
+		rest -= year * Year
 	}
-	return base + "s"
+
+	month := rest / Month
+	if month > 0 {
+		rest -= month * Month
+	}
+
+	day := rest / Day
+	if day > 0 {
+		rest -= day * Day
+	}
+
+	hour := rest / Hour
+	if hour > 0 {
+		rest -= hour * Hour
+	}
+
+	minute := rest
+
+	return minute, hour, day, month, year
+}
+
+// Minute returns the minute
+func (t *GameTime) Minute() int64 {
+
+	minute, _, _, _, _ := t.date()
+	return minute
+}
+
+// Hour returns the hour
+func (t *GameTime) Hour() int64 {
+
+	_, hour, _, _, _ := t.date()
+	return hour
+}
+
+// Day returns the day
+func (t *GameTime) Day() int64 {
+
+	_, _, day, _, _ := t.date()
+	return day
+}
+
+// Month returns the month
+func (t *GameTime) Month() int64 {
+
+	_, _, _, month, _ := t.date()
+	return month
+}
+
+// Year returns the year
+func (t *GameTime) Year() int64 {
+
+	_, _, _, _, year := t.date()
+	return year
 }
 
 // PassedSinceStart describes distance of t.time to 0
 func (t *GameTime) PassedSinceStart() string {
 
-	if t.time < hour {
-		return fmt.Sprintf("%d %s", t.time, t.Plural("minute"))
+	minute, hour, day, month, year := t.date()
+
+	if year > 0 {
+		return plural(year, "year")
 	}
-	if t.time < day {
-		r := newTime(t.time / hour)
-		return fmt.Sprintf("%d %s", r.time, r.Plural("hour"))
+	if month > 0 {
+		return plural(month, "month")
 	}
-	if t.time < month {
-		r := newTime(t.time / day)
-		return fmt.Sprintf("%d %s", r.time, r.Plural("day"))
+	if day > 0 {
+		return plural(day, "day")
 	}
-	if t.time < year {
-		r := newTime(t.time / month)
-		return fmt.Sprintf("%d %s", r.time, r.Plural("month"))
+	if hour > 0 {
+		return plural(hour, "hour")
 	}
-	r := newTime(t.time / year)
-	return fmt.Sprintf("%d %s", r.time, r.Plural("year"))
+	return plural(minute, "minute")
+}
+
+// DayOfYear ...
+func (t *GameTime) DayOfYear() string {
+
+	_, _, day, month, year := t.date()
+
+	return fmt.Sprintf("day %d of month %d in year %d", day, month, year)
+}
+
+// Plural returns "1 item" or "2 items"
+func plural(t int64, base string) string {
+
+	if t == 1 {
+		return fmt.Sprintf("%d %s", t, base)
+	}
+	return fmt.Sprintf("%d %ss", t, base)
 }

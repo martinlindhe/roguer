@@ -87,7 +87,7 @@ func TestFindFoodAndEat(t *testing.T) {
 	}
 
 	// make sure that npc has aged
-	assert.Equal(t, true, dw.Age > 0)
+	assert.Equal(t, true, dw.Age.Current() > 0)
 	// make sure food was found
 	assert.Equal(t, true, dw.hasItemTypeInInventory("food"))
 	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
@@ -426,7 +426,7 @@ func TestNpcDiesOfOldAge(t *testing.T) {
 	assert.Equal(t, 1, len(island.Spawns))
 
 	dw := island.Spawns[0]
-	dw.Age = dw.ageCap() + 1
+	dw.Age.Set(dw.ageCap() + 1)
 
 	island.Tick()
 
