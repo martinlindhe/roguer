@@ -1,4 +1,4 @@
-class MessageLog
+export default class MessageLog
 {
     constructor() {
         this.logMessages = [];
@@ -34,8 +34,8 @@ class MessageLog
         }
 
         this.isDirty = false;
-        //console.log("saved message log in session storage");
 
+        //console.log("saved message log in session storage");
         window.sessionStorage.setItem('_messages', JSON.stringify(this.logMessages));
     }
 
@@ -59,5 +59,3 @@ class MessageLog
         return txt.trim();
     }
 }
-
-export default MessageLog;

@@ -1,7 +1,7 @@
 import Client from './Client.js';
 import MessageLog from './MessageLog.js';
 
-class GameState extends Phaser.State
+export default class GameState extends Phaser.State
 {
     preload()
     {
@@ -381,5 +381,3 @@ class GameState extends Phaser.State
         this.shadowTexture.dirty = true;
     }
 }
-
-export default GameState;

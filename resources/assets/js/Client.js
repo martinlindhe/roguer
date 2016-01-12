@@ -1,7 +1,7 @@
 /**
  * Websocket client
  */
-class Client
+export default class Client
 {
     constructor(gameState)
     {
@@ -89,5 +89,3 @@ class Client
         this.gameState.renderLocalSpawns(cmd.LocalSpawns);
     }
 }
-
-export default Client;
