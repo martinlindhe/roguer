@@ -33,7 +33,7 @@ class Client
 
             case 'msg':
                 //console.log('msg: ' + cmd.Message);
-                parent.gameState.newLogMessage({time: cmd.Time, text: cmd.Message});
+                parent.gameState.messageToLog({time: cmd.Time, text: cmd.Message});
                 break;
 
             default:

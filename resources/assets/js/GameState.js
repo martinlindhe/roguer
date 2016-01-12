@@ -1,4 +1,5 @@
 import Client from './Client.js';
+import MessageLog from './MessageLog.js';
 
 class GameState extends Phaser.State
 {
@@ -174,62 +175,10 @@ class GameState extends Phaser.State
         //game.debug.soundInfo(this.music, 10, 140);
     }
 
-    // XXXX refactor to MessageLog class
-    initMessageLog()
+    messageToLog(o)
     {
-        this.logMessages = [
-            {time: 0, text: "Welcome to roguer!"},
-        ];
-
-        var savedMessages = window.sessionStorage.getItem('_messages');
-        if (savedMessages) {
-            console.log("restoring saved msgs from " + savedMessages);
-            this.logMessages = JSON.parse(savedMessages);
-        }
-
-        this.logMessageList.text = this.renderMessageLog();
+        this.logMessageList.text = this.messageLog.add(o).render();
     }
-
-    newLogMessage(o)
-    {
-        if (!this.logMessages) {
-            console.log("error: log wnd not yet ready!");
-            console.log(o);
-            return;
-        }
-
-        this.logMessages.push(o);
-
-        this.logMessageList.text = this.renderMessageLog();
-    }
-
-    saveMessageLog()
-    {
-        // XXX server should ping me, on each recieved one, there call saveMessageLog()
-        console.log("saved message log in session storage");
-
-        window.sessionStorage.setItem('_messages', JSON.stringify(this.logMessages));
-    }
-
-    renderMessageLog()
-    {
-        if (!this.logMessages) {
-            console.log("error: log messages not yet ready!");
-            return;
-        }
-
-        // TODO log window with scroll
-        // only save the last messages in this.logMessages, and ignore scroll for now
-        this.logMessages = this.logMessages.slice(-this.maxMessages);
-
-        var txt = "";
-        for (let msg of this.logMessages) {
-            txt = txt + msg.time + ": " + msg.text + "\n";
-        }
-
-        return txt.trim();
-    }
-
 
     initUi()
     {
@@ -281,9 +230,8 @@ class GameState extends Phaser.State
 
         this.uiGroup.add(this.logMessageList);
 
-
-        this.initMessageLog();
-        //this.MessageLog = new MessageLog();
+        this.messageLog = new MessageLog();
+        this.messageToLog({time: 0, text: "Welcome to roguer!"});
     }
 
     spawnPlayer(cmd)
