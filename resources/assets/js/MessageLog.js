@@ -24,8 +24,7 @@ class MessageLog
 
     save()
     {
-        // XXX server should ping me, on each recieved one, there call saveMessageLog()
-        console.log("saved message log in session storage");
+        // console.log("saved message log in session storage");
 
         window.sessionStorage.setItem('_messages', JSON.stringify(this.logMessages));
     }
@@ -38,6 +37,7 @@ class MessageLog
         }
 
         // TODO log window with scroll
+
         // only save the last messages in this.logMessages, and ignore scroll for now
         this.logMessages = this.logMessages.slice(-this.maxMessages);
 

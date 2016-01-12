@@ -239,7 +239,7 @@ class GameState extends Phaser.State
 
 
         // shows server time :
-        this.serverTimeText = this.game.add.text(this.game.width - 200, 0, "", style);
+        this.serverTimeText = this.game.add.text(this.game.width - 210, 0, "", style);
         this.serverTimeText.fixedToCamera = true;
         this.setServerTime(0);
     }
@@ -251,6 +251,9 @@ class GameState extends Phaser.State
         if (this.serverTime) {
             this.serverTimeText.text = "time: " + this.serverTime;
         }
+
+        // auto save message log on every ping
+        this.messageLog.save();
     }
 
     spawnPlayer(cmd)

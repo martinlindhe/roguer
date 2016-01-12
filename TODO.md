@@ -38,9 +38,6 @@ garden:
 
 world:
   - day and night
-  - seasons
-
-
 
 
 
@@ -55,8 +52,6 @@ world:
 
     scaling/zoom is broken
 
-
     log window: scrolling
-        - remember history in client for current session
 
     minimap: show my current position
