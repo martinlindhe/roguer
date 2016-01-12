@@ -31,6 +31,10 @@ class Client
                 console.log("server OK: " + msg.data);
                 break;
 
+            case 'tick':
+                parent.gameState.serverTime = cmd.Time;
+                break;
+
             case 'msg':
                 //console.log('msg: ' + cmd.Message);
                 parent.gameState.messageToLog({time: cmd.Time, text: cmd.Message});

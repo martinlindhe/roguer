@@ -17,3 +17,9 @@ body {
 
   color: $textColor;
 }
+
+// HACK to force load webfont, see http://www.html5gamedevs.com/topic/4225-how-do-you-use-a-webfont-in-phaser-exactly/
+.fontLoader {
+  position: absolute;
+  left: -1000px;
+}

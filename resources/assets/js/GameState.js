@@ -23,6 +23,8 @@ class GameState extends Phaser.State
         this.game.load.image('oddballFont', 'img/tileset/oddball/font.png');
 
         this.game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
+
+        // NOTE: topaz-8.woff is force loaded with css hack, see fontLoader
     }
 
     create()
@@ -35,6 +37,8 @@ class GameState extends Phaser.State
 
         this.maxMessages = 15;
         this.logTextHeight = 15;
+
+        this.serverTime = 0; // ticks since server started
 
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -232,6 +236,12 @@ class GameState extends Phaser.State
 
         this.messageLog = new MessageLog();
         this.messageToLog({time: 0, text: "Welcome to roguer!"});
+
+
+        // shows server time :
+        this.serverTimeText = this.game.add.text(this.game.width - 200, 0, "time: " + this.serverTime, style);
+        this.serverTimeText.fixedToCamera = true;
+
     }
 
     spawnPlayer(cmd)
