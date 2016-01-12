@@ -216,7 +216,7 @@ class GameState extends Phaser.State
 
 
         // text-shadow hack for making text-stroke
-        var style = { font: "10px topaz", fill: "#fff", wordWrap: true, wordWrapWidth: 400 };
+        var style = { font: "10px topaz", fill: "#fff", backgroundColor: 'rgba(0,0,0,0.25)', wordWrap: true, wordWrapWidth: 400 };
 
         this.logMessageList = this.game.add.text(0, 0, '', style);
         this.logMessageList.stroke = '#000000';
@@ -227,7 +227,7 @@ class GameState extends Phaser.State
         this.logMessageList.y = this.game.height - (this.maxMessages * this.logTextHeight);
         this.logMessageList.fixedToCamera = true;
 
-        //this.uiGroup.add(this.logMessageWindow);
+        this.uiGroup.add(this.logMessageList);
     }
 
     spawnPlayer(cmd)

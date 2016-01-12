@@ -57,4 +57,4 @@ generate island:
     scaling/zoom is broken
 
 
-    message window not shown
+    log window: scrolling
