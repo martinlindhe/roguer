@@ -32,8 +32,11 @@ class GameState extends Phaser.State
         this.tileWidth = 8;
         this.tileHeight = 4;
 
+        this.maxMessages = 15;
+        this.logTextHeight = 15;
+
         this.logMessages = [
-            {time: 0, text: "Connected to server"},
+            {time: 0, text: "Welcome to roguer!"},
         ];
 
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -212,14 +215,19 @@ class GameState extends Phaser.State
         this.uiGroup.add(button);
 
 
+        // text-shadow hack for making text-stroke
+        var style = { font: "10px topaz", fill: "#fff", wordWrap: true, wordWrapWidth: 400 };
 
-        this.logMessageWindow = this.game.add.group();
-        this.logMessageWindow.x = 10;
-        this.logMessageWindow.y = 10;
-        this.logMessageWindow.z = 20;
-        this.logMessageWindow.fixedToCamera = true;
+        this.logMessageList = this.game.add.text(0, 0, '', style);
+        this.logMessageList.stroke = '#000000';
+        this.logMessageList.strokeThickness = 2;
+        this.logMessageList.lineSpacing = -8;
 
-        this.uiGroup.add(this.logMessageWindow);
+        this.logMessageList.x = this.game.width - 400;
+        this.logMessageList.y = this.game.height - (this.maxMessages * this.logTextHeight);
+        this.logMessageList.fixedToCamera = true;
+
+        //this.uiGroup.add(this.logMessageWindow);
     }
 
     spawnPlayer(cmd)
@@ -314,23 +322,16 @@ class GameState extends Phaser.State
 
     redrawLogMessages()
     {
-        this.logMessageWindow.removeAll();
+        // TODO log window with scroll
+        // only save the last messages in this.logMessages, and ignore scroll for now
+        this.logMessages = this.logMessages.slice(-this.maxMessages);
 
-        // XXX log window with scroll
-
-        // text-shadow hack for making text-stroke
-        var style = { font: "10px topaz", fill: "#fff"};
-
-
-        var y = 20;
+        var txt = "";
         for (let msg of this.logMessages) {
-            var txt = msg.time + ": " + msg.text;
-            var t = this.game.add.text(10, y, txt, style);
-            t.setShadow(2, 2, 'rgba(0, 0, 0, 0.5)', 0);
-            y += 15;
-
-            this.logMessageWindow.add(t);
+            txt = txt + msg.time + ": " + msg.text + "\n";
         }
+
+        this.logMessageList.text = txt;
     }
 
     updateShadowTexture()
