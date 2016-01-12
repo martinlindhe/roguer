@@ -44,7 +44,7 @@ func (c *client) read() {
 				// XXX broadcast a "new player" event to all
 
 			case "continue":
-				pos, token, err := island.ContinuePlayer(parts[1])
+				pos, token, err := island.ContinuePlayer(parts[1], c.socket)
 				if err != nil {
 					res := messageResponse{Type: "error", Message: fmt.Sprintf("%v", err)}
 					b, _ = json.Marshal(res)

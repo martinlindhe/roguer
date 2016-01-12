@@ -33,8 +33,7 @@ class GameState extends Phaser.State
         this.tileHeight = 4;
 
         this.logMessages = [
-            {text: "hello there", time: 1222},
-            {text: "later on", time: 1234},
+            {time: 0, text: "Connected to server"},
         ];
 
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -101,11 +100,12 @@ class GameState extends Phaser.State
 
 
         this.client = new Client(this);
-        this.redrawLogMessages();
     }
 
     update()
     {
+        this.redrawLogMessages();
+
         if (!this.playerSprite) {
             return;
         }
@@ -317,13 +317,19 @@ class GameState extends Phaser.State
         this.logMessageWindow.removeAll();
 
         // XXX log window with scroll
+
+        // text-shadow hack for making text-stroke
+        var style = { font: "10px topaz", fill: "#fff"};
+
+
+        var y = 20;
         for (let msg of this.logMessages) {
-            console.log(msg);
+            var txt = msg.time + ": " + msg.text;
+            var t = this.game.add.text(10, y, txt, style);
+            t.setShadow(2, 2, 'rgba(0, 0, 0, 0.5)', 0);
+            y += 15;
 
-            var txt = this.makeText(msg.text);
-
-            var img = this.game.add.image(0, -10, txt);
-            this.logMessageWindow.add(img);
+            this.logMessageWindow.add(t);
         }
     }
 

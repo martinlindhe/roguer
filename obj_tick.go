@@ -16,9 +16,9 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 
 	for _, pl := range island.Players {
 		if pl.Spawn.Position.isNearby(n.Position) {
-			log.Printf("XXXX tell %s: %s", pl.Name, str)
+			//log.Printf("tell %s: %s", pl.Name, str)
 
-			res := messageResponse{Type: "msg", Message: str}
+			res := messageResponse{Type: "msg", Message: str, Time: island.Age}
 
 			b, _ := json.Marshal(res)
 			pl.Socket.WriteMessage(websocket.TextMessage, b)

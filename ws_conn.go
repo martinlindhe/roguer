@@ -15,6 +15,7 @@ var (
 type messageResponse struct {
 	Type    string
 	Message string
+	Time    int64 // ticks since server reset
 }
 
 type moveResponse struct {
@@ -29,6 +30,7 @@ type playerSpawnResponse struct {
 	Token string
 }
 
+// ServeWs ...
 func ServeWs(w http.ResponseWriter, r *http.Request) {
 	socket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

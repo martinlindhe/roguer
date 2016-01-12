@@ -103,7 +103,7 @@ func (n *Obj) performCurrentAction() {
 	}
 
 	if status == true {
-		log.Println(n.Name, "finished", n.CurrentAction.Name)
+		n.Announce("%s finished %s", n.Name, n.CurrentAction.Name)
 		n.CurrentAction = nil
 	}
 }

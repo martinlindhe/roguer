@@ -1,10 +1,9 @@
-$baseFont: 'avenir', arial;
+$baseFont: 'topaz';
 
 @font-face {
-  font-family: 'avenir';
-  src: url('/fonts/avenir/AvenirNextLTPro-Regular.woff2') format('woff2'),
-  url('/fonts/avenir/AvenirNextLTPro-Regular.woff') format('woff'),
-  url('/fonts/avenir/AvenirNextLTPro-Regular.otf') format('opentype');
+  font-family: 'topaz';
+  src: url('/fonts/topaz-8/topaz-8.woff2') format('woff2'),
+  url('/fonts/topaz-8/topaz-8.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }

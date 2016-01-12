@@ -57,12 +57,13 @@ func (i *Island) NewPlayer(name string, socket *websocket.Conn) (Point, string) 
 }
 
 // ContinuePlayer resumes a game, given a valid token
-func (i *Island) ContinuePlayer(token string) (*Point, string, error) {
+func (i *Island) ContinuePlayer(token string, socket *websocket.Conn) (*Point, string, error) {
 
 	for i, pl := range island.Players {
 		if pl.Token == token {
 			// give the client a fresh token
 			island.Players[i].Token = newJwt()
+			island.Players[i].Socket = socket
 			return &pl.Spawn.Position, island.Players[i].Token, nil
 		}
 	}
