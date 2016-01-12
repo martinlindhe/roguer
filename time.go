@@ -152,7 +152,7 @@ func (t *GameTime) PassedSinceStart() string {
 	return plural(minute, "minute")
 }
 
-// DayOfYear ...
+// DayOfYear returns "19 feb in year 5"
 func (t *GameTime) DayOfYear() string {
 
 	_, _, day, month, year := t.date()

@@ -2,6 +2,7 @@ class MessageLog
 {
     constructor() {
         this.logMessages = [];
+        this.isDirty = false;
 
         var savedMessages = window.sessionStorage.getItem('_messages');
         if (savedMessages) {
@@ -18,13 +19,22 @@ class MessageLog
             return;
         }
 
+        //console.log("added msg");
+        //console.log(o);
+
         this.logMessages.push(o);
+        this.isDirty = true;
         return this;
     }
 
     save()
     {
-        // console.log("saved message log in session storage");
+        if (!this.isDirty) {
+            return;
+        }
+
+        this.isDirty = false;
+        //console.log("saved message log in session storage");
 
         window.sessionStorage.setItem('_messages', JSON.stringify(this.logMessages));
     }
