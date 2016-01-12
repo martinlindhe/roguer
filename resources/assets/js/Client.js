@@ -32,7 +32,7 @@ class Client
                 break;
 
             case 'msg':
-                console.log('msg: ' + cmd.Message);
+                //console.log('msg: ' + cmd.Message);
                 parent.gameState.logMessages.push({time: cmd.Time, text: cmd.Message});
                 break;
 

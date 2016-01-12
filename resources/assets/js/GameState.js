@@ -331,7 +331,7 @@ class GameState extends Phaser.State
             txt = txt + msg.time + ": " + msg.text + "\n";
         }
 
-        this.logMessageList.text = txt;
+        this.logMessageList.text = txt.trim();
     }
 
     updateShadowTexture()
