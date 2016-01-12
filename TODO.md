@@ -57,8 +57,4 @@ generate island:
     scaling/zoom is broken
 
 
-    server: let object broadcast stuff that is happening to nearby clients
-        FIXME: websockets: fix up server part to broadcast to clients easily
-
-
     message window not shown

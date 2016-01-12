@@ -31,6 +31,10 @@ class Client
                 console.log("server OK: " + msg.data);
                 break;
 
+            case 'msg':
+                console.log('msg: ' + cmd.Message);
+                break;
+
             default:
                 console.log("<-recv- " + msg.data);
                 console.log("unknown command from server: " + cmd.Type);
