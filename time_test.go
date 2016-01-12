@@ -72,3 +72,20 @@ func TestSeason(t *testing.T) {
 	t1 := newTime(Month*1 + Day*20 + Hour*18 + Minute*20)
 	assert.Equal(t, "spring", t1.Season())
 }
+
+func TestIsDaytime(t *testing.T) {
+
+	// NOTE: daytime is 06:00 to 17:59
+
+	t1 := newTime(Hour*05 + Minute*59)
+	assert.Equal(t, false, t1.IsDaytime())
+
+	t1.Set(Hour * 06)
+	assert.Equal(t, true, t1.IsDaytime())
+
+	t1.Set(Hour*17 + Minute*59)
+	assert.Equal(t, true, t1.IsDaytime())
+
+	t1.Set(Hour * 18)
+	assert.Equal(t, false, t1.IsDaytime())
+}

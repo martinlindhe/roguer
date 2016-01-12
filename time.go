@@ -169,6 +169,21 @@ func (t *GameTime) Season() string {
 	return seasons[season]
 }
 
+// IsDaytime ...
+func (t *GameTime) IsDaytime() bool {
+	h := t.Hour()
+	if h >= 6 && h <= 17 {
+		return true
+	}
+
+	return false
+}
+
+// IsNighttime ...
+func (t *GameTime) IsNighttime() bool {
+	return !t.IsDaytime()
+}
+
 // Plural returns "1 item" or "2 items"
 func plural(t int64, base string) string {
 
