@@ -1,7 +1,10 @@
 export default class MessageLog
 {
     constructor() {
-        this.logMessages = [];
+        this.logMessages = [
+            {time: 0, text: "Welcome to roguer!"}
+        ];
+
         this.isDirty = false;
 
         var savedMessages = window.sessionStorage.getItem('_messages');

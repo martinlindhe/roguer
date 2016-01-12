@@ -235,7 +235,7 @@ export default class GameState extends Phaser.State
         this.uiGroup.add(this.logMessageList);
 
         this.messageLog = new MessageLog();
-        this.messageToLog({time: 0, text: "Welcome to roguer!"});
+        this.logMessageList.text = this.messageLog.render();
 
 
         // shows server time :
@@ -249,7 +249,7 @@ export default class GameState extends Phaser.State
         this.serverTime = i;
 
         if (this.serverTime) {
-            this.serverTimeText.text = "time: " + this.serverTime;
+            this.serverTimeText.text = this.serverTime;
         }
 
         // auto save message log on every ping

@@ -36,11 +36,6 @@ garden:
 
 
 
-world:
-  - day and night
-
-
-
 # phaser js game engine
 
     fog of war thing:

@@ -89,3 +89,9 @@ func TestIsDaytime(t *testing.T) {
 	t1.Set(Hour * 18)
 	assert.Equal(t, false, t1.IsDaytime())
 }
+
+func TestPartOfDay(t *testing.T) {
+
+	t1 := newTime(Hour * 15)
+	assert.Equal(t, "afternoon", t1.PartOfDay())
+}

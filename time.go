@@ -184,6 +184,31 @@ func (t *GameTime) IsNighttime() bool {
 	return !t.IsDaytime()
 }
 
+// PartOfDay returns "morning" or "midnight"
+func (t *GameTime) PartOfDay() string {
+
+	hour := t.Hour()
+	if hour == 0 {
+		return "midnight"
+	}
+	if hour == 6 {
+		return "sunrise"
+	}
+	if hour == 12 {
+		return "midday"
+	}
+	if hour == 18 {
+		return "sunset"
+	}
+	if hour <= 12 {
+		return "morning"
+	}
+	if hour <= 18 {
+		return "afternoon"
+	}
+	return "evening"
+}
+
 // Plural returns "1 item" or "2 items"
 func plural(t int64, base string) string {
 
