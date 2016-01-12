@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
@@ -98,7 +99,7 @@ func (i *Island) removeSpawn(o *Obj) {
 func (i *Island) Tick() {
 
 	i.Age++
-	log.Debugf("World tick %d", i.Age)
+	log.Infof("World tick %d. %d spawns and %d players", i.Age, len(i.Spawns), len(i.Players))
 
 	for _, o := range i.Spawns {
 		check := o.Tick()
@@ -106,6 +107,12 @@ func (i *Island) Tick() {
 			log.Infof("Removing spawn %s", o.Name)
 			i.removeSpawn(o)
 		}
+	}
+
+	tickMsg, _ := json.Marshal(tickMessage{Type: "tick", Time: i.Age})
+
+	for _, p := range i.Players {
+		p.Socket.WriteMessage(websocket.TextMessage, tickMsg)
 	}
 }
 

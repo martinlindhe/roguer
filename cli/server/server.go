@@ -27,7 +27,7 @@ func main() {
 
 	listenAt := fmt.Sprintf(":%d", appPort)
 
-	log.Info("roguer server started, listening on %s", listenAt)
+	log.Infof("roguer server started, listening on %s", listenAt)
 
 	go r.Run(listenAt)
 

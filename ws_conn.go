@@ -25,6 +25,11 @@ type moveResponse struct {
 	LocalSpawns []LocalSpawns
 }
 
+type tickMessage struct {
+	Type string
+	Time int64
+}
+
 type playerSpawnResponse struct {
 	moveResponse
 	Token string
