@@ -34,5 +34,15 @@ func TestTimeOfDay(t *testing.T) {
 
 func TestDayOfYear(t *testing.T) {
 	t1 := newTime(0)
-	assert.Equal(t, "day 0 of month 0 in year 0", t1.DayOfYear())
+	t1.Set(Day * 1)
+	assert.Equal(t, "jan 1", t1.DayOfYear())
+
+	t1.Set(Month*1 + Day*20)
+	assert.Equal(t, "feb 20", t1.DayOfYear())
+}
+
+func TestDateString(t *testing.T) {
+
+	t1 := newTime(Month*1 + Day*20 + Hour*18 + Minute*20)
+	assert.Equal(t, "18:20\nfeb 20", t1.DateString())
 }

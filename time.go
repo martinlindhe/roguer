@@ -54,6 +54,12 @@ func (t *GameTime) Current() int64 {
 	return t.time
 }
 
+// DateString returns "19:20 feb 20"
+func (t *GameTime) DateString() string {
+
+	return t.TimeOfDay() + "\n" + t.DayOfYear()
+}
+
 // TimeOfDay returns time as "19:30"
 func (t *GameTime) TimeOfDay() string {
 
@@ -151,7 +157,12 @@ func (t *GameTime) DayOfYear() string {
 
 	_, _, day, month, year := t.date()
 
-	return fmt.Sprintf("day %d of month %d in year %d", day, month, year)
+	months := []string{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"}
+
+	if year > 0 {
+		return fmt.Sprintf("%s %d in year %d", months[month], day, year)
+	}
+	return fmt.Sprintf("%s %d", months[month], day)
 }
 
 // Plural returns "1 item" or "2 items"

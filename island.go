@@ -17,7 +17,7 @@ type Island struct {
 	Width     int
 	Height    int
 	Seed      int64
-	Age       int64
+	Age       GameTime
 	HeightMap [][]int
 	Spawns    []*Obj
 	Players   []Player
@@ -98,7 +98,7 @@ func (i *Island) removeSpawn(o *Obj) {
 // Tick executes one tick on each spawn in the zone
 func (i *Island) Tick() {
 
-	i.Age++
+	i.Age.Tick()
 	log.Infof("World tick %d. %d spawns and %d players", i.Age, len(i.Spawns), len(i.Players))
 
 	for _, o := range i.Spawns {
@@ -109,7 +109,7 @@ func (i *Island) Tick() {
 		}
 	}
 
-	tickMsg, _ := json.Marshal(tickMessage{Type: "tick", Time: i.Age})
+	tickMsg, _ := json.Marshal(tickMessage{Type: "tick", Time: i.Age.Current(), FormattedTime: i.Age.DateString()})
 
 	for _, p := range i.Players {
 		p.Socket.WriteMessage(websocket.TextMessage, tickMsg)

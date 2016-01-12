@@ -32,11 +32,11 @@ class Client
                 break;
 
             case 'tick':
-                parent.gameState.setServerTime(cmd.Time);
+                parent.gameState.setServerTime(cmd.FormattedTime);
                 break;
 
             case 'msg':
-                //console.log('msg: ' + cmd.Message);
+                //console.log(cmd);
                 parent.gameState.messageToLog({time: cmd.Time, text: cmd.Message});
                 break;
 

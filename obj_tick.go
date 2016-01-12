@@ -18,7 +18,7 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 		if pl.Spawn.Position.isNearby(n.Position) {
 			//log.Printf("tell %s: %s", pl.Name, str)
 
-			res := messageResponse{Type: "msg", Message: str, Time: island.Age}
+			res := messageResponse{Type: "msg", Message: str, Time: island.Age.Current()}
 
 			b, _ := json.Marshal(res)
 			pl.Socket.WriteMessage(websocket.TextMessage, b)

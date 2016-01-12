@@ -26,8 +26,9 @@ type moveResponse struct {
 }
 
 type tickMessage struct {
-	Type string
-	Time int64
+	Type          string
+	FormattedTime string // XXX: remove this when js have int-to-time code
+	Time          int64
 }
 
 type playerSpawnResponse struct {
