@@ -32,7 +32,7 @@ class Client
                 break;
 
             case 'tick':
-                parent.gameState.serverTime = cmd.Time;
+                parent.gameState.setServerTime(cmd.Time);
                 break;
 
             case 'msg':

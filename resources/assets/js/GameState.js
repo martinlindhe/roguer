@@ -239,9 +239,18 @@ class GameState extends Phaser.State
 
 
         // shows server time :
-        this.serverTimeText = this.game.add.text(this.game.width - 200, 0, "time: " + this.serverTime, style);
+        this.serverTimeText = this.game.add.text(this.game.width - 200, 0, "", style);
         this.serverTimeText.fixedToCamera = true;
+        this.setServerTime(0);
+    }
 
+    setServerTime(i)
+    {
+        this.serverTime = i;
+
+        if (this.serverTime) {
+            this.serverTimeText.text = "time: " + this.serverTime;
+        }
     }
 
     spawnPlayer(cmd)
