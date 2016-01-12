@@ -28,7 +28,7 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 
 // Tick until it returns false
 func (n *Obj) Tick() bool {
-	n.Age++
+	n.Age.Tick()
 
 	// log.Println("[tick]", n.Name, n.Age)
 

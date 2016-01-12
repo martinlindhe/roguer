@@ -39,7 +39,6 @@ garden:
 world:
   - day and night
   - seasons
-  server: each tick, send tick msg to clients
 
 
 

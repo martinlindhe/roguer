@@ -2,7 +2,7 @@ package rogue
 
 import "fmt"
 
-func (n *Obj) ageCap() int {
+func (n *Obj) ageCap() int64 {
 	// XXX what is a sane age?
 	return 100000
 }
@@ -59,7 +59,7 @@ func (n *Obj) isSleeping() bool {
 }
 
 func (n *Obj) isAboveMaxAge() bool {
-	if n.Age >= n.ageCap() {
+	if n.Age.Current() >= n.ageCap() {
 		return true
 	}
 	return false
@@ -70,6 +70,7 @@ func (n *Obj) isActivated() bool {
 	return n.Activated
 }
 
+// Activate ...
 func (n *Obj) Activate() {
 	if n.Activated == true {
 		panic(fmt.Errorf("obj %s is already activated", n.Name))
