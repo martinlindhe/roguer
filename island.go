@@ -16,7 +16,7 @@ import (
 type Island struct {
 	Width     int
 	Height    int
-	Seed      int64
+	Seed      int64 `bson:"_id"`
 	Age       GameTime
 	HeightMap [][]int
 	Spawns    []*Obj

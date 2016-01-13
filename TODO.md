@@ -45,8 +45,6 @@ garden:
     collision detection (dont walk on water...)
 
 
-    scaling/zoom is broken
-
     log window: scrolling
 
     minimap: show my current position

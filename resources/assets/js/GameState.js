@@ -38,7 +38,7 @@ export class GameState extends Phaser.State
     {
         this.playerName = "Jimpson";
 
-        this.worldScale = {x:3, y:3};    // 3x ZOOM
+        this.worldScale = {x:6, y:6};    // 6x ZOOM
 
         this.tileWidth = 8;
         this.tileHeight = 4;
