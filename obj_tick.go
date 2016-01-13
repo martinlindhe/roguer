@@ -14,6 +14,8 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 
 	str := fmt.Sprintf(format, a...)
 
+	fmt.Printf("XXX %s announces %s\n", n.Name, str)
+
 	for _, pl := range island.Players {
 		if pl.Spawn.Position.isNearby(n.Position) {
 			//log.Printf("tell %s: %s", pl.Name, str)

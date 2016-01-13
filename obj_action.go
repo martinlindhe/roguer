@@ -54,6 +54,7 @@ func (n *Obj) planAction(params ...interface{}) {
 		case string:
 			actionName = it.(string)
 			if n.hasPlanned(actionName) {
+				fmt.Printf("XXX %s aborting, already has planned %s\n", n.Name, actionName)
 				return
 			}
 		case Point:
@@ -269,25 +270,25 @@ func (n *Obj) performBuild() bool {
 	// XXX 1=walking speed
 	if !n.performTravel(1) {
 		return false
+	}
 
-		n.Announce("%s is performing %s", n.Name, n.CurrentAction.Name)
+	n.Announce("%s is performing %s, duration left %d", n.Name, n.CurrentAction.Name, n.CurrentAction.Duration)
 
-		n.CurrentAction.Duration--
-		if n.CurrentAction.Duration < 0 {
-			spec := island.getNpcSpecFromName(n.CurrentAction.Result)
+	n.CurrentAction.Duration--
+	if n.CurrentAction.Duration < 0 {
+		spec := island.getNpcSpecFromName(n.CurrentAction.Result)
 
-			o := island.getNpcFromSpec(spec)
-			o.Position = *n.CurrentAction.Destination
-			island.addSpawn(o)
+		o := island.getNpcFromSpec(spec)
+		o.Position = *n.CurrentAction.Destination
+		island.addSpawn(o)
 
-			// if object is a shelter, make it my home
-			if spec.Type == "shelter" || spec.Type == "burrow" {
-				n.Announce("%s has declared %s their home", n, o)
-				n.Home = o
-			}
-
-			return true
+		// if object is a shelter, make it my home
+		if spec.Type == "shelter" || spec.Type == "burrow" {
+			n.Announce("%s has declared %s their home", n, o)
+			n.Home = o
 		}
+
+		return true
 	}
 
 	return false

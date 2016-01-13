@@ -83,9 +83,6 @@ func (t *GameTime) date() (int64, int64, int64, int64, int64) {
 		rest -= day * Day
 	}
 
-	// NOTE: day is stored 0-based, but displayed 1-based
-	day++
-
 	hour := rest / Hour
 	if hour > 0 {
 		rest -= hour * Hour
@@ -157,6 +154,9 @@ func (t *GameTime) DayOfYear() string {
 	_, _, day, month, year := t.date()
 
 	months := []string{"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"}
+
+	// NOTE: day is stored 0-based, but displayed 1-based
+	day++
 
 	if year > 0 {
 		return fmt.Sprintf("%s %d in year %d", months[month], day, year)

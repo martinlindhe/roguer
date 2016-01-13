@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"fmt"
 	"image/png"
 	"os"
 	"testing"
@@ -244,9 +245,13 @@ func TestSleepAtShelter(t *testing.T) {
 func TestRabbitDigHole(t *testing.T) {
 
 	prepareIsland()
+	assert.Equal(t, 0, len(island.Spawns))
 
 	island.addNpcFromRace("rabbit", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
+
+	fmt.Println(island.Spawns)
+
 	ra := island.Spawns[0]
 
 	island.Tick()
@@ -440,7 +445,7 @@ func TestSpawnGravel(t *testing.T) {
 
 	assert.Equal(t, 0, len(island.Spawns))
 	island.spawnGravel()
-	assert.Equal(t, true, len(island.Spawns) > 100)
+	assert.Equal(t, true, len(island.Spawns) > 1)
 }
 
 func TestNpcMovesToFireplace(t *testing.T) {
@@ -557,6 +562,7 @@ func TestBuildCookingPit(t *testing.T) {
 	prepareIsland()
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
+
 	assert.Equal(t, 1, len(island.Spawns))
 	dw := island.Spawns[0]
 
