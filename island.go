@@ -99,7 +99,7 @@ func (i *Island) removeSpawn(o *Obj) {
 func (i *Island) Tick() {
 
 	i.Age.Tick()
-	log.Infof("World tick %d. %d spawns and %d players", i.Age, len(i.Spawns), len(i.Players))
+	log.Infof("World tick %d. %d spawns and %d players", i.Age.Current(), len(i.Spawns), len(i.Players))
 
 	for _, o := range i.Spawns {
 		check := o.Tick()

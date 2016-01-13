@@ -99,6 +99,6 @@ func (p *Point) spawnsByType(t string, radius float64) []*Obj {
 			res = append(res, o)
 		}
 	}
-	fmt.Printf("spawnsByType radius %f from %s match %s: found %d\n", radius, p, t, len(res))
+	//fmt.Printf("spawnsByType radius %f from %s match %s: found %d\n", radius, p, t, len(res))
 	return res
 }

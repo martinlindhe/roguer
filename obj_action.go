@@ -54,7 +54,7 @@ func (n *Obj) planAction(params ...interface{}) {
 		case string:
 			actionName = it.(string)
 			if n.hasPlanned(actionName) {
-				fmt.Printf("XXX %s aborting, already has planned %s\n", n.Name, actionName)
+				// fmt.Printf("XXX %s aborting, already has planned %s\n", n.Name, actionName)
 				return
 			}
 		case Point:
