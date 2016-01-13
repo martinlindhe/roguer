@@ -1,5 +1,6 @@
 import Client from './Client.js';
 import MessageLog from './MessageLog.js';
+import GameTime from './GameTime.js';
 
 export default class GameState extends Phaser.State
 {
@@ -241,15 +242,16 @@ export default class GameState extends Phaser.State
         // shows server time :
         this.serverTimeText = this.game.add.text(this.game.width - 230, 0, "", style);
         this.serverTimeText.fixedToCamera = true;
-        this.setServerTime(0);
+
+        this.serverTime = new GameTime(0);
     }
 
     setServerTime(i)
     {
-        this.serverTime = i;
+        this.serverTime.set(i);
 
-        if (this.serverTime) {
-            this.serverTimeText.text = this.serverTime;
+        if (this.serverTime.time) {
+            this.serverTimeText.text = this.serverTime.render();
         }
 
         // auto save message log on every ping

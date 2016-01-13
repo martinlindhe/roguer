@@ -1,11 +1,22 @@
 {
+  "browserify": {
+    "transform": ["babelify"]
+  },
   "dependencies": {
     "bootstrap-sass": "^3.3",
     "font-awesome": "^4.5",
     "phaser": "^2.4"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.3",
+    "babel-runtime": "^6.3",
     "gulp": "^3.9",
-    "laravel-elixir": "^4.2"
+    "jasmine": "^2.4",
+    "karma": "^0.13",
+    "karma-browserify": "^4.4",
+    "karma-jasmine": "^0.3",
+    "karma-phantomjs-launcher": "^0.2",
+    "laravel-elixir": "^4.2",
+    "phantomjs": "^1.9"
   }
 }

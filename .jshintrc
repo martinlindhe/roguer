@@ -3,6 +3,7 @@
   "devel": true,
   "esnext": true,
   "indent": 4,
+  "jasmine": true,
   "predef": [ "Phaser" ],
   "undef": true,
   "unused": true

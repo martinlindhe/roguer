@@ -32,7 +32,7 @@ export default class Client
                 break;
 
             case 'tick':
-                parent.gameState.setServerTime(cmd.FormattedTime);
+                parent.gameState.setServerTime(cmd.Time);
                 break;
 
             case 'msg':

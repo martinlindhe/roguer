@@ -46,8 +46,8 @@ validate-js:
 
 watch:
 	# BUG: watch dont run sass.. elixir 4.2
-	node_modules/gulp/bin/gulp.js --production
-	node_modules/gulp/bin/gulp.js watch --production
+	node_modules/gulp/bin/gulp.js
+	node_modules/gulp/bin/gulp.js watch
 
 deps:
 	npm install

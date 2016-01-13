@@ -1,5 +1,6 @@
 var elixir = require('laravel-elixir');
 
+elixir.config.production = true; // minify
 elixir.config.sourcemaps = true;
 
 elixir(function(mix) {
