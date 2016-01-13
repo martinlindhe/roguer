@@ -89,6 +89,15 @@ export class GameState extends Phaser.State
 
 
 
+        this.info = this.game.add.text(16, 16, ' ');
+        this.info.font = "Courier";
+        this.info.fontSize = 14;
+        this.info.fill = "#ffffff";
+        this.info.lineSpacing = 4;
+        this.info.setShadow(2, 2);
+        this.info.fixedToCamera = true;
+
+
         this.initUi();
 
 
@@ -174,6 +183,16 @@ export class GameState extends Phaser.State
 
         this.groundLayer.resizeWorld();
 */
+
+
+        var s = "Game size: " + this.game.width + " x " + this.game.height + "\n";
+        s += "Actual size: " + this.game.scale.width + " x " + this.game.scale.height + "\n";
+        s += "minWidth: " + this.game.scale.minWidth + " - minHeight: " + this.game.scale.minHeight + "\n";
+        s += "maxWidth: " + this.game.scale.maxWidth + " - maxHeight: " + this.game.scale.maxHeight + "\n";
+        s += "aspect ratio: " + this.game.scale.aspectRatio + "\n";
+        s += "parent is window: " + this.game.scale.parentIsWindow + "\n";
+        s += "bounds x: " + this.game.scale.bounds.x + " y: " + this.game.scale.bounds.y + " width: " + this.game.scale.bounds.width + " height: " + this.game.scale.bounds.height + "\n";
+        this.info.text = s;
     }
 
     render()
