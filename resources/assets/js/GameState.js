@@ -38,7 +38,8 @@ export class GameState extends Phaser.State
     {
         this.playerName = "Jimpson";
 
-        this.worldScale = 1.0;
+        this.worldScale = {x:3, y:3};    // 3x ZOOM
+
         this.tileWidth = 8;
         this.tileHeight = 4;
 
@@ -59,25 +60,6 @@ export class GameState extends Phaser.State
 
 
 
-        this.groundMap = this.game.add.tilemap('islandMap');
-        this.groundMap.addTilesetImage('island_tiles', 'ground');
-        this.groundMap.setCollisionBetween(0, 112); // 112 = beach line
-
-        this.groundLayer = this.groundMap.createLayer(0);
-        //this.groundLayer.resizeWorld();
-
-        // Un-comment this on to see the collision tiles
-        //this.groundLayer.debug = true;
-
-
-        this.playerGroup = this.game.add.group();
-        //this.playerGroup.z = 10;
-
-
-        this.spawnLayer = this.game.add.group();
-        //this.spawnLayer.z = 0;
-
-
 
         this.initUi();
 
@@ -88,24 +70,11 @@ export class GameState extends Phaser.State
             case 't':
                 this.ui.visible = !this.ui.visible;
                 return;
-            case 'q':
-                this.worldScale += 0.2;
-                break;
-            case 'a':
-                this.worldScale -= 0.2;
-                break;
             default:
                 console.log("unhandled char " + char);
                 return;
             }
-
-            // set a minimum and maximum scale value
-            this.worldScale = Phaser.Math.clamp(this.worldScale, 0.5, 4);
-
-            // set our world scale as needed
-            this.game.scale.set(this.worldScale); // XXX
         });
-
 
 
 /*
@@ -139,7 +108,7 @@ export class GameState extends Phaser.State
 
         this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
 
-        var steppingHoriz = 1;
+        var steppingHoriz = 8;
         var steppingVert = steppingHoriz / 2;
 
         /*
@@ -205,8 +174,26 @@ export class GameState extends Phaser.State
 
     initUi()
     {
+        this.groundMap = this.game.add.tilemap('islandMap');
+        this.groundMap.addTilesetImage('island_tiles', 'ground');
+        this.groundMap.setCollisionBetween(0, 112); // 112 = beach line
+
+        this.groundLayer = this.groundMap.createLayer(0);
+        //this.groundLayer.resizeWorld();
+        this.groundLayer.scale = this.worldScale;
+
+        // Un-comment this on to see the collision tiles
+        //this.groundLayer.debug = true;
+
+
+        this.spawnLayer = this.game.add.group();
+        this.spawnLayer.scale = this.worldScale;
+
+
+
         this.ui = this.game.add.group();
         this.ui.fixedToCamera = true;
+// XXX make ui non-zoom
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
@@ -333,12 +320,17 @@ export class GameState extends Phaser.State
     spawnPlayer(cmd)
     {
         this.playerSprite = this.game.add.sprite(0, 0, 'characterAtlas');
+        this.playerSprite.scale = this.worldScale;
+
         this.game.physics.enable(this.playerSprite, Phaser.Physics.ARCADE);
-        this.game.camera.follow(this.playerSprite);
+
+        //this.playerSprite.body.collideWorldBounds = true;
 
         this.playerSprite.frameName = 'dwarf';
         this.playerSprite.anchor.set(0.5);
-        //this.playerSprite.body.collideWorldBounds = true;
+
+        this.game.camera.follow(this.playerSprite);
+
 
 
 
@@ -350,8 +342,9 @@ export class GameState extends Phaser.State
 
         // multiply coords with tile size to scale properly.
         // sprite tiles are always in pixels
-        this.playerSprite.x = cmd.X * this.tileWidth;
-        this.playerSprite.y = cmd.Y * this.tileHeight;
+
+        this.playerSprite.x = (cmd.X * this.tileWidth) * this.worldScale.x;
+        this.playerSprite.y = (cmd.Y * this.tileHeight) * this.worldScale.y;
 
 /*
         // floating name over head of player

@@ -51,3 +51,6 @@ watch:
 
 deps:
 	npm install
+
+build-custom-phaser:
+	cd node_modules/phaser && npm install && grunt --split true
