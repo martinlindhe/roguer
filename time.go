@@ -50,10 +50,10 @@ func (t *GameTime) Current() int64 {
 	return t.time
 }
 
-// DateString returns "19:20 feb 20"
+// DateString returns "evening 19:20\nspring feb 20"
 func (t *GameTime) DateString() string {
 
-	return t.TimeOfDay() + "\n" + t.DayOfYear()
+	return t.PartOfDay() + " " + t.TimeOfDay() + "\n" + t.Season() + " " + t.DayOfYear()
 }
 
 // TimeOfDay returns time as "19:30"

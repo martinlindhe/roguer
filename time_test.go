@@ -64,7 +64,7 @@ func TestDayOfYear(t *testing.T) {
 func TestDateString(t *testing.T) {
 
 	t1 := newTime(Month*1 + Day*20 + Hour*18 + Minute*20)
-	assert.Equal(t, "18:20\nfeb 20", t1.DateString())
+	assert.Equal(t, "sunset 18:20\nspring feb 20", t1.DateString())
 }
 
 func TestSeason(t *testing.T) {
