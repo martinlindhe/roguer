@@ -83,6 +83,9 @@ func (t *GameTime) date() (int64, int64, int64, int64, int64) {
 		rest -= day * Day
 	}
 
+	// NOTE: day is stored 0-based, but displayed 1-based
+	day++
+
 	hour := rest / Hour
 	if hour > 0 {
 		rest -= hour * Hour

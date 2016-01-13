@@ -239,7 +239,7 @@ export default class GameState extends Phaser.State
 
 
         // shows server time :
-        this.serverTimeText = this.game.add.text(this.game.width - 210, 0, "", style);
+        this.serverTimeText = this.game.add.text(this.game.width - 230, 0, "", style);
         this.serverTimeText.fixedToCamera = true;
         this.setServerTime(0);
     }

@@ -54,17 +54,24 @@ func TestTimeOfDay(t *testing.T) {
 
 func TestDayOfYear(t *testing.T) {
 	t1 := newTime(0)
-	t1.Set(Day * 1)
-	assert.Equal(t, "jan 1", t1.DayOfYear())
+	t1.Set(Day * 1) // NOTE: first day of month is Day * 0
+	assert.Equal(t, "jan 2", t1.DayOfYear())
 
 	t1.Set(Month*1 + Day*20)
-	assert.Equal(t, "feb 20", t1.DayOfYear())
+	assert.Equal(t, "feb 21", t1.DayOfYear())
 }
 
 func TestDateString(t *testing.T) {
 
 	t1 := newTime(Month*1 + Day*20 + Hour*18 + Minute*20)
-	assert.Equal(t, "sunset 18:20\nspring feb 20", t1.DateString())
+	assert.Equal(t, "sunset 18:20\nspring feb 21", t1.DateString())
+
+	// NOTE: there are 30 days in a month, stored as 0 to 29
+	t1.Set(Month*1 + Day*29)
+	assert.Equal(t, "midnight 00:00\nspring feb 30", t1.DateString())
+
+	t1.Set(Month*1 + Day*30)
+	assert.Equal(t, "midnight 00:00\nspring mar 1", t1.DateString())
 }
 
 func TestSeason(t *testing.T) {
