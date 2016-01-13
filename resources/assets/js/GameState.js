@@ -59,9 +59,6 @@ export class GameState extends Phaser.State
 
 
 
-        // world (except UI) is in this group, so it can be scaled
-        this.stageGroup = this.game.add.group();
-
         this.groundMap = this.game.add.tilemap('islandMap');
         this.groundMap.addTilesetImage('island_tiles', 'ground');
 
@@ -73,29 +70,15 @@ export class GameState extends Phaser.State
         // Un-comment this on to see the collision tiles
         //this.groundLayer.debug = true;
 
-        this.stageGroup.add(this.groundLayer);
-
 
         this.playerGroup = this.game.add.group();
         this.game.camera.follow(this.playerGroup);
-
         //this.playerGroup.z = 10;
-        this.stageGroup.add(this.playerGroup);
 
 
         this.spawnLayer = this.game.add.group();
         //this.spawnLayer.z = 0;
-        this.stageGroup.add(this.spawnLayer);
 
-
-
-        this.info = this.game.add.text(16, 16, ' ');
-        this.info.font = "Courier";
-        this.info.fontSize = 14;
-        this.info.fill = "#ffffff";
-        this.info.lineSpacing = 4;
-        this.info.setShadow(2, 2);
-        this.info.fixedToCamera = true;
 
 
         this.initUi();
@@ -166,13 +149,16 @@ export class GameState extends Phaser.State
             this.worldScale += 0.05;
         } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
             this.worldScale -= 0.05;
+        } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.T)) {
+            console.log("XXX toggle ui");
+            this.ui.visible = !this.ui.visible;
         }
 
         // set a minimum and maximum scale value
         this.worldScale = Phaser.Math.clamp(this.worldScale, 0.5, 4);
 
         // set our world scale as needed
-        this.stageGroup.scale.set(this.worldScale);
+        //this.stageGroup.scale.set(this.worldScale);
 
 /*
         // XXX game.camera
@@ -212,10 +198,23 @@ export class GameState extends Phaser.State
 
     initUi()
     {
-        this.uiGroup = this.game.add.group();
+        this.ui = this.game.add.group();
 
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
+
+
+
+        this.info = this.game.add.text(16, 16, ' ');
+        this.info.font = "Courier";
+        this.info.fontSize = 14;
+        this.info.fill = "#fff";
+        this.info.lineSpacing = -10;
+        this.info.setShadow(2, 2);
+        this.info.fixedToCamera = true;
+        this.ui.add(this.info);
+
+
 
         var minimapScale = 3;
         var minimapX = this.game.width - this.game.cache.getImage('minimap').width / minimapScale;
@@ -224,7 +223,7 @@ export class GameState extends Phaser.State
         minimap.scale.set(1.0 / minimapScale);
         minimap.alpha = 0.8;
         minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
-        this.uiGroup.add(minimap);
+        this.ui.add(minimap);
 
         var button = this.game.add.button(
             this.game.width - 102,
@@ -243,7 +242,7 @@ export class GameState extends Phaser.State
             0
         );
         button.fixedToCamera = true;
-        this.uiGroup.add(button);
+        this.ui.add(button);
 
 
         // text-shadow hack for making text-stroke
@@ -258,7 +257,7 @@ export class GameState extends Phaser.State
         this.logMessageList.y = this.game.height - (this.maxMessages * this.logTextHeight);
         this.logMessageList.fixedToCamera = true;
 
-        this.uiGroup.add(this.logMessageList);
+        this.ui.add(this.logMessageList);
 
         this.messageLog = new MessageLog();
         this.logMessageList.text = this.messageLog.render();
@@ -268,12 +267,13 @@ export class GameState extends Phaser.State
         this.timeOfDayIcon.strokeThickness = 2;
 
         this.timeOfDayIcon.fixedToCamera = true;
-        this.uiGroup.add(this.timeOfDayIcon);
+        this.ui.add(this.timeOfDayIcon);
 
 
         // shows server time :
         this.serverTimeText = this.game.add.text(this.game.width - 230, 0, "", style);
         this.serverTimeText.fixedToCamera = true;
+        this.ui.add(this.serverTimeText);
     }
 
     setServerTime(i)
