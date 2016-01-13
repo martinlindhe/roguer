@@ -238,7 +238,7 @@ export class GameState extends Phaser.State
         this.messageLog = new MessageLog();
         this.logMessageList.text = this.messageLog.render();
 
-        this.timeOfDayIcon = this.game.add.text(this.game.width - 130, 0, '', { fill : '#fff', font : '18px weathericons' });
+        this.timeOfDayIcon = this.game.add.text(this.game.width - 150, 0, '', { fill : '#fff', font : '18px weathericons' });
         this.timeOfDayIcon.stroke = '#000';
         this.timeOfDayIcon.strokeThickness = 2;
 
@@ -265,6 +265,7 @@ export class GameState extends Phaser.State
         this.messageLog.save();
     }
 
+    // uses https://erikflowers.github.io/weather-icons/
     updateTimeOfDayIcon()
     {
         var hour = this.serverTime.hour();
@@ -272,21 +273,17 @@ export class GameState extends Phaser.State
             hour -= 12;
         }
 
-        var val = "";
-        console.log("hour " + hour);
-        switch (hour) {
-            case 0: val = "\uf089"; break;
-            case 1: val = "\uf08a"; break;
-            case 2: val = "\uf08b"; break;
-            case 3: val = "\uf08c"; break;
-            case 4: val = "\uf08d"; break;
-            case 5: val = "\uf08e"; break;
-            case 6: val = "\uf08f"; break;
-            case 7: val = "\uf090"; break;
-            case 8: val = "\uf091"; break;
-            case 9: val = "\uf092"; break;
-            case 10: val = "\uf093"; break;
-            case 11: val = "\uf094"; break;
+        // wi-time-*
+        var timesOfDay = [
+            "\uf089", "\uf08a", "\uf08b", "\uf08c", "\uf08d", "\uf08e",
+            "\uf08f", "\uf090", "\uf091", "\uf092", "\uf093", "\uf094"
+        ];
+
+        var val = timesOfDay[hour];
+        if (this.serverTime.isDaytime()) {
+            val += " \uf00d"; // wi-day-sunny
+        } else {
+            val += " \uf024"; // wi-night-clear
         }
 
         this.timeOfDayIcon.text = val + " ";

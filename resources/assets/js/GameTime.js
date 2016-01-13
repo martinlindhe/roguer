@@ -40,6 +40,15 @@ export class GameTime
         return parts.Hour;
     }
 
+    isDaytime()
+    {
+        var h = this.hour();
+        if (h >= 6 && h <= 17) {
+            return true;
+        }
+        return false;
+    }
+
     dateParts()
     {
         var rest = this.time;
