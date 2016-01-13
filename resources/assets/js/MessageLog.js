@@ -1,4 +1,6 @@
-export default class MessageLog
+import {GameTime} from './GameTime.js';
+
+export class MessageLog
 {
     constructor() {
         this.logMessages = [
@@ -56,7 +58,8 @@ export default class MessageLog
 
         var txt = "";
         for (let msg of this.logMessages) {
-            txt = txt + msg.time + ": " + msg.text + "\n";
+            var time = new GameTime(msg.time);
+            txt = txt + time.render() + ": " + msg.text + "\n";
         }
 
         return txt.trim();

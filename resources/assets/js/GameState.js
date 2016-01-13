@@ -1,8 +1,8 @@
-import Client from './Client.js';
-import MessageLog from './MessageLog.js';
-import GameTime from './GameTime.js';
+import {Client} from './Client.js';
+import {MessageLog} from './MessageLog.js';
+import {GameTime} from './GameTime.js';
 
-export default class GameState extends Phaser.State
+export class GameState extends Phaser.State
 {
     preload()
     {
@@ -39,7 +39,7 @@ export default class GameState extends Phaser.State
         this.maxMessages = 15;
         this.logTextHeight = 15;
 
-        this.serverTime = 0; // ticks since server started
+        this.serverTime = new GameTime(0);
 
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -242,8 +242,6 @@ export default class GameState extends Phaser.State
         // shows server time :
         this.serverTimeText = this.game.add.text(this.game.width - 230, 0, "", style);
         this.serverTimeText.fixedToCamera = true;
-
-        this.serverTime = new GameTime(0);
     }
 
     setServerTime(i)

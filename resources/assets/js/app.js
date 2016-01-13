@@ -1,4 +1,4 @@
-import GameState from './GameState.js';
+import {GameState} from './GameState.js';
 
 class Game extends Phaser.Game {
 

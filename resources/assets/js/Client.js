@@ -1,7 +1,7 @@
 /**
  * Websocket client
  */
-export default class Client
+export class Client
 {
     constructor(gameState)
     {

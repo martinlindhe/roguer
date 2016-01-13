@@ -14,6 +14,7 @@
     "jasmine": "^2.4",
     "karma": "^0.13",
     "karma-browserify": "^4.4",
+    "karma-coverage": "^0.5.3",
     "karma-jasmine": "^0.3",
     "karma-phantomjs-launcher": "^0.2",
     "laravel-elixir": "^4.2",

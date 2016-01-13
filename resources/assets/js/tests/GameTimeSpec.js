@@ -1,8 +1,9 @@
-import GameTime from './../GameTime.js';
+import {GameTime, Hour} from './../GameTime.js';
 
 describe('TimeOfDay', function () {
     it('shows time of day', function () {
-        var t = new GameTime(0);
-        expect(t.render()).toEqual("00:00");
+
+        let t = new GameTime(Hour * 4);
+        expect(t.render()).toEqual("04:00");
     });
 });

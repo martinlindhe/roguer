@@ -8,12 +8,7 @@ elixir(function(mix) {
     mix
         .sass('app.scss')
 
-        .browserify(
-            [
-                './resources/assets/js/app.js',
-            ],
-            'public/js/app.js'
-        )
+        .browserify('app.js')
 
         .copy(
             'node_modules/bootstrap-sass/assets/fonts/bootstrap',
