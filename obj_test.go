@@ -64,7 +64,8 @@ func TestFindFoodAndEat(t *testing.T) {
 	assert.Equal(t, 1, len(dw.Inventory))
 
 	// place food nearby
-	nextTo, _ := dw.Position.randomNearby()
+	nextTo, err := dw.Position.randomNearby()
+	assert.Equal(t, nil, err)
 	island.addNpcFromName("carrot", nextTo)
 
 	// make npc hungry
@@ -115,7 +116,8 @@ func TestFindWaterAndDrink(t *testing.T) {
 	assert.Equal(t, 1, len(dw.Inventory)) // firewood
 
 	// place water nearby
-	nextTo, _ := dw.Position.randomNearby()
+	nextTo, err := dw.Position.randomNearby()
+	assert.Equal(t, nil, err)
 	island.addNpcFromName("pouch of water", nextTo)
 
 	// make npc thirsty
@@ -171,7 +173,8 @@ func TestFindFirewood(t *testing.T) {
 	assert.Equal(t, true, dw.isCold())
 
 	// place firewood nearby
-	nextTo, _ := dw.Position.randomNearby()
+	nextTo, err := dw.Position.randomNearby()
+	assert.Equal(t, nil, err)
 	island.addNpcFromName("small branch", nextTo)
 
 	// tick so npc decides to pick firewood
@@ -229,7 +232,8 @@ func TestSleepAtShelter(t *testing.T) {
 	dw := island.Spawns[0]
 
 	// add nessecities nearby
-	nextTo, _ := island.Spawns[0].Position.randomNearby()
+	nextTo, err := island.Spawns[0].Position.randomNearby()
+	assert.Equal(t, nil, err)
 	island.addNpcFromName("small shelter", nextTo)
 
 	// make npc tired
@@ -290,7 +294,8 @@ func TestBuildFireplace(t *testing.T) {
 	dw.addToInventory("small branch")
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo, _ := island.Spawns[0].Position.randomNearby()
+	nextTo, err := island.Spawns[0].Position.randomNearby()
+	assert.Equal(t, nil, err)
 
 	// make sure nextTo is changed
 	assert.Equal(t, false, island.Spawns[0].Position == nextTo)
@@ -326,7 +331,8 @@ func TestBuildShelter(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo, _ := island.Spawns[0].Position.randomNearby()
+	nextTo, err := island.Spawns[0].Position.randomNearby()
+	assert.Equal(t, nil, err)
 
 	// add nessecities, so they dont need to be built
 	island.addNpcFromName("farmland", nextTo)
@@ -465,7 +471,8 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
 
-	nextTo, _ := island.Spawns[0].Position.randomNearby()
+	nextTo, err := island.Spawns[0].Position.randomNearby()
+	assert.Equal(t, nil, err)
 
 	assert.Equal(t, false, dw.Position == nextTo)
 
@@ -512,7 +519,8 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 
 	// NOTE: similar to TestNpcMovesToFireplace, but now also make sure dwarf finds a firewood
 
-	nextTo, _ := dw.Position.randomNearby()
+	nextTo, err := dw.Position.randomNearby()
+	assert.Equal(t, nil, err)
 
 	assert.Equal(t, false, dw.Position == nextTo)
 
@@ -524,8 +532,9 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	island.addNpcFromName("apple tree", nextTo)
 	assert.Equal(t, 7, len(island.Spawns))
 
-	nextTo2, _ := dw.Position.randomNearby()
-	assert.Equal(t, false, nextTo == nextTo2)
+	nextTo2, err := dw.Position.randomNearby()
+	assert.Equal(t, nil, err)
+	assert.Equal(t, false, nextTo.Equals(nextTo2))
 
 	island.addNpcFromName("branch", nextTo)
 	assert.Equal(t, 8, len(island.Spawns))
@@ -608,7 +617,8 @@ func TestBuildSmallHut(t *testing.T) {
 	dw := island.Spawns[0]
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo, _ := dw.Position.randomNearby()
+	nextTo, err := dw.Position.randomNearby()
+	assert.Equal(t, nil, err)
 	island.addNpcFromName("small fireplace", nextTo)
 
 	dw.Home = island.addNpcFromName("small shelter", nextTo)
