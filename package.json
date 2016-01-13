@@ -21,6 +21,6 @@
     "karma-phantomjs-launcher": "^0.2",
     "laravel-elixir": "^4.2",
     "phantomjs": "^1.9",
-    "weathericons": "^2.0.10"
+    "weathericons": "^2.0"
   }
 }
