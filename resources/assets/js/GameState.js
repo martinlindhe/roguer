@@ -83,6 +83,13 @@ export class GameState extends Phaser.State
 
         this.initUi();
 
+        //  Capture all key presses
+        this.game.input.keyboard.addCallbacks(this, null, null, function(char) {
+            // console.log("pressed "+char);
+            if (char == 't') {
+                this.ui.visible = !this.ui.visible;
+            }
+        });
 
 
 
@@ -149,9 +156,6 @@ export class GameState extends Phaser.State
             this.worldScale += 0.05;
         } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
             this.worldScale -= 0.05;
-        } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.T)) {
-            console.log("XXX toggle ui");
-            this.ui.visible = !this.ui.visible;
         }
 
         // set a minimum and maximum scale value
