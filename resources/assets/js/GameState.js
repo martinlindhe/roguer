@@ -225,7 +225,7 @@ export class GameState extends Phaser.State
         var style = { font: "10px topaz", fill: "#fff", backgroundColor: 'rgba(0,0,0,0.25)', wordWrap: true, wordWrapWidth: 400 };
 
         this.logMessageList = this.game.add.text(0, 0, '', style);
-        this.logMessageList.stroke = '#000000';
+        this.logMessageList.stroke = '#000';
         this.logMessageList.strokeThickness = 2;
         this.logMessageList.lineSpacing = -8;
 
@@ -237,6 +237,13 @@ export class GameState extends Phaser.State
 
         this.messageLog = new MessageLog();
         this.logMessageList.text = this.messageLog.render();
+
+        this.timeOfDayIcon = this.game.add.text(this.game.width - 130, 0, '', { fill : '#fff', font : '18px weathericons' });
+        this.timeOfDayIcon.stroke = '#000';
+        this.timeOfDayIcon.strokeThickness = 2;
+
+        this.timeOfDayIcon.fixedToCamera = true;
+        this.uiGroup.add(this.timeOfDayIcon);
 
 
         // shows server time :
@@ -250,10 +257,39 @@ export class GameState extends Phaser.State
 
         if (this.serverTime.time) {
             this.serverTimeText.text = this.serverTime.render();
+
+            this.updateTimeOfDayIcon();
         }
 
         // auto save message log on every ping
         this.messageLog.save();
+    }
+
+    updateTimeOfDayIcon()
+    {
+        var hour = this.serverTime.hour();
+        if (hour >= 12) {
+            hour -= 12;
+        }
+
+        var val = "";
+        console.log("hour " + hour);
+        switch (hour) {
+            case 0: val = "\uf089"; break;
+            case 1: val = "\uf08a"; break;
+            case 2: val = "\uf08b"; break;
+            case 3: val = "\uf08c"; break;
+            case 4: val = "\uf08d"; break;
+            case 5: val = "\uf08e"; break;
+            case 6: val = "\uf08f"; break;
+            case 7: val = "\uf090"; break;
+            case 8: val = "\uf091"; break;
+            case 9: val = "\uf092"; break;
+            case 10: val = "\uf093"; break;
+            case 11: val = "\uf094"; break;
+        }
+
+        this.timeOfDayIcon.text = val + " ";
     }
 
     spawnPlayer(cmd)

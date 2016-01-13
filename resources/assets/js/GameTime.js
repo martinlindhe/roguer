@@ -28,6 +28,18 @@ export class GameTime
         return ("00" + parts.Hour).slice(-2) + ":" + ("00" + parts.Minute).slice(-2);
     }
 
+    minute()
+    {
+        var parts = this.dateParts();
+        return parts.Minute;
+    }
+
+    hour()
+    {
+        var parts = this.dateParts();
+        return parts.Hour;
+    }
+
     dateParts()
     {
         var rest = this.time;

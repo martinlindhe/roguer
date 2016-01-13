@@ -11,7 +11,7 @@ export class MessageLog
 
         var savedMessages = window.sessionStorage.getItem('_messages');
         if (savedMessages) {
-            console.log("restoring saved msgs from " + savedMessages);
+            //console.log("restoring saved msgs from " + savedMessages);
             this.logMessages = JSON.parse(savedMessages);
         }
     }

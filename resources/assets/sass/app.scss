@@ -7,6 +7,13 @@ $fa-font-path: "/fonts/font-awesome";
 @import "./../../../node_modules/font-awesome/scss/font-awesome";
 @import "_fonts";
 
+// weather icons
+$wi-path: "/fonts/weathericons";
+@import "./../../../node_modules/weathericons/sass/weather-icons-core.scss";
+@import "./../../../node_modules/weathericons/sass/weather-icons-variables.scss";
+@import "./../../../node_modules/weathericons/sass/weather-icons-classes.scss";
+
+
 
 // misc
 @import "_colors";

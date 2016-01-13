@@ -20,6 +20,11 @@ elixir(function(mix) {
             'public/fonts/font-awesome'
         )
 
+        .copy(
+            'node_modules/weathericons/font',
+            'public/fonts/weathericons'
+        )
+
     ;
 
 });

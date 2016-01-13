@@ -1,6 +1,8 @@
 {
   "browserify": {
-    "transform": ["babelify"]
+    "transform": [
+      "babelify"
+    ]
   },
   "dependencies": {
     "bootstrap-sass": "^3.3",
@@ -18,6 +20,7 @@
     "karma-jasmine": "^0.3",
     "karma-phantomjs-launcher": "^0.2",
     "laravel-elixir": "^4.2",
-    "phantomjs": "^1.9"
+    "phantomjs": "^1.9",
+    "weathericons": "^2.0.10"
   }
 }
