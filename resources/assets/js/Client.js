@@ -61,8 +61,8 @@ export class Client
 
     sendMove()
     {
-        var newX = Math.floor(this.gameState.playerGroup.x / this.gameState.tileWidth);
-        var newY = Math.floor(this.gameState.playerGroup.y / this.gameState.tileHeight);
+        var newX = Math.floor(this.gameState.playerSprite.x / this.gameState.tileWidth);
+        var newY = Math.floor(this.gameState.playerSprite.y / this.gameState.tileHeight);
 
         if (this.prevX == newX && this.prevY == newY) {
             // dont spam server when coords havent changed

@@ -27,10 +27,10 @@ export class GameState extends Phaser.State
 
         // NOTE: topaz-8.woff is force loaded with css hack, see fontLoader
 
-        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        //this.game.scale.setShowAll();
+        this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+        //this.scale.pageAlignVertically = true;
 
-        window.addEventListener('resize', () => this.game.scale.refresh());
+        //window.addEventListener('resize', () => this.game.scale.refresh());
         //this.game.scale.refresh();
     }
 
@@ -44,14 +44,14 @@ export class GameState extends Phaser.State
 
         this.maxMessages = 15;
         this.logTextHeight = 15;
+        this.minimapScale = 3;
 
         this.serverTime = new GameTime(0);
 
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
-
         // scale to whole window
-        this.game.scale.setGameSize(window.innerWidth, window.innerHeight);
+        //this.game.scale.setGameSize(window.innerWidth, window.innerHeight);
 
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
 
         this.music = this.game.add.audio('bgSound');
@@ -61,18 +61,16 @@ export class GameState extends Phaser.State
 
         this.groundMap = this.game.add.tilemap('islandMap');
         this.groundMap.addTilesetImage('island_tiles', 'ground');
-
         this.groundMap.setCollisionBetween(0, 112); // 112 = beach line
 
         this.groundLayer = this.groundMap.createLayer(0);
-        this.groundLayer.resizeWorld();
+        //this.groundLayer.resizeWorld();
 
         // Un-comment this on to see the collision tiles
         //this.groundLayer.debug = true;
 
 
         this.playerGroup = this.game.add.group();
-        this.game.camera.follow(this.playerGroup);
         //this.playerGroup.z = 10;
 
 
@@ -86,9 +84,26 @@ export class GameState extends Phaser.State
         //  Capture all key presses
         this.game.input.keyboard.addCallbacks(this, null, null, function(char) {
             // console.log("pressed "+char);
-            if (char == 't') {
+            switch (char) {
+            case 't':
                 this.ui.visible = !this.ui.visible;
+                return;
+            case 'q':
+                this.worldScale += 0.2;
+                break;
+            case 'a':
+                this.worldScale -= 0.2;
+                break;
+            default:
+                console.log("unhandled char " + char);
+                return;
             }
+
+            // set a minimum and maximum scale value
+            this.worldScale = Phaser.Math.clamp(this.worldScale, 0.5, 4);
+
+            // set our world scale as needed
+            this.game.scale.set(this.worldScale); // XXX
         });
 
 
@@ -122,7 +137,7 @@ export class GameState extends Phaser.State
         // Update the shadow texture each frame
         //this.updateShadowTexture();
 
-        this.game.physics.arcade.collide(this.playerGroup, this.groundLayer);
+        this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
 
         var steppingHoriz = 1;
         var steppingVert = steppingHoriz / 2;
@@ -137,32 +152,20 @@ export class GameState extends Phaser.State
         */
 
         if (this.cursors.up.isDown) {
-            this.playerGroup.y -= steppingVert;
+            this.playerSprite.y -= steppingVert;
             this.client.sendMove();
         } else if (this.cursors.down.isDown) {
-            this.playerGroup.y += steppingVert;
+            this.playerSprite.y += steppingVert;
             this.client.sendMove();
         }
 
         if (this.cursors.left.isDown) {
-            this.playerGroup.x -= steppingHoriz;
+            this.playerSprite.x -= steppingHoriz;
             this.client.sendMove();
         } else if (this.cursors.right.isDown) {
-            this.playerGroup.x += steppingHoriz;
+            this.playerSprite.x += steppingHoriz;
             this.client.sendMove();
         }
-
-        if (this.game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
-            this.worldScale += 0.05;
-        } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-            this.worldScale -= 0.05;
-        }
-
-        // set a minimum and maximum scale value
-        this.worldScale = Phaser.Math.clamp(this.worldScale, 0.5, 4);
-
-        // set our world scale as needed
-        //this.stageGroup.scale.set(this.worldScale);
 
 /*
         // XXX game.camera
@@ -170,8 +173,6 @@ export class GameState extends Phaser.State
         this.game.camera.setBoundsToWorld();
         this.game.camera.follow(this.playerGroup);
         this.game.camera.update();
-
-        this.groundLayer.resizeWorld();
 */
 
 
@@ -189,7 +190,9 @@ export class GameState extends Phaser.State
     {
         this.game.debug.text(this.game.time.fps || '--', 1, 14, "#00ff00");
 
-        //game.debug.spriteInfo(this.player, 32, 32);
+        if (this.playerSprite) {
+            this.game.debug.spriteInfo(this.playerSprite, 400, 20);
+        }
         //game.debug.cameraInfo(game.camera, 10, 32);
 
         //game.debug.soundInfo(this.music, 10, 140);
@@ -203,7 +206,7 @@ export class GameState extends Phaser.State
     initUi()
     {
         this.ui = this.game.add.group();
-
+        this.ui.fixedToCamera = true;
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
@@ -215,22 +218,17 @@ export class GameState extends Phaser.State
         this.info.fill = "#fff";
         this.info.lineSpacing = -10;
         this.info.setShadow(2, 2);
-        this.info.fixedToCamera = true;
         this.ui.add(this.info);
 
 
 
-        var minimapScale = 3;
-        var minimapX = this.game.width - this.game.cache.getImage('minimap').width / minimapScale;
-        var minimap = this.game.add.sprite(minimapX, 0, 'minimap');
-        minimap.fixedToCamera = true;
-        minimap.scale.set(1.0 / minimapScale);
-        minimap.alpha = 0.8;
-        minimap.setScaleMinMax(1.0 / minimapScale, 1.0 / minimapScale);
-        this.ui.add(minimap);
+        this.minimap = this.game.add.sprite(0, 0, 'minimap');
+        this.minimap.scale.set(1.0 / this.minimapScale);
+        this.minimap.alpha = 0.8;
+        this.ui.add(this.minimap);
 
-        var button = this.game.add.button(
-            this.game.width - 102,
+        this.muteButton = this.game.add.button(
+            0,
             2,
             'button',
             function() { // onClick
@@ -245,8 +243,7 @@ export class GameState extends Phaser.State
             0,
             0
         );
-        button.fixedToCamera = true;
-        this.ui.add(button);
+        this.ui.add(this.muteButton);
 
 
         // text-shadow hack for making text-stroke
@@ -257,27 +254,42 @@ export class GameState extends Phaser.State
         this.logMessageList.strokeThickness = 2;
         this.logMessageList.lineSpacing = -8;
 
-        this.logMessageList.x = this.game.width - 400;
-        this.logMessageList.y = this.game.height - (this.maxMessages * this.logTextHeight);
-        this.logMessageList.fixedToCamera = true;
-
         this.ui.add(this.logMessageList);
 
         this.messageLog = new MessageLog();
         this.logMessageList.text = this.messageLog.render();
 
-        this.timeOfDayIcon = this.game.add.text(this.game.width - 150, 0, '', { fill : '#fff', font : '18px weathericons' });
+        this.timeOfDayIcon = this.game.add.text(0, 0, '', { fill : '#fff', font : '18px weathericons' });
         this.timeOfDayIcon.stroke = '#000';
         this.timeOfDayIcon.strokeThickness = 2;
 
-        this.timeOfDayIcon.fixedToCamera = true;
         this.ui.add(this.timeOfDayIcon);
 
 
         // shows server time :
-        this.serverTimeText = this.game.add.text(this.game.width - 230, 0, "", style);
-        this.serverTimeText.fixedToCamera = true;
+        this.serverTimeText = this.game.add.text(0, 0, "", style);
         this.ui.add(this.serverTimeText);
+
+        this.resize(this.game.width, this.game.height);
+    }
+
+
+    resize(width, height)
+    {
+        console.log("resized to w " + width + ", h = " + height);
+
+        this.minimap.x = width - this.game.cache.getImage('minimap').width / this.minimapScale;
+
+        this.muteButton.x = width - 102;
+
+        this.logMessageList.x = width - 400;
+        this.logMessageList.y = height - (this.maxMessages * this.logTextHeight);
+
+        this.timeOfDayIcon.x = width - 150;
+
+        this.serverTimeText.x = width - 230;
+
+        this.game.scale.refresh();
     }
 
     setServerTime(i)
@@ -321,8 +333,12 @@ export class GameState extends Phaser.State
     spawnPlayer(cmd)
     {
         this.playerSprite = this.game.add.sprite(0, 0, 'characterAtlas');
+        this.game.physics.enable(this.playerSprite, Phaser.Physics.ARCADE);
+        this.game.camera.follow(this.playerSprite);
+
         this.playerSprite.frameName = 'dwarf';
         this.playerSprite.anchor.set(0.5);
+        //this.playerSprite.body.collideWorldBounds = true;
 
 
 
@@ -334,20 +350,17 @@ export class GameState extends Phaser.State
 
         // multiply coords with tile size to scale properly.
         // sprite tiles are always in pixels
-        this.playerGroup.x = cmd.X * this.tileWidth;
-        this.playerGroup.y = cmd.Y * this.tileHeight;
-        this.playerGroup.add(this.playerSprite);
+        this.playerSprite.x = cmd.X * this.tileWidth;
+        this.playerSprite.y = cmd.Y * this.tileHeight;
 
-
+/*
         // floating name over head of player
         var txt = this.makeText(this.playerName);
         var aboveHead = this.game.add.image(0, -10, txt);
         aboveHead.anchor.set(0.5);
         this.playerGroup.add(aboveHead);
-
+*/
         console.log("spawned at " + cmd.X + ", " + cmd.Y);
-
-        this.game.physics.enable(this.playerGroup);
 
         this.renderLocalSpawns(cmd.LocalSpawns);
     }
