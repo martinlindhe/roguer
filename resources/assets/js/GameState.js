@@ -26,6 +26,12 @@ export class GameState extends Phaser.State
         this.game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 
         // NOTE: topaz-8.woff is force loaded with css hack, see fontLoader
+
+        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //this.game.scale.setShowAll();
+
+        window.addEventListener('resize', () => this.game.scale.refresh());
+        //this.game.scale.refresh();
     }
 
     create()
@@ -283,7 +289,7 @@ export class GameState extends Phaser.State
         if (this.serverTime.isDaytime()) {
             val += " \uf00d"; // wi-day-sunny
         } else {
-            val += " \uf024"; // wi-night-clear
+            val += " \uf02e"; // wi-night-clear
         }
 
         this.timeOfDayIcon.text = val + " ";
