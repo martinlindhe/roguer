@@ -376,11 +376,18 @@ func TestBuildFarmland(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 
+	fmt.Printf("xxxx dwarf at %s\n", island.Spawns[0].Position)
+
 	// add nessecities nearby, so they dont need to be built
-	nextTo, _ := island.Spawns[0].Position.randomNearby()
+	nextTo, err := island.Spawns[0].Position.randomNearby()
+	assert.Equal(t, nil, err)
+
+	fmt.Printf("xxxx nextTo = %s\n", nextTo)
 
 	// add nessecities, so they dont need to be built
 	island.addNpcFromName("small fireplace", nextTo)
+	assert.Equal(t, 1, len(nextTo.spawnsByType("fireplace", 30)))
+
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
 	island.addNpcFromName("cooking pit", nextTo)
@@ -567,7 +574,9 @@ func TestBuildCookingPit(t *testing.T) {
 	dw := island.Spawns[0]
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo, _ := dw.Position.randomNearby()
+	nextTo, err := dw.Position.randomNearby()
+	assert.Equal(t, nil, err)
+
 	island.addNpcFromName("small fireplace", nextTo)
 	island.addNpcFromName("small shelter", nextTo)
 	island.addNpcFromName("apple tree", nextTo)

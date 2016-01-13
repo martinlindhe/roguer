@@ -129,7 +129,7 @@ func (i *Island) getNpcSpecFromName(n string) objSpec {
 func (i *Island) getNpcSpecFromRace(n string) objSpec {
 	for _, spec := range island.npcSpecs {
 		if spec.Race == n {
-			fmt.Printf("found race %v from %s\n", spec, n)
+			// fmt.Printf("found race %v from %s\n", spec, n)
 			return spec
 		}
 	}

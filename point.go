@@ -16,6 +16,13 @@ func (p Point) String() string {
 	return fmt.Sprintf("%f,%f", p.X, p.Y)
 }
 
+func (p Point) Equals(p2 Point) bool {
+	if p.X == p2.X && p.Y == p2.Y {
+		return true
+	}
+	return false
+}
+
 func (n *Obj) distanceTo(pos Point) float64 {
 
 	xd := n.Position.X - pos.X
@@ -47,7 +54,7 @@ func (p *Point) randomNearby() (Point, error) {
 		for x := p.X - 1; x <= p.X+1; x++ {
 			if y >= 0 && y < float64(island.Height) && x >= 0 && x < float64(island.Width) {
 				pp := Point{x, y}
-				if pp != *p && island.isAboveWater(pp) {
+				if !pp.Equals(*p) && island.isAboveWater(pp) {
 					m = append(m, pp)
 				}
 			}
@@ -92,5 +99,6 @@ func (p *Point) spawnsByType(t string, radius float64) []*Obj {
 			res = append(res, o)
 		}
 	}
+	fmt.Printf("spawnsByType radius %f from %s match %s: found %d\n", radius, p, t, len(res))
 	return res
 }

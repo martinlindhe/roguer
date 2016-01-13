@@ -38,3 +38,17 @@ func TestSpawnsByType(t *testing.T) {
 	assert.Equal(t, 1, len(pos2.spawnsByType("fireplace", 2))) // NOTE: distance here is random but can be over 1.0
 	assert.Equal(t, 1, len(pos2.spawnsByType("fireplace", 30)))
 }
+
+func TestRandomNearby(t *testing.T) {
+	// should never get the input point
+
+	prepareIsland()
+	assert.Equal(t, true, len(island.Spawns) == 0)
+
+	pos := island.RandomPointAboveWater()
+
+	for i := 0; i < 100; i++ {
+		p2, _ := pos.randomNearby()
+		assert.Equal(t, false, p2.Equals(pos))
+	}
+}
