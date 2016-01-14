@@ -35,19 +35,20 @@ func main() {
 	db := mongo.DB("test").C("roguer")
 
 	rogue.NewIsland()
+
 	/*
 		island.Seed = 666666 // XXX dont hard code
-		fmt.Printf("Resuming session with seed %d\n", island.Seed)
+		fmt.Printf("Resuming island with seed %d\n", island.Seed)
 		err = db.Find(bson.M{"_id": island.Seed}).One(&island)
 		if err != nil {
 			//panic(err)
 			fmt.Printf("ERROR resuming, creating new world")
 			rogue.NewIsland()
 		} else {
-			// XXXX load specs
 			island.LoadSpecs()
 		}
 	*/
+
 	ticker := time.NewTicker(1*tickDuration + 1)
 	quit := make(chan struct{})
 	go func() {
