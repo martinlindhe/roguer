@@ -14,28 +14,20 @@ import (
 )
 
 var (
-	island       rogue.Island
-	islandMap    []byte
-	appPort      = 3322
-	tickDuration = 3 * time.Second // 1 game tick = 3 real world seconds
+	island           rogue.Island
+	islandMap        []byte
+	appPort          = 3322
+	tickDuration     = 3 * time.Second // 1 game tick = 3 real world seconds
+	snapshotInterval = 10*tickDuration + 1
+	mongoSession     *mgo.Session
+	dbName           = "roguer"
+	enableAutosave   = false
 )
 
-func main() {
-
-	log.SetLevel(log.DebugLevel)
-
-	mongo, err := mgo.Dial("localhost")
-	if err != nil {
-		panic(err)
-	}
-	defer mongo.Close()
-
-	mongo.SetMode(mgo.Monotonic, true)
-
-	db := mongo.DB("test").C("roguer")
-
+func newOrResumeIsland() {
 	rogue.NewIsland()
 
+	// XXX loading island half-works, disabled for now //jan 2016
 	/*
 		island.Seed = 666666 // XXX dont hard code
 		fmt.Printf("Resuming island with seed %d\n", island.Seed)
@@ -48,23 +40,73 @@ func main() {
 			island.LoadSpecs()
 		}
 	*/
+}
 
-	ticker := time.NewTicker(1*tickDuration + 1)
+func main() {
+
+	log.SetLevel(log.DebugLevel)
+
+	mongoSession, err := initMongo()
+	if err != nil {
+		panic(err)
+	}
+	defer mongoSession.Close()
+
+	newOrResumeIsland()
+
+	registerAutosaver()
+
+	r := getRouter()
+
+	islandMap = rogue.PrecalcTilemap()
+
+	listenAt := fmt.Sprintf(":%d", appPort)
+
+	log.Infof("roguer server started, listening on %s", listenAt)
+
+	go r.Run(listenAt)
+
+	c := time.Tick(tickDuration)
+	for range c {
+		// progress game world
+		island.Tick()
+	}
+}
+
+func initMongo() (*mgo.Session, error) {
+	session, err := mgo.Dial("localhost")
+	if err != nil {
+		return nil, err
+	}
+
+	session.SetMode(mgo.Monotonic, true)
+
+	return session, nil
+}
+
+func registerAutosaver() {
+	ticker := time.NewTicker(snapshotInterval)
 	quit := make(chan struct{})
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
+				if !enableAutosave {
+					break
+				}
 
 				log.Printf("---SAVE at %s\n", time.Now())
 
-				mongo.Refresh()
-				_, err = db.UpsertId(island.Seed, &island)
+				mongoSession.Refresh()
+
+				coll := mongoSession.DB(dbName).C("world")
+
+				_, err := coll.UpsertId(island.Seed, island)
 				if err != nil {
 					log.Fatalf("ERROR saving db: %s", err)
-					mongo.Refresh()
+					mongoSession.Refresh()
 
-					_, err = db.UpsertId(island.Seed, &island)
+					_, err = coll.UpsertId(island.Seed, &island)
 					if err != nil {
 						log.Fatalf("FATAL ERROR, failed twice saving db\n")
 					}
@@ -78,25 +120,6 @@ func main() {
 			}
 		}
 	}()
-
-	r := getRouter()
-
-	islandMap = rogue.PrecalcTilemap()
-
-	listenAt := fmt.Sprintf(":%d", appPort)
-
-	log.Infof("roguer server started, listening on %s", listenAt)
-
-	go r.Run(listenAt)
-
-	// initial tick
-	island.Tick()
-
-	c := time.Tick(tickDuration)
-	for range c {
-		// progress game world
-		island.Tick()
-	}
 }
 
 func getRouter() *ace.Ace {
