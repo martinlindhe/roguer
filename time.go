@@ -25,29 +25,29 @@ const (
 // So 1 game year = 518400 * 3 = 1555200 real seconds,
 // or 25920 real time minutes (432 real hours, 7.2 real days).
 type GameTime struct {
-	time int64
+	Time int64
 }
 
 func newTime(t int64) *GameTime {
 
-	return &GameTime{time: t}
+	return &GameTime{Time: t}
 }
 
 // Set sets the current time
 func (t *GameTime) Set(i int64) {
-	t.time = i
+	t.Time = i
 }
 
 // Tick progress the time
 func (t *GameTime) Tick() {
 
-	t.time++
+	t.Time++
 }
 
 // Current returns the current time
 func (t *GameTime) Current() int64 {
 
-	return t.time
+	return t.Time
 }
 
 // DateString returns "evening 19:20\nspring feb 20"
@@ -66,7 +66,7 @@ func (t *GameTime) TimeOfDay() string {
 
 func (t *GameTime) date() (int64, int64, int64, int64, int64) {
 
-	rest := t.time
+	rest := t.Time
 
 	year := rest / Year
 	if year > 0 {
