@@ -135,6 +135,8 @@ func (i *Island) getNpcSpecFromRace(n string) objSpec {
 		}
 	}
 
+	fmt.Printf("checked %d specs", len(island.npcSpecs))
+
 	panic(fmt.Errorf("npc spec by race not found: %s", n))
 }
 

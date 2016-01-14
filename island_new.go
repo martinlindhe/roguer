@@ -11,15 +11,15 @@ import (
 	"github.com/ojrac/opensimplex-go"
 )
 
-var island *Island // singelton
+var island Island // singelton
 
 // NewIsland inits the singelton
-func NewIsland() *Island {
+func NewIsland() {
 
 	// XXX load existing world from disk
 	seed := int64(666666)
 	log.Infof("Generating island with seed %d ...", seed)
-	island = generateIsland(seed, 220, 140)
+	generateIsland(seed, 220, 140)
 
 	island.spawnGravel()
 	island.spawnTrees()
@@ -41,7 +41,6 @@ func NewIsland() *Island {
 		islandImgFile, _ := os.Create("island.png")
 		png.Encode(islandImgFile, islandImage)
 	*/
-	return island
 }
 
 // create some small rocks spread out over surface
@@ -116,7 +115,7 @@ func (i *Island) fillWithCritters() {
 	}
 }
 
-func generateIsland(seed int64, width int, height int) *Island {
+func generateIsland(seed int64, width int, height int) {
 
 	particleLength := 8
 	innerBlur := 0.85
@@ -163,15 +162,12 @@ func generateIsland(seed int64, width int, height int) *Island {
 		}
 	}
 
-	is := &Island{
-		Width:     width,
-		Height:    height,
-		Seed:      seed,
-		HeightMap: m}
+	island.Width = width
+	island.Height = height
+	island.Seed = seed
+	island.HeightMap = m
 
 	// load all possible world items, NPC:s and actions
-	is.npcSpecs, _ = parseObjectsDefinition("data/objs.yml")
-	is.actionSpecs, _ = parseActionsDefinition("data/actions.yml")
-
-	return is
+	island.npcSpecs, _ = parseObjectsDefinition("data/objs.yml")
+	island.actionSpecs, _ = parseActionsDefinition("data/actions.yml")
 }

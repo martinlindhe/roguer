@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	island       *rogue.Island
+	island       rogue.Island
 	islandMap    []byte
 	appPort      = 3322
 	tickDuration = 3 * time.Second // 1 game tick = 3 real world seconds
@@ -30,15 +30,17 @@ func main() {
 	}
 	defer mongo.Close()
 
+	mongo.SetMode(mgo.Monotonic, true)
+
 	db := mongo.DB("test").C("roguer")
 	/*
-		XXX CRASH
-		err = db.Find(bson.M{"Seed": island.Seed}).Select(bson.M{"phone": 0}).One(&island)
+		//XXX CRASH
+		//island := make(*rogue.Island)
+		err = db.Find(bson.M{"Seed": island.Seed}).All(&island)
 		if err != nil {
 			panic(err)
 		}
 	*/
-
 	ticker := time.NewTicker(10*tickDuration + 1)
 	quit := make(chan struct{})
 	go func() {
@@ -70,7 +72,7 @@ func main() {
 	}()
 
 	r := getRouter()
-	island = rogue.NewIsland()
+	rogue.NewIsland()
 	islandMap = rogue.PrecalcTilemap()
 
 	listenAt := fmt.Sprintf(":%d", appPort)
