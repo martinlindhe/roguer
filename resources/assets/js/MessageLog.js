@@ -2,7 +2,10 @@ import {GameTime} from './GameTime.js';
 
 export class MessageLog
 {
-    constructor() {
+    constructor(maxMessageLines) {
+
+        this.maxMessageLines = maxMessageLines;
+
         this.logMessages = [
             {time: 0, text: "Welcome to roguer!"}
         ];
@@ -54,12 +57,12 @@ export class MessageLog
         // TODO log window with scroll
 
         // only save the last messages in this.logMessages, and ignore scroll for now
-        this.logMessages = this.logMessages.slice(-this.maxMessages);
+        var msg = this.logMessages.slice(-this.maxMessageLines);
 
         var txt = "";
-        for (let msg of this.logMessages) {
-            var time = new GameTime(msg.time);
-            txt = txt + time.render() + ": " + msg.text + "\n";
+        for (let m of msg) {
+            var time = new GameTime(m.time);
+            txt = txt + time.render() + ": " + m.text + "\n";
         }
 
         return txt.trim();

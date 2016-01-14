@@ -43,7 +43,7 @@ export class GameState extends Phaser.State
         this.tileWidth = 8;
         this.tileHeight = 4;
 
-        this.maxMessages = 15;
+        this.maxMessageLines = 15;
         this.logTextHeight = 15;
         this.minimapScale = 3;
 
@@ -264,7 +264,7 @@ export class GameState extends Phaser.State
 
         this.ui.add(this.logMessageList);
 
-        this.messageLog = new MessageLog();
+        this.messageLog = new MessageLog(this.maxMessageLines);
         this.logMessageList.text = this.messageLog.render();
 
         this.timeOfDayIcon = this.game.add.text(0, 0, '', { fill : '#fff', font : '18px weathericons' });
@@ -290,7 +290,7 @@ export class GameState extends Phaser.State
         this.muteButton.x = width - 102;
 
         this.logMessageList.x = width - 400;
-        this.logMessageList.y = height - (this.maxMessages * this.logTextHeight);
+        this.logMessageList.y = height - (this.maxMessageLines * this.logTextHeight);
 
         this.timeOfDayIcon.x = width - 150;
 
