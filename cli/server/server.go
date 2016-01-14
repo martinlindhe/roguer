@@ -33,22 +33,29 @@ func main() {
 	mongo.SetMode(mgo.Monotonic, true)
 
 	db := mongo.DB("test").C("roguer")
+
+	rogue.NewIsland()
 	/*
-		//XXX CRASH
-		//island := make(*rogue.Island)
-		err = db.Find(bson.M{"Seed": island.Seed}).All(&island)
+		island.Seed = 666666 // XXX dont hard code
+		fmt.Printf("Resuming session with seed %d\n", island.Seed)
+		err = db.Find(bson.M{"_id": island.Seed}).One(&island)
 		if err != nil {
-			panic(err)
+			//panic(err)
+			fmt.Printf("ERROR resuming, creating new world")
+			rogue.NewIsland()
+		} else {
+			// XXXX load specs
+			island.LoadSpecs()
 		}
 	*/
-	ticker := time.NewTicker(10*tickDuration + 1)
+	ticker := time.NewTicker(1*tickDuration + 1)
 	quit := make(chan struct{})
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
 
-				log.Printf("-SNAPSHOTTING DB at %s\n", time.Now())
+				log.Printf("---SAVE at %s\n", time.Now())
 
 				mongo.Refresh()
 				_, err = db.UpsertId(island.Seed, &island)
@@ -62,7 +69,7 @@ func main() {
 					}
 				}
 
-				log.Printf("-DONE at %s\n", time.Now())
+				log.Printf("---DONE at %s\n", time.Now())
 
 			case <-quit:
 				ticker.Stop()
@@ -72,7 +79,7 @@ func main() {
 	}()
 
 	r := getRouter()
-	rogue.NewIsland()
+
 	islandMap = rogue.PrecalcTilemap()
 
 	listenAt := fmt.Sprintf(":%d", appPort)

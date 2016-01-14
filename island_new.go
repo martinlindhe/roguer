@@ -167,7 +167,11 @@ func generateIsland(seed int64, width int, height int) {
 	island.Seed = seed
 	island.HeightMap = m
 
-	// load all possible world items, NPC:s and actions
+	island.LoadSpecs()
+}
+
+// LoadSpecs loads all possible world items, NPC:s and actions
+func (i *Island) LoadSpecs() {
 	island.npcSpecs, _ = parseObjectsDefinition("data/objs.yml")
 	island.actionSpecs, _ = parseActionsDefinition("data/actions.yml")
 }
