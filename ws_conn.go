@@ -22,7 +22,7 @@ type moveResponse struct {
 	Type        string
 	X           float64
 	Y           float64
-	LocalSpawns []LocalSpawns
+	LocalSpawns []LocalSpawn
 }
 
 type tickMessage struct {
