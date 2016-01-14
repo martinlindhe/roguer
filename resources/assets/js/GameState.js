@@ -38,6 +38,7 @@ export class GameState extends Phaser.State
         this.playerName = "Jimpson";
 
         this.worldScale = {x:7, y:7};    // 7x ZOOM
+        this.deadzonePadding = 100;
 
         this.tileWidth = 8;
         this.tileHeight = 4;
@@ -120,11 +121,16 @@ export class GameState extends Phaser.State
         }
 */
 
+        this.game.physics.arcade.collide(this.playerSprite, this.groundLayer, function() {
+            console.log("collision");
+        });
+
+
         this.playerSprite.body.velocity.x = 0;
         this.playerSprite.body.velocity.y = 0;
 
 
-        var steppingHoriz = 200;
+        var steppingHoriz = 1600;
         var steppingVert = steppingHoriz / 2;
 
 
@@ -145,17 +151,6 @@ export class GameState extends Phaser.State
             this.playerSprite.body.velocity.x = steppingHoriz;
             this.client.sendMove();
         }
-
-        this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
-
-
-/*
-        // XXX game.camera
-        this.game.camera.setSize(this.game.width, this.game.height);
-        this.game.camera.setBoundsToWorld();
-        this.game.camera.follow(this.playerGroup);
-        this.game.camera.update();
-*/
     }
 
     render()
@@ -166,9 +161,21 @@ export class GameState extends Phaser.State
             //this.game.debug.spriteInfo(this.playerSprite, 400, 20);
             //this.game.debug.spriteCoords(this.playerSprite, 400, 300);
 
-            //this.game.debug.bodyInfo(this.playerSprite.body);
+            this.game.debug.bodyInfo(this.playerSprite, 10, this.game.height - 100);
+
+            // shows collision box of sprite
+            this.game.debug.body(this.playerSprite, 'rgba(0,255,0,0.4)', true);
         }
         //this.game.debug.cameraInfo(this.game.camera, 10, 132);
+
+        /*
+        // draw camera deadzone
+        var zone = this.game.camera.deadzone;
+        if (zone) {
+            this.game.context.fillStyle = 'rgba(255,0,0,0.6)';
+            this.game.context.fillRect(zone.x, zone.y, zone.width, zone.height);
+        }
+        */
 
         //game.debug.soundInfo(this.music, 10, 140);
 /*
@@ -196,8 +203,8 @@ export class GameState extends Phaser.State
         this.groundLayer = this.groundMap.createLayer(0);
         this.groundLayer.scale = this.worldScale;
         this.groundLayer.resizeWorld(); // NOTE: resize is needed for camera follow to work
-        this.game.physics.arcade.enable(this.groundLayer);
         this.groundMap.setCollisionBetween(25, 80); // 112 = beach line
+        this.game.physics.arcade.enable(this.groundLayer);
 
 
         this.spawnLayer = this.game.add.group();
@@ -289,6 +296,8 @@ export class GameState extends Phaser.State
 
         this.serverTimeText.x = width - 230;
 
+        this.game.camera.deadzone = new Phaser.Rectangle(this.deadzonePadding, this.deadzonePadding, width - this.deadzonePadding*2, height - this.deadzonePadding*2);
+
         this.game.scale.refresh();
     }
 
@@ -335,7 +344,7 @@ export class GameState extends Phaser.State
         this.playerSprite = this.game.add.sprite(0, 0, 'characterAtlas');
         this.playerSprite.scale = this.worldScale;
         this.playerSprite.frameName = 'dwarf';
-        this.playerSprite.anchor.set(0.5);
+        this.playerSprite.anchor.setTo(0.5, 0.5);
 
         // multiply coords with tile size to scale properly.
         // sprite tiles are always in pixels
@@ -353,17 +362,21 @@ export class GameState extends Phaser.State
 
         this.game.physics.arcade.enable(this.playerSprite);
 
+        this.playerSprite.body.setSize(10, 14, 2, 1);
 
         this.playerSprite.body.collideWorldBounds = true;
 
         //  Because both our body and our tiles are so tiny,
         //  and the body is moving pretty fast, we need to add
         //  some tile padding to the body. WHat this does
-        this.playerSprite.body.tilePadding.set(32, 32);
+        //this.playerSprite.body.tilePadding.set(32, 32);
 
 
         this.game.camera.follow(this.playerSprite);
 
+        // The deadzone is a Rectangle that defines the limits
+        // at which the camera will start to scroll
+        this.game.camera.deadzone = new Phaser.Rectangle(this.deadzonePadding, this.deadzonePadding, this.game.width - this.deadzonePadding*2, this.game.height - this.deadzonePadding*2);
 
         console.log("spawned at " + cmd.X + ", " + cmd.Y);
 
@@ -440,8 +453,8 @@ export class GameState extends Phaser.State
 
         // Draw circle of light with a soft edge
         var gradient = this.shadowTexture.context.createRadialGradient(
-            this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS * 0.75,
-            this.playerGroup.x, this.playerGroup.y, this.LIGHT_RADIUS
+            this.playerSprite.x, this.playerSprite.y, this.LIGHT_RADIUS * 0.75,
+            this.playerSprite.x, this.playerSprite.y, this.LIGHT_RADIUS
         );
         gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
         gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
@@ -449,8 +462,8 @@ export class GameState extends Phaser.State
         this.shadowTexture.context.beginPath();
         this.shadowTexture.context.fillStyle = gradient;
         this.shadowTexture.context.arc(
-            this.playerGroup.x,
-            this.playerGroup.y,
+            this.playerSprite.x,
+            this.playerSprite.y,
             this.LIGHT_RADIUS,
             0,
             Math.PI * 2
