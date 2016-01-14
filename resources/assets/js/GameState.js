@@ -23,22 +23,21 @@ export class GameState extends Phaser.State
 
         this.game.load.image('oddballFont', 'img/tileset/oddball/font.png');
 
-        this.game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
+        //this.game.load.audio('bgSound', ['audio/dead_feelings.mp3']);
 
         // NOTE: topaz-8.woff is force loaded with css hack, see fontLoader
 
         this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-        //this.scale.pageAlignVertically = true;
 
-        //window.addEventListener('resize', () => this.game.scale.refresh());
-        //this.game.scale.refresh();
+        // NOTE: this is needed to keep antialiasing disabled
+        this.game.stage.disableVisibilityChange = true;
     }
 
     create()
     {
         this.playerName = "Jimpson";
 
-        this.worldScale = {x:6, y:6};    // 6x ZOOM
+        this.worldScale = {x:7, y:7};    // 7x ZOOM
 
         this.tileWidth = 8;
         this.tileHeight = 4;
@@ -54,10 +53,10 @@ export class GameState extends Phaser.State
 
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-
+/*
         this.music = this.game.add.audio('bgSound');
         this.music.volume = 0.20; // 20%
-
+*/
 
 
 
@@ -106,9 +105,12 @@ export class GameState extends Phaser.State
         // Update the shadow texture each frame
         //this.updateShadowTexture();
 
+        this.playerSprite.body.velocity.x = 0;
+        this.playerSprite.body.velocity.y = 0;
+
         this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
 
-        var steppingHoriz = 8;
+        var steppingHoriz = 200;
         var steppingVert = steppingHoriz / 2;
 
         /*
@@ -121,18 +123,18 @@ export class GameState extends Phaser.State
         */
 
         if (this.cursors.up.isDown) {
-            this.playerSprite.y -= steppingVert;
+            this.playerSprite.body.velocity.y = -steppingVert;
             this.client.sendMove();
         } else if (this.cursors.down.isDown) {
-            this.playerSprite.y += steppingVert;
+            this.playerSprite.body.velocity.y = steppingVert;
             this.client.sendMove();
         }
 
         if (this.cursors.left.isDown) {
-            this.playerSprite.x -= steppingHoriz;
+            this.playerSprite.body.velocity.x = -steppingHoriz;
             this.client.sendMove();
         } else if (this.cursors.right.isDown) {
-            this.playerSprite.x += steppingHoriz;
+            this.playerSprite.body.velocity.x = steppingHoriz;
             this.client.sendMove();
         }
 
@@ -143,8 +145,22 @@ export class GameState extends Phaser.State
         this.game.camera.follow(this.playerGroup);
         this.game.camera.update();
 */
+    }
 
+    render()
+    {
+        this.game.debug.text(this.game.time.fps || '--', 1, 14, "#00ff00");
 
+        if (this.playerSprite) {
+            //this.game.debug.spriteInfo(this.playerSprite, 400, 20);
+            //this.game.debug.spriteCoords(this.playerSprite, 400, 300);
+
+            //this.game.debug.bodyInfo(this.playerSprite.body);
+        }
+        //this.game.debug.cameraInfo(this.game.camera, 10, 132);
+
+        //game.debug.soundInfo(this.music, 10, 140);
+/*
         var s = "Game size: " + this.game.width + " x " + this.game.height + "\n";
         s += "Actual size: " + this.game.scale.width + " x " + this.game.scale.height + "\n";
         s += "minWidth: " + this.game.scale.minWidth + " - minHeight: " + this.game.scale.minHeight + "\n";
@@ -153,18 +169,7 @@ export class GameState extends Phaser.State
         s += "parent is window: " + this.game.scale.parentIsWindow + "\n";
         s += "bounds x: " + this.game.scale.bounds.x + " y: " + this.game.scale.bounds.y + " width: " + this.game.scale.bounds.width + " height: " + this.game.scale.bounds.height + "\n";
         this.info.text = s;
-    }
-
-    render()
-    {
-        this.game.debug.text(this.game.time.fps || '--', 1, 14, "#00ff00");
-
-        if (this.playerSprite) {
-            this.game.debug.spriteInfo(this.playerSprite, 400, 20);
-        }
-        //game.debug.cameraInfo(game.camera, 10, 32);
-
-        //game.debug.soundInfo(this.music, 10, 140);
+*/
     }
 
     messageToLog(o)
@@ -176,11 +181,12 @@ export class GameState extends Phaser.State
     {
         this.groundMap = this.game.add.tilemap('islandMap');
         this.groundMap.addTilesetImage('island_tiles', 'ground');
-        this.groundMap.setCollisionBetween(0, 112); // 112 = beach line
 
         this.groundLayer = this.groundMap.createLayer(0);
-        //this.groundLayer.resizeWorld();
         this.groundLayer.scale = this.worldScale;
+        this.groundLayer.resizeWorld(); // NOTE: resize is needed for camera follow to work
+
+        this.groundMap.setCollisionBetween(25, 80); // 112 = beach line
 
         // Un-comment this on to see the collision tiles
         //this.groundLayer.debug = true;
@@ -193,7 +199,7 @@ export class GameState extends Phaser.State
 
         this.ui = this.game.add.group();
         this.ui.fixedToCamera = true;
-// XXX make ui non-zoom
+
 
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
@@ -263,8 +269,7 @@ export class GameState extends Phaser.State
 
     resize(width, height)
     {
-        console.log("resized to w " + width + ", h = " + height);
-
+        //console.log("resized to w " + width + ", h = " + height);
         this.minimap.x = width - this.game.cache.getImage('minimap').width / this.minimapScale;
 
         this.muteButton.x = width - 102;
@@ -337,7 +342,7 @@ export class GameState extends Phaser.State
         //  Because both our body and our tiles are so tiny,
         //  and the body is moving pretty fast, we need to add
         //  some tile padding to the body. WHat this does
-        //this.playerSprite.body.tilePadding.set(32, 32);
+        this.playerSprite.body.tilePadding.set(32, 32);
 
 
         // multiply coords with tile size to scale properly.

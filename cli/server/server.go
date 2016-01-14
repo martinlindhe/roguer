@@ -39,9 +39,6 @@ func main() {
 		}
 	*/
 
-	// Optional. Switch the session to a monotonic behavior.
-	//mongo.SetMode(mgo.Monotonic, true)
-
 	ticker := time.NewTicker(10*tickDuration + 1)
 	quit := make(chan struct{})
 	go func() {
@@ -49,18 +46,14 @@ func main() {
 			select {
 			case <-ticker.C:
 
-				// XXX show times hh:mm:ss.ms
-
-				ms := time.Now().UnixNano() / int64(time.Millisecond)
-				log.Printf("-SNAPSHOTTING DB at %d\n", ms)
+				log.Printf("-SNAPSHOTTING DB at %s\n", time.Now())
 
 				_, err = db.UpsertId(island.Seed, &island)
 				if err != nil {
-					log.Fatal(err)
+					log.Printf("ERROR saving db: %s", err)
 				}
 
-				ms2 := time.Now().UnixNano() / int64(time.Millisecond)
-				log.Printf("-DONE at %d\n", ms2)
+				log.Printf("-DONE at %s\n", time.Now())
 
 			case <-quit:
 				ticker.Stop()

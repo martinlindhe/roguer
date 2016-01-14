@@ -5,8 +5,17 @@ export class Client
 {
     constructor(gameState)
     {
+        var loc = window.location, wsEntry;
+        if (loc.protocol === "https:") {
+            wsEntry = "wss:";
+        } else {
+            wsEntry = "ws:";
+        }
+        wsEntry += "//" + loc.host;
+        wsEntry += loc.pathname + "ws";
+
         this.gameState = gameState;
-        this.socket = new WebSocket('ws://localhost:3322/ws');
+        this.socket = new WebSocket(wsEntry);
 
         this.sessionToken = window.sessionStorage.getItem('_token');
 
