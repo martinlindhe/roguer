@@ -203,7 +203,7 @@ export class GameState extends Phaser.State
         this.groundLayer = this.groundMap.createLayer(0);
         this.groundLayer.scale = this.worldScale;
         this.groundLayer.resizeWorld(); // NOTE: resize is needed for camera follow to work
-        this.groundMap.setCollisionBetween(0, 60); // 112 = beach line
+        this.groundMap.setCollisionBetween(0, 100); // 112 = beach line
         this.game.physics.arcade.enable(this.groundLayer);
 
 
@@ -253,6 +253,21 @@ export class GameState extends Phaser.State
         );
         this.ui.add(this.muteButton);
 
+        this.autoToggleButton = this.game.add.button(
+            0,
+            60,
+            'button',
+            function() { // onClick
+                console.log("XXX tell server to autoplay me");
+                this.client.sendCommand("toggle autoplay");
+            },
+            this,
+            1,
+            1,
+            1
+        );
+        this.ui.add(this.autoToggleButton);
+
 
         // text-shadow hack for making text-stroke
         var style = { font: "10px topaz", fill: "#fff", backgroundColor: 'rgba(0,0,0,0.25)', wordWrap: true, wordWrapWidth: 400 };
@@ -288,6 +303,8 @@ export class GameState extends Phaser.State
         this.minimap.x = width - this.game.cache.getImage('minimap').width / this.minimapScale;
 
         this.muteButton.x = width - 102;
+
+        this.autoToggleButton.x = width - 50;
 
         this.logMessageList.x = width - 400;
         this.logMessageList.y = height - (this.maxMessageLines * this.logTextHeight);

@@ -68,6 +68,11 @@ export class Client
         };
     }
 
+    sendCommand(cmd)
+    {
+        this.socket.send(cmd);
+    }
+
     sendMove()
     {
         var newX = Math.floor((this.gameState.playerSprite.x / this.gameState.tileWidth) / this.gameState.worldScale.x);
@@ -78,7 +83,7 @@ export class Client
             return;
         }
 
-        this.socket.send("move " + newX + " " + newY + " " + this.sessionToken);
+        this.sendCommand("move " + newX + " " + newY + " " + this.sessionToken);
         this.prevX = newX;
         this.prevY = newY;
     }
