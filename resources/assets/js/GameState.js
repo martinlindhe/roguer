@@ -69,6 +69,12 @@ export class GameState extends Phaser.State
             case 't':
                 this.ui.visible = !this.ui.visible;
                 return;
+            case 'd':
+                console.log("debug collision toggle");
+                console.log(this.groundLayer.debug);
+                this.groundLayer.debug = !this.groundLayer.debug;
+                return;
+
             default:
                 console.log("unhandled char " + char);
                 return;
@@ -105,22 +111,24 @@ export class GameState extends Phaser.State
         // Update the shadow texture each frame
         //this.updateShadowTexture();
 
+/*
+        // flip horizontally, XXX this should be done on all npc movements to show facing direction
+        if (this.playerSprite.body.velocity.x == this.cursors.left.isDown) {
+            this.playerSprite.scale.x = this.worldScale.x * -1;
+        } else if (this.playerSprite.body.velocity.x == this.cursors.right.isDown) {
+            this.playerSprite.scale.x = this.worldScale.x * 1;
+        }
+*/
+
         this.playerSprite.body.velocity.x = 0;
         this.playerSprite.body.velocity.y = 0;
 
-        this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
 
         var steppingHoriz = 200;
         var steppingVert = steppingHoriz / 2;
 
-        /*
-        // flip horizontally, XXX this should be done on all npc movements to show facing direction
-        if (this.playerSprite.body.velocity.x == this.cursors.left.isDown) {
-            this.playerSprite.scale.x = -1;
-        } else if (this.playerSprite.body.velocity.x == this.cursors.right.isDown) {
-            this.playerSprite.scale.x = 1;
-        }
-        */
+
+
 
         if (this.cursors.up.isDown) {
             this.playerSprite.body.velocity.y = -steppingVert;
@@ -137,6 +145,9 @@ export class GameState extends Phaser.State
             this.playerSprite.body.velocity.x = steppingHoriz;
             this.client.sendMove();
         }
+
+        this.game.physics.arcade.collide(this.playerSprite, this.groundLayer);
+
 
 /*
         // XXX game.camera
@@ -185,11 +196,8 @@ export class GameState extends Phaser.State
         this.groundLayer = this.groundMap.createLayer(0);
         this.groundLayer.scale = this.worldScale;
         this.groundLayer.resizeWorld(); // NOTE: resize is needed for camera follow to work
-
+        this.game.physics.arcade.enable(this.groundLayer);
         this.groundMap.setCollisionBetween(25, 80); // 112 = beach line
-
-        // Un-comment this on to see the collision tiles
-        //this.groundLayer.debug = true;
 
 
         this.spawnLayer = this.game.add.group();
@@ -326,24 +334,8 @@ export class GameState extends Phaser.State
     {
         this.playerSprite = this.game.add.sprite(0, 0, 'characterAtlas');
         this.playerSprite.scale = this.worldScale;
-
-        this.game.physics.enable(this.playerSprite, Phaser.Physics.ARCADE);
-
-        //this.playerSprite.body.collideWorldBounds = true;
-
         this.playerSprite.frameName = 'dwarf';
         this.playerSprite.anchor.set(0.5);
-
-        this.game.camera.follow(this.playerSprite);
-
-
-
-
-        //  Because both our body and our tiles are so tiny,
-        //  and the body is moving pretty fast, we need to add
-        //  some tile padding to the body. WHat this does
-        this.playerSprite.body.tilePadding.set(32, 32);
-
 
         // multiply coords with tile size to scale properly.
         // sprite tiles are always in pixels
@@ -358,6 +350,21 @@ export class GameState extends Phaser.State
         aboveHead.anchor.set(0.5);
         this.playerGroup.add(aboveHead);
 */
+
+        this.game.physics.arcade.enable(this.playerSprite);
+
+
+        this.playerSprite.body.collideWorldBounds = true;
+
+        //  Because both our body and our tiles are so tiny,
+        //  and the body is moving pretty fast, we need to add
+        //  some tile padding to the body. WHat this does
+        this.playerSprite.body.tilePadding.set(32, 32);
+
+
+        this.game.camera.follow(this.playerSprite);
+
+
         console.log("spawned at " + cmd.X + ", " + cmd.Y);
 
         this.renderLocalSpawns(cmd.LocalSpawns);
