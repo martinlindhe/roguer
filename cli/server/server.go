@@ -51,6 +51,12 @@ func main() {
 				_, err = db.UpsertId(island.Seed, &island)
 				if err != nil {
 					log.Printf("ERROR saving db: %s", err)
+					mongo.Refresh()
+
+					_, err = db.UpsertId(island.Seed, &island)
+					if err != nil {
+						log.Fatalf("FATAL ERROR, failed twice saving db\n")
+					}
 				}
 
 				log.Printf("-DONE at %s\n", time.Now())
