@@ -1,19 +1,22 @@
 package rogue
 
-// PhaserTileMap represents the tiled json format, recognized by phaser.io
-type PhaserTileMap struct {
-	Version     int               `json:"version"`
-	Width       int               `json:"width"`
-	Height      int               `json:"height"`
-	TileWidth   int               `json:"tilewidth"`
-	TileHeight  int               `json:"tileheight"`
-	Orientation string            `json:"orientation"`
-	Layers      []PhaserTileLayer `json:"layers"`
-	TileSets    []PhaserTileSet   `json:"tilesets"`
+// SEE https://github.com/bjorn/tiled/wiki/JSON-Map-Format
+
+// TiledMapJSON represents the tiled json format, recognized by phaser.io
+type TiledMapJSON struct {
+	Version     int             `json:"version"`
+	Width       int             `json:"width"`
+	Height      int             `json:"height"`
+	TileWidth   int             `json:"tilewidth"`
+	TileHeight  int             `json:"tileheight"`
+	Orientation string          `json:"orientation"`
+	Layers      []TiledMapLayer `json:"layers"`
+	TileSets    []TiledTileSet  `json:"tilesets"`
 	// Properties ....  we skipped this
 }
 
-type PhaserTileLayer struct {
+// TiledMapLayer represents a map layer
+type TiledMapLayer struct {
 	Name    string `json:"name"`
 	Type    string `json:"type"`
 	Data    []int  `json:"data"`
@@ -25,7 +28,8 @@ type PhaserTileLayer struct {
 	Y       int    `json:"y"`
 }
 
-type PhaserTileSet struct {
+// TiledTileSet represents a tile set in use on the map
+type TiledTileSet struct {
 	FirstGid    int    `json:"firstgid"`
 	Image       string `json:"image"`
 	Name        string `json:"name"`

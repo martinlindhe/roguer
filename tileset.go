@@ -45,9 +45,8 @@ func parseGroundTilesetDefinition(defFileName string) (tilesetSpec, error) {
 	return specs, nil
 }
 
+// PrecalcTilemap ...
 func PrecalcTilemap() []byte {
-
-	// XXX also contain collision data
 
 	tiles, err := parseGroundTilesetDefinition("resources/assets/tilesets/oddball/ground.yml")
 	if err != nil {
@@ -56,33 +55,36 @@ func PrecalcTilemap() []byte {
 
 	imgWidth, imgHeight := getImageDimension(tiles.Props.TileMap)
 
-	var tileMap PhaserTileMap
-	tileMap.Version = 1
-	tileMap.Width = island.Width
-	tileMap.Height = island.Height
-	tileMap.TileWidth = tiles.Props.Width
-	tileMap.TileHeight = tiles.Props.Height
-	tileMap.Orientation = "orthogonal"
+	tileMap := TiledMapJSON{
+		Version:     1,
+		Width:       island.Width,
+		Height:      island.Height,
+		TileWidth:   tiles.Props.Width,
+		TileHeight:  tiles.Props.Height,
+		Orientation: "orthogonal"}
 
-	var layer PhaserTileLayer
-	layer.Data = island.HeightsAsFlatTilemap()
-	layer.Width = island.Width
-	layer.Height = island.Height
-	layer.Visible = true
-	layer.Opacity = 1
-	layer.Type = "tilelayer"
-	layer.Name = "layer1"
+	layer := TiledMapLayer{
+		Data:    island.HeightsAsFlatTilemap(),
+		Width:   island.Width,
+		Height:  island.Height,
+		Visible: true,
+		Opacity: 1,
+		Type:    "tilelayer",
+		Name:    "layer1"}
+
 	tileMap.Layers = append(tileMap.Layers, layer)
 
-	var tileset PhaserTileSet
-	tileset.FirstGid = 0
-	// NOTE: need to specify a tile in phaser later, .Name and .Image must be the same value (phaser 2.4.4, dec 2015)
-	tileset.Name = "island_tiles"
-	tileset.Image = "island_tiles"
-	tileset.ImageWidth = imgWidth
-	tileset.ImageHeight = imgHeight
-	tileset.TileWidth = tiles.Props.Width
-	tileset.TileHeight = tiles.Props.Height
+	// NOTE: need to specify a tile in phaser later, Name and Image
+	// must have same value (phaser 2.4.4, dec 2015)
+	tileset := TiledTileSet{
+		FirstGid:    0,
+		Name:        "island_tiles",
+		Image:       "island_tiles",
+		ImageWidth:  imgWidth,
+		ImageHeight: imgHeight,
+		TileWidth:   tiles.Props.Width,
+		TileHeight:  tiles.Props.Height}
+
 	tileMap.TileSets = append(tileMap.TileSets, tileset)
 
 	b, _ := json.Marshal(tileMap)

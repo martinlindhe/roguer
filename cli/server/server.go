@@ -48,9 +48,10 @@ func main() {
 
 				log.Printf("-SNAPSHOTTING DB at %s\n", time.Now())
 
+				mongo.Refresh()
 				_, err = db.UpsertId(island.Seed, &island)
 				if err != nil {
-					log.Printf("ERROR saving db: %s", err)
+					log.Fatalf("ERROR saving db: %s", err)
 					mongo.Refresh()
 
 					_, err = db.UpsertId(island.Seed, &island)

@@ -203,7 +203,7 @@ export class GameState extends Phaser.State
         this.groundLayer = this.groundMap.createLayer(0);
         this.groundLayer.scale = this.worldScale;
         this.groundLayer.resizeWorld(); // NOTE: resize is needed for camera follow to work
-        this.groundMap.setCollisionBetween(25, 80); // 112 = beach line
+        this.groundMap.setCollisionBetween(0, 60); // 112 = beach line
         this.game.physics.arcade.enable(this.groundLayer);
 
 
