@@ -9,6 +9,7 @@ import (
 	"gopkg.in/mgo.v2"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/martinlindhe/imgcat"
 	"github.com/martinlindhe/roguer"
 	"github.com/plimble/ace"
 )
@@ -26,6 +27,8 @@ var (
 
 func newOrResumeIsland() {
 	rogue.NewIsland()
+
+	imgcat.CatImage("public/img/islands/current.png")
 
 	// XXX loading island half-works, disabled for now //jan 2016
 	/*

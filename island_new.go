@@ -78,8 +78,8 @@ func (i *Island) spawnTrees() {
 		for x := 0; x < i.Width; x++ {
 			pos := Point{X: float64(x), Y: float64(y)}
 			if i.isAboveWater(pos) {
-				// add one tree in 3% of the time
-				if rand.Intn(100) < 3 {
+				// add one tree in 2% of the time
+				if rand.Intn(100) < 2 {
 					name := ""
 					// XXX make it less likely to place oak trees ?
 					switch rand.Intn(3) {

@@ -28,7 +28,7 @@ func (n *Obj) addToInventory(itemName string) {
 	spec := island.getNpcSpecFromName(itemName)
 	o := island.getNpcFromSpec(spec)
 
-	n.Inventory = append(n.Inventory, *o)
+	n.Inventory = append(n.Inventory, o)
 }
 
 func (n *Obj) removeFromInventory(index int) Obj {

@@ -20,12 +20,14 @@ type Island struct {
 	Seed      int64 `bson:"_id"`
 	Age       GameTime
 	HeightMap [][]int
-	Spawns    []*Obj
+	Spawns    []Obj
 	Players   []Player
 
 	// lookup lists:
 	npcSpecs    []objSpec
 	actionSpecs []actionSpec
+
+	idSeq int64
 }
 
 // height constants
@@ -51,7 +53,7 @@ func (i *Island) NewPlayer(name string, socket *websocket.Conn) (Point, string) 
 	var player Player
 	player.Name = name
 	player.Token = token
-	player.Spawn = spawn
+	player.Spawn = &spawn
 	player.Socket = socket
 	island.Players = append(island.Players, player)
 
@@ -74,16 +76,21 @@ func (i *Island) ContinuePlayer(token string, socket *websocket.Conn) (*Point, s
 }
 
 // Add ...
-func (i *Island) addSpawn(o *Obj) {
+func (i *Island) addSpawn(o Obj) {
+
+	i.idSeq++
+	o.Id = i.idSeq
+
+	log.Debug("spawned id ", o.Id, " ", o.Name)
 	i.Spawns = append(i.Spawns, o)
 }
 
-func (i *Island) removeSpawn(o *Obj) {
+func (i *Island) removeSpawn(o Obj) {
 
 	removeIdx := -1
 
 	for idx, sp := range i.Spawns {
-		if sp == o {
+		if sp.Id == o.Id {
 			removeIdx = idx
 			break
 		}
@@ -100,9 +107,9 @@ func (i *Island) removeSpawn(o *Obj) {
 func (i *Island) Tick() {
 
 	i.Age.Tick()
-	log.Infof("World tick %d at %s. %d spawns and %d players", i.Age.Current(), time.Now(), len(i.Spawns), len(i.Players))
+	log.Infof("World tick %d at %s. %d spawns and %d players", i.Age.Current(), time.Now(), len(island.Spawns), len(island.Players))
 
-	for _, o := range i.Spawns {
+	for _, o := range island.Spawns {
 		check := o.Tick()
 		if check == false {
 			log.Infof("Removing spawn %s", o.Name)
@@ -112,7 +119,7 @@ func (i *Island) Tick() {
 
 	tickMsg, _ := json.Marshal(tickMessage{Type: "tick", Time: i.Age.Current(), FormattedTime: i.Age.DateString()})
 
-	for _, p := range i.Players {
+	for _, p := range island.Players {
 		p.Socket.WriteMessage(websocket.TextMessage, tickMsg)
 	}
 }
@@ -140,7 +147,7 @@ func (i *Island) getNpcSpecFromRace(n string) objSpec {
 	panic(fmt.Errorf("npc spec by race not found: %s", n))
 }
 
-func (i *Island) addNpcFromName(n string, pos Point) *Obj {
+func (i *Island) addNpcFromName(n string, pos Point) Obj {
 
 	return i.addNpcFromSpec(i.getNpcSpecFromName(n), pos)
 }
@@ -150,13 +157,13 @@ func (i *Island) addNpcFromRace(n string, pos Point) {
 	i.addNpcFromSpec(i.getNpcSpecFromRace(n), pos)
 }
 
-func (i *Island) getNpcFromRace(race string) *Obj {
+func (i *Island) getNpcFromRace(race string) Obj {
 	spec := i.getNpcSpecFromRace(race)
 	return i.getNpcFromSpec(spec)
 }
 
-func (i *Island) getNpcFromSpec(spec objSpec) *Obj {
-	o := new(Obj)
+func (i *Island) getNpcFromSpec(spec objSpec) Obj {
+	var o Obj
 
 	o.Level = 1
 	o.Race = spec.Race
@@ -176,7 +183,7 @@ func (i *Island) getNpcFromSpec(spec objSpec) *Obj {
 	return o
 }
 
-func (i *Island) addNpcFromSpec(spec objSpec, pos Point) *Obj {
+func (i *Island) addNpcFromSpec(spec objSpec, pos Point) Obj {
 
 	o := i.getNpcFromSpec(spec)
 	o.Position = pos

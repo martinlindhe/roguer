@@ -18,19 +18,17 @@ func BenchmarkGenerateIsland(b *testing.B) {
 }
 
 func prepareIsland() {
-	if island == nil {
-		seed := int64(779)
-		log.Printf("Creating island with seed %d", seed)
-		island = generateIsland(seed, 200, 100)
-		island.spawnGravel()
-		island.spawnTrees()
-
-		islandColImgFile, _ := os.Create("island_test.png")
-		png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
-	}
-
 	// clear spawns between tests
 	island.Spawns = nil
+
+	seed := int64(780)
+	log.Printf("Creating island with seed %d", seed)
+	generateIsland(seed, 200, 100)
+	island.spawnGravel()
+	island.spawnTrees()
+
+	islandColImgFile, _ := os.Create("island_test.png")
+	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
 }
 
 func TestParseObjectsDefinition(t *testing.T) {
@@ -41,10 +39,11 @@ func TestParseObjectsDefinition(t *testing.T) {
 func TestCanBuildAt(t *testing.T) {
 
 	prepareIsland()
-	assert.Equal(t, 0, len(island.Spawns))
+	spawnCnt := len(island.Spawns)
+	assert.Equal(t, true, spawnCnt > 0)
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
-	assert.Equal(t, 1, len(island.Spawns))
+	assert.Equal(t, spawnCnt+1, len(island.Spawns))
 
 	assert.Equal(t, true, island.canBuildAt(island.Spawns[0].Position))
 
@@ -58,9 +57,10 @@ func TestFindFoodAndEat(t *testing.T) {
 	prepareIsland()
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
-	assert.Equal(t, 1, len(island.Spawns))
+	assert.Equal(t, true, len(island.Spawns) > 0)
 	dw := island.Spawns[0]
 	dw.addToInventory("small branch")
+
 	assert.Equal(t, 1, len(dw.Inventory))
 
 	// place food nearby
@@ -73,6 +73,7 @@ func TestFindFoodAndEat(t *testing.T) {
 	island.Tick()
 
 	// make sure planned action: find food
+	assert.Equal(t, false, dw.CurrentAction == nil)
 	assert.Equal(t, "find food", dw.CurrentAction.Name)
 	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
 
@@ -359,7 +360,7 @@ func TestBuildShelter(t *testing.T) {
 	assert.Equal(t, 1, len(shelters))
 
 	// make sure npc made this their home
-	assert.Equal(t, true, dw.Home == shelters[0])
+	assert.Equal(t, true, dw.Home == &shelters[0])
 
 	// make npc tired
 	dw.Tiredness = dw.tirednessCap() + 1
@@ -621,7 +622,8 @@ func TestBuildSmallHut(t *testing.T) {
 	assert.Equal(t, nil, err)
 	island.addNpcFromName("small fireplace", nextTo)
 
-	dw.Home = island.addNpcFromName("small shelter", nextTo)
+	home := island.addNpcFromName("small shelter", nextTo)
+	dw.Home = &home
 
 	island.addNpcFromName("apple tree", nextTo)
 	island.addNpcFromName("farmland", nextTo)

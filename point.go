@@ -85,15 +85,15 @@ func (p *Point) spawnsByName(n string, radius float64) []Obj {
 	var res []Obj
 	for _, o := range island.Spawns {
 		if o.Name == n && o.distanceTo(*p) <= radius {
-			res = append(res, *o)
+			res = append(res, o)
 		}
 	}
 	return res
 }
 
-func (p *Point) spawnsByType(t string, radius float64) []*Obj {
+func (p *Point) spawnsByType(t string, radius float64) []Obj {
 
-	var res []*Obj
+	var res []Obj
 	for _, o := range island.Spawns {
 		if o.Type == t && o.distanceTo(*p) <= radius {
 			res = append(res, o)
