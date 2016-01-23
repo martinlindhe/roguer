@@ -14,7 +14,7 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 
 	str := fmt.Sprintf(format, a...)
 
-	//fmt.Printf("XXX %s announces %s\n", n.Name, str)
+	log.Debug(n.Name, " announces ", str)
 
 	for _, pl := range island.Players {
 		if pl.Spawn.Position.isNearby(n.Position) {
@@ -32,10 +32,20 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 func (n *Obj) Tick() bool {
 	n.Age.Tick()
 
-	// log.Println("[tick]", n.Name, n.Age)
+	log.Debug("[tick] ", n.Name, n.Age)
 
 	if n.isAboveMaxAge() {
 		n.Announce("%s dies of old age", n.Name)
+		return false
+	}
+
+	if n.Hunger > 5 {
+		n.Announce("%s dies of hunger", n.Name)
+		return false
+	}
+
+	if n.Thirst > 5 {
+		n.Announce("%s dies of thirst", n.Name)
 		return false
 	}
 
@@ -84,9 +94,6 @@ func (n *Obj) npcTick() bool {
 	if n.Class != "npc" {
 		return true
 	}
-
-	n.Hunger++
-	n.Thirst++
 
 	if n.isSleeping() {
 		if n.CurrentAction.Name != "sleep" {
@@ -282,6 +289,9 @@ func (n *Obj) tiredTick() bool {
 }
 
 func (n *Obj) hungerThirstTick() bool {
+
+	n.Hunger++
+	n.Thirst++
 
 	if n.isHungry() {
 

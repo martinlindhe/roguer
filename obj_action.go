@@ -235,7 +235,7 @@ func (n *Obj) performForage() bool {
 
 		for _, it := range list {
 			n.Announce("%s picked up %s", n.Name, it.Name)
-			n.addItemToInventory(*it)
+			n.addItemToInventory(it)
 
 			// remove spawn from world
 			island.removeSpawn(it)
@@ -285,7 +285,7 @@ func (n *Obj) performBuild() bool {
 		// if object is a shelter, make it my home
 		if spec.Type == "shelter" || spec.Type == "burrow" {
 			n.Announce("%s has declared %s their home", n, o)
-			n.Home = o
+			n.Home = &o
 		}
 
 		return true

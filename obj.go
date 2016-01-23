@@ -10,6 +10,7 @@ import (
 
 // Obj is a in-game object, such as a npc or a item
 type Obj struct {
+	Id       int64
 	Level    int
 	Age      GameTime
 	Name     string
