@@ -36,8 +36,7 @@ type playerSpawnResponse struct {
 	Token string
 }
 
-// ServeWs ...
-func ServeWs(w http.ResponseWriter, r *http.Request) {
+func serveWebsocket(w http.ResponseWriter, r *http.Request) {
 	socket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("upgrade:", err)

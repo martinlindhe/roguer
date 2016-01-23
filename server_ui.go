@@ -1,9 +1,13 @@
-package main
+package rogue
 
 import (
 	"fmt"
 
 	"github.com/nsf/termbox-go"
+)
+
+var (
+	logMessages MessageList
 )
 
 type MessageList struct {
@@ -55,6 +59,7 @@ func handleEvents() bool {
 		}
 		if ev.Key == 'v' {
 			fmt.Println("xxx verbosity")
+			//log.SetLevel(log.DebugLevel)
 		}
 	}
 

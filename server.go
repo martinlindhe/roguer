@@ -1,6 +1,7 @@
-package main
+package rogue
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -9,12 +10,11 @@ import (
 	"gopkg.in/mgo.v2"
 
 	"github.com/martinlindhe/imgcat/lib"
-	"github.com/martinlindhe/roguer"
+	"github.com/nsf/termbox-go"
 	"github.com/plimble/ace"
 )
 
 var (
-	island           rogue.Island
 	islandMap        []byte
 	appPort          = 3322
 	mainloopInterval = 100 * time.Millisecond
@@ -25,8 +25,65 @@ var (
 	enableAutosave   = false
 )
 
+// BootServer ...
+func BootServer() {
+
+	err := termbox.Init()
+	if err != nil {
+		panic(err)
+	}
+	defer termbox.Close()
+
+	//termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
+
+	mongoSession, err := initServer()
+	if err != nil {
+		panic(err)
+	}
+	defer mongoSession.Close()
+
+	serverLoop()
+}
+
+func initServer() (*mgo.Session, error) {
+	mongoSession, err := initMongo()
+
+	registerAutosaver()
+
+	newOrResumeIsland()
+
+	r := getHTTPRouter()
+	islandMap = PrecalcTilemap()
+	listenAt := fmt.Sprintf(":%d", appPort)
+
+	go r.Run(listenAt)
+
+	return mongoSession, err
+}
+
+func serverLoop() {
+
+	// main loop
+	var cnt time.Duration
+	c := time.Tick(mainloopInterval)
+	for range c {
+
+		if !handleEvents() {
+			break
+		}
+
+		cnt += mainloopInterval
+		if cnt >= gameTickIRL {
+			cnt = 0
+			// progress game world
+			island.Tick()
+		}
+		logMessages.repaintMostRecent()
+	}
+}
+
 func newOrResumeIsland() {
-	rogue.NewIsland()
+	NewIsland()
 
 	imgcat.CatFile("public/img/islands/current.png", os.Stdout)
 
@@ -38,7 +95,7 @@ func newOrResumeIsland() {
 		if err != nil {
 			//panic(err)
 			fmt.Printf("ERROR resuming, creating new world")
-			rogue.NewIsland()
+			NewIsland()
 		} else {
 			island.LoadSpecs()
 		}
@@ -94,7 +151,7 @@ func registerAutosaver() {
 	}()
 }
 
-func getRouter() *ace.Ace {
+func getHTTPRouter() *ace.Ace {
 
 	// ace with Logger, Recovery
 	r := ace.Default()
@@ -111,7 +168,7 @@ func getRouter() *ace.Ace {
 	r.GET("/sprite/ground2", getTexturePackGround2Controller)
 
 	r.GET("/ws", func(c *ace.C) {
-		rogue.ServeWs(c.Writer, c.Request)
+		serveWebsocket(c.Writer, c.Request)
 	})
 
 	r.Static("/js", "./public/js")
@@ -119,6 +176,8 @@ func getRouter() *ace.Ace {
 	r.Static("/fonts", "./public/fonts")
 	r.Static("/img", "./public/img")
 	r.Static("/audio", "./public/audio")
+
+	logMessages.Info("http server started, listening on port", appPort)
 
 	return r
 }
@@ -133,33 +192,33 @@ func getFullIslandController(c *ace.C) {
 
 func getTexturePackCharacterController(c *ace.C) {
 
-	ss, err := rogue.ParseSpritesetDefinition("resources/assets/tilesets/oddball/characters.yml")
+	ss, err := ParseSpritesetDefinition("resources/assets/tilesets/oddball/characters.yml")
 	if err != nil {
 		panic(err)
 	}
 
-	tp := rogue.GenerateTexturePacker(ss)
+	tp := GenerateTexturePacker(ss)
 	c.JSON(http.StatusOK, tp)
 }
 
 func getTexturePackItemController(c *ace.C) {
 
-	ss, err := rogue.ParseSpritesetDefinition("resources/assets/tilesets/oddball/items.yml")
+	ss, err := ParseSpritesetDefinition("resources/assets/tilesets/oddball/items.yml")
 	if err != nil {
 		panic(err)
 	}
 
-	tp := rogue.GenerateTexturePacker(ss)
+	tp := GenerateTexturePacker(ss)
 	c.JSON(http.StatusOK, tp)
 }
 
 func getTexturePackGround2Controller(c *ace.C) {
 
-	ss, err := rogue.ParseSpritesetDefinition("resources/assets/tilesets/oddball/ground2.yml")
+	ss, err := ParseSpritesetDefinition("resources/assets/tilesets/oddball/ground2.yml")
 	if err != nil {
 		panic(err)
 	}
 
-	tp := rogue.GenerateTexturePacker(ss)
+	tp := GenerateTexturePacker(ss)
 	c.JSON(http.StatusOK, tp)
 }
