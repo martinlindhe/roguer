@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 // Island ...
@@ -81,7 +79,7 @@ func (i *Island) addSpawn(o Obj) {
 	i.idSeq++
 	o.Id = i.idSeq
 
-	log.Debug("spawned id ", o.Id, " ", o.Name)
+	generalLog.Debug("spawned id ", o.Id, " ", o.Name)
 	i.Spawns = append(i.Spawns, o)
 }
 
@@ -107,12 +105,12 @@ func (i *Island) removeSpawn(o Obj) {
 func (i *Island) Tick() {
 
 	i.Age.Tick()
-	log.Infof("World tick %d at %s. %d spawns and %d players", i.Age.Current(), time.Now(), len(island.Spawns), len(island.Players))
+	generalLog.Infof("World tick %d at %s. %d spawns and %d players", i.Age.Current(), time.Now(), len(island.Spawns), len(island.Players))
 
 	for _, o := range island.Spawns {
 		check := o.Tick()
 		if check == false {
-			log.Infof("Removing spawn %s", o.Name)
+			generalLog.Info("Removing spawn", o.Name)
 			i.removeSpawn(o)
 		}
 	}
@@ -142,9 +140,7 @@ func (i *Island) getNpcSpecFromRace(n string) objSpec {
 		}
 	}
 
-	fmt.Printf("checked %d specs", len(island.npcSpecs))
-
-	panic(fmt.Errorf("npc spec by race not found: %s", n))
+	panic(fmt.Errorf("npc spec by race not found: %s, checked %d specs", n, len(island.npcSpecs)))
 }
 
 func (i *Island) addNpcFromName(n string, pos Point) Obj {

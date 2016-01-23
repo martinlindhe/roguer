@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"os"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/martinlindhe/roguer/rollingparticle"
 	"github.com/ojrac/opensimplex-go"
 )
@@ -18,14 +17,14 @@ func NewIsland() {
 
 	// XXX load existing world from disk
 	seed := int64(666666)
-	logMessages.Info("Generating island with seed", seed, "...")
+	generalLog.Info("Generating island with seed", seed, "...")
 	generateIsland(seed, 220, 140)
 
 	island.spawnGravel()
 	island.spawnTrees()
 
 	island.fillWithCritters()
-	log.Info("Done generating island")
+	generalLog.Info("Done generating island")
 
 	// store island to disk as png
 	islandColImage := island.ColoredHeightMapAsImage()
@@ -98,7 +97,7 @@ func (i *Island) spawnTrees() {
 			}
 		}
 	}
-	log.Printf("spawned %d trees", cnt)
+	generalLog.Info("spawned", cnt, "trees")
 }
 
 // generate critters based on data file

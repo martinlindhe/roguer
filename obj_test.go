@@ -22,7 +22,7 @@ func prepareIsland() {
 	island.Spawns = nil
 
 	seed := int64(780)
-	log.Printf("Creating island with seed %d", seed)
+	log.Info("Creating island with seed", seed)
 	generateIsland(seed, 200, 100)
 	island.spawnGravel()
 	island.spawnTrees()

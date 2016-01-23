@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
 )
 
@@ -39,7 +38,7 @@ func (c *client) read() {
 				res.LocalSpawns = island.DescribeLocalArea(pos)
 
 				b, _ = json.Marshal(res)
-				log.Printf("new player %s spawned at %s", parts[1], pos)
+				generalLog.Infof("new player %s spawned at %s", parts[1], pos)
 
 				// XXX broadcast a "new player" event to all
 
@@ -59,7 +58,7 @@ func (c *client) read() {
 				res.LocalSpawns = island.DescribeLocalArea(*pos)
 
 				b, _ = json.Marshal(res)
-				log.Printf("continuing player %s spawned at %s", parts[1], pos)
+				generalLog.Infof("continuing player %s spawned at %s", parts[1], pos)
 
 			case "move":
 				subcommand := strings.SplitN(parts[1], " ", 3)
@@ -75,7 +74,7 @@ func (c *client) read() {
 					}
 				}
 				if player == nil {
-					log.Errorf("Invalid token recieved: %s", token)
+					generalLog.Error("Invalid token recieved:", token)
 					res := messageResponse{Type: "error", Message: "invalid token"}
 					b, _ = json.Marshal(res)
 					break
@@ -85,7 +84,7 @@ func (c *client) read() {
 				player.Spawn.Position.X = float64(x)
 				player.Spawn.Position.Y = float64(y)
 
-				log.Printf("Player %s moved from %s to %s", player.Name, oldPos, player.Spawn.Position)
+				generalLog.Infof("Player %s moved from %s to %s", player.Name, oldPos, player.Spawn.Position)
 
 				var res moveResponse
 				res.Type = "move_res"
@@ -95,9 +94,8 @@ func (c *client) read() {
 				b, _ = json.Marshal(res)
 
 			default:
-				log.Errorf("unknown command %s", parts[0])
-
-				res := messageResponse{Type: "error", Message: fmt.Sprintf("unknown command %s", parts[0])}
+				generalLog.Error("unknown command", parts[0])
+				res := messageResponse{Type: "error", Message: "unknown command"}
 				b, _ = json.Marshal(res)
 			}
 

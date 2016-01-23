@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
 )
 
@@ -77,6 +76,6 @@ func parseObjectsDefinition(defFileName string) ([]objSpec, error) {
 		return npcs.All, err
 	}
 
-	log.Infof("Read %d entries from %s", len(npcs.All), defFileName)
+	generalLog.Infof("Read %d entries from %s", len(npcs.All), defFileName)
 	return npcs.All, nil
 }

@@ -78,7 +78,7 @@ func serverLoop() {
 			// progress game world
 			island.Tick()
 		}
-		logMessages.repaintMostRecent()
+		generalLog.repaintMostRecent()
 	}
 }
 
@@ -124,7 +124,7 @@ func registerAutosaver() {
 					break
 				}
 
-				logMessages.Info("---SAVE at", time.Now())
+				generalLog.Info("---SAVE at", time.Now())
 
 				mongoSession.Refresh()
 
@@ -132,16 +132,16 @@ func registerAutosaver() {
 
 				_, err := coll.UpsertId(island.Seed, island)
 				if err != nil {
-					logMessages.Info("ERROR saving db:", err)
+					generalLog.Info("ERROR saving db:", err)
 					mongoSession.Refresh()
 
 					_, err = coll.UpsertId(island.Seed, &island)
 					if err != nil {
-						logMessages.Info("FATAL ERROR, failed twice saving db")
+						generalLog.Info("FATAL ERROR, failed twice saving db")
 					}
 				}
 
-				logMessages.Info("---DONE at", time.Now())
+				generalLog.Info("---DONE at", time.Now())
 
 			case <-quit:
 				ticker.Stop()
@@ -177,7 +177,7 @@ func getHTTPRouter() *ace.Ace {
 	r.Static("/img", "./public/img")
 	r.Static("/audio", "./public/audio")
 
-	logMessages.Info("http server started, listening on port", appPort)
+	generalLog.Info("http server started, listening on port", appPort)
 
 	return r
 }

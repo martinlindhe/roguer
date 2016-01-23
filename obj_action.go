@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 // check if npc already has planned to do a
@@ -257,7 +255,7 @@ func (n *Obj) performForage() bool {
 
 	n.CurrentAction.Duration--
 	if n.CurrentAction.Duration < 0 {
-		log.Errorf("%s gave up foraging before dst reached!", n.Name)
+		generalLog.Error(n.Name, "gave up foraging before dst reached!")
 		return true
 	}
 

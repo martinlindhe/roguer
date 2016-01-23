@@ -3,7 +3,6 @@ package rogue
 import (
 	"io/ioutil"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
 )
 
@@ -41,6 +40,6 @@ func parseActionsDefinition(defFileName string) ([]actionSpec, error) {
 		return specs.All, err
 	}
 
-	log.Infof("Read %d entries from %s", len(specs.All), defFileName)
+	generalLog.Infof("Read", len(specs.All), "entries from", defFileName)
 	return specs.All, nil
 }

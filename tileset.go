@@ -41,7 +41,7 @@ func parseGroundTilesetDefinition(defFileName string) (tilesetSpec, error) {
 		return specs, err
 	}
 
-	log.Infof("Read %s", defFileName)
+	generalLog.Info("Read", defFileName)
 	return specs, nil
 }
 
@@ -101,7 +101,7 @@ func getImageDimension(imagePath string) (int, int) {
 
 	image, _, err := image.DecodeConfig(file)
 	if err != nil {
-		log.Println(imagePath, err)
+		generalLog.Error(imagePath, err)
 	}
 	return image.Width, image.Height
 }

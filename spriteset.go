@@ -3,7 +3,6 @@ package rogue
 import (
 	"io/ioutil"
 
-	"github.com/gobuild/log"
 	"gopkg.in/yaml.v2"
 )
 
@@ -26,7 +25,7 @@ func ParseSpritesetDefinition(defFileName string) (spritesheetSpec, error) {
 		return specs, err
 	}
 
-	log.Infof("Read %d entries from %s", len(specs.Tiles), defFileName)
+	generalLog.Infof("Read %d entries from %s", len(specs.Tiles), defFileName)
 	return specs, nil
 }
 

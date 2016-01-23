@@ -7,29 +7,41 @@ import (
 )
 
 var (
-	logMessages MessageList
+	generalLog messageList
 )
 
-type MessageList struct {
+type messageList struct {
 	messages []string
 }
 
-func (m MessageList) Info(a ...interface{}) {
+func (m messageList) Error(a ...interface{}) {
+
+	// XXX mark msg type
+	m.Info(a)
+}
+
+func (m messageList) Debug(a ...interface{}) {
+
+	// XXX mark msg type
+	m.Info(a)
+}
+
+func (m messageList) Info(a ...interface{}) {
 
 	m.messages = append(m.messages, fmt.Sprint(a))
 }
 
-func (m MessageList) Infof(format string, a ...interface{}) {
+func (m messageList) Infof(format string, a ...interface{}) {
 
 	m.messages = append(m.messages, fmt.Sprintf(format, a))
 }
 
-func (m MessageList) repaintMostRecent() {
+func (m messageList) repaintMostRecent() {
 
 	y := 0
 
 	// XXX draw last x lines, depending on console window height
-	for _, m := range logMessages.messages {
+	for _, m := range m.messages {
 		tbPrint(0, y, termbox.ColorWhite, termbox.ColorDefault, m)
 		fmt.Println(m)
 		y++ // XXX
