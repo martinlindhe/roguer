@@ -287,7 +287,7 @@ func fromSliceByScale(b int, min int, max int, tiles []int) int {
 	num := int(scale(float64(b), float64(min), float64(max), 0, float64(len(tiles))))
 
 	if num >= len(tiles) {
-		fmt.Printf("ERROR: num is %d, max is %d\n", num, len(tiles)-1)
+		//fmt.Printf("ERROR: num is %d, max is %d\n", num, len(tiles)-1)
 		num = len(tiles) - 1
 	}
 	return tiles[num]

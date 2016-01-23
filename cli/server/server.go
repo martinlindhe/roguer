@@ -1,15 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"gopkg.in/mgo.v2"
 
-	log "github.com/Sirupsen/logrus"
-	"github.com/martinlindhe/imgcat"
+	"github.com/martinlindhe/imgcat/lib"
 	"github.com/martinlindhe/roguer"
 	"github.com/plimble/ace"
 )
@@ -18,8 +17,9 @@ var (
 	island           rogue.Island
 	islandMap        []byte
 	appPort          = 3322
-	tickDuration     = 3 * time.Second // 1 game tick = 3 real world seconds
-	snapshotInterval = 10*tickDuration + 1
+	mainloopInterval = 100 * time.Millisecond
+	gameTickIRL      = 3 * time.Second // 1 game tick = 3 real world seconds
+	snapshotInterval = 10*gameTickIRL + 1
 	mongoSession     *mgo.Session
 	dbName           = "roguer"
 	enableAutosave   = false
@@ -28,7 +28,7 @@ var (
 func newOrResumeIsland() {
 	rogue.NewIsland()
 
-	imgcat.CatImage("public/img/islands/current.png")
+	imgcat.CatFile("public/img/islands/current.png", os.Stdout)
 
 	// XXX loading island half-works, disabled for now //jan 2016
 	/*
@@ -43,37 +43,6 @@ func newOrResumeIsland() {
 			island.LoadSpecs()
 		}
 	*/
-}
-
-func main() {
-
-	log.SetLevel(log.DebugLevel)
-
-	mongoSession, err := initMongo()
-	if err != nil {
-		panic(err)
-	}
-	defer mongoSession.Close()
-
-	newOrResumeIsland()
-
-	registerAutosaver()
-
-	r := getRouter()
-
-	islandMap = rogue.PrecalcTilemap()
-
-	listenAt := fmt.Sprintf(":%d", appPort)
-
-	log.Infof("roguer server started, listening on %s", listenAt)
-
-	go r.Run(listenAt)
-
-	c := time.Tick(tickDuration)
-	for range c {
-		// progress game world
-		island.Tick()
-	}
 }
 
 func initMongo() (*mgo.Session, error) {
@@ -98,7 +67,7 @@ func registerAutosaver() {
 					break
 				}
 
-				log.Printf("---SAVE at %s\n", time.Now())
+				logMessages.Info("---SAVE at", time.Now())
 
 				mongoSession.Refresh()
 
@@ -106,16 +75,16 @@ func registerAutosaver() {
 
 				_, err := coll.UpsertId(island.Seed, island)
 				if err != nil {
-					log.Fatalf("ERROR saving db: %s", err)
+					logMessages.Info("ERROR saving db:", err)
 					mongoSession.Refresh()
 
 					_, err = coll.UpsertId(island.Seed, &island)
 					if err != nil {
-						log.Fatalf("FATAL ERROR, failed twice saving db\n")
+						logMessages.Info("FATAL ERROR, failed twice saving db")
 					}
 				}
 
-				log.Printf("---DONE at %s\n", time.Now())
+				logMessages.Info("---DONE at", time.Now())
 
 			case <-quit:
 				ticker.Stop()
