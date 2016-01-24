@@ -44,6 +44,9 @@ func (m *messageList) repaintMostRecent() {
 	y := 10
 
 	maxMessages := 30 // XXX depending on console window height
+	if maxMessages > len(m.messages) {
+		maxMessages = len(m.messages)
+	}
 
 	// draw last x lines of log
 	msgs := m.messages[len(m.messages)-maxMessages : len(m.messages)]

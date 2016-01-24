@@ -78,9 +78,9 @@ func (i *Island) addSpawn(o *Obj) {
 
 	i.idSeq++
 	o.ID = i.idSeq
-
-	generalLog.Debug("spawned id ", o.ID, " ", o.Name)
 	i.Spawns = append(i.Spawns, o)
+
+	//generalLog.Debug("spawned id ", o.ID, " ", o.Name)
 }
 
 func (i *Island) removeSpawn(o *Obj) {
