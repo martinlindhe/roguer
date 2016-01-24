@@ -24,8 +24,8 @@ func prepareIsland() {
 	seed := int64(780)
 	log.Info("Creating island with seed ", seed)
 	generateIsland(seed, 200, 100)
-	island.spawnGravel()
-	island.spawnTrees()
+	//island.spawnGravel()
+	//island.spawnTrees()
 
 	islandColImgFile, _ := os.Create("island_test.png")
 	png.Encode(islandColImgFile, island.ColoredHeightMapAsImage())
@@ -40,7 +40,7 @@ func TestCanBuildAt(t *testing.T) {
 
 	prepareIsland()
 	spawnCnt := len(island.Spawns)
-	assert.Equal(t, true, spawnCnt > 0)
+	assert.Equal(t, 0, spawnCnt)
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, spawnCnt+1, len(island.Spawns))
@@ -60,8 +60,13 @@ func TestFindFoodAndEat(t *testing.T) {
 	assert.Equal(t, true, len(island.Spawns) > 0)
 	npc := island.Spawns[0]
 	npc.addToInventory("small branch")
-
 	assert.Equal(t, 1, len(npc.Inventory))
+
+	// add nessecities, so they dont need to be built
+	island.addNpcFromName("small fireplace", npc.Position)
+	island.addNpcFromName("small shelter", npc.Position)
+	island.addNpcFromName("apple tree", npc.Position)
+	island.addNpcFromName("farmland", npc.Position)
 
 	// place food nearby
 	nextTo, err := npc.Position.randomNearby()

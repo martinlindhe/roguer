@@ -24,7 +24,7 @@ func (p Point) Equals(p2 Point) bool {
 	return false
 }
 
-func (n *Obj) distanceTo(pos Point) float64 {
+func (n *Obj) distanceTo(pos *Point) float64 {
 
 	xd := n.Position.X - pos.X
 	yd := n.Position.Y - pos.Y
@@ -85,7 +85,7 @@ func (p *Point) spawnsByName(n string, radius float64) []*Obj {
 
 	var res []*Obj
 	for _, o := range island.Spawns {
-		if o.Name == n && o.distanceTo(*p) <= radius {
+		if o.Name == n && o.distanceTo(p) <= radius {
 			res = append(res, o)
 		}
 	}
@@ -96,10 +96,10 @@ func (p *Point) spawnsByType(t string, radius float64) []*Obj {
 
 	var res []*Obj
 	for _, o := range island.Spawns {
-		if o.Type == t && o.distanceTo(*p) <= radius {
+		if o.Type == t && o.distanceTo(p) <= radius {
 			res = append(res, o)
 		}
 	}
-	//fmt.Printf("spawnsByType radius %f from %s match %s: found %d\n", radius, p, t, len(res))
+	//log.Debugf("spawnsByType radius %f from %s match %s: found %d\n", radius, p, t, len(res))
 	return res
 }

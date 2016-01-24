@@ -37,6 +37,14 @@ func (n *Obj) isThirsty() bool {
 	return false
 }
 
+func (n *Obj) diesOfHungerCap() int {
+	return n.hungerCap() + 1000
+}
+
+func (n *Obj) diesOfThirstCap() int {
+	return n.thirstCap() + 1000
+}
+
 func (n *Obj) isCold() bool {
 	if n.Coldness >= n.coldnessCap() {
 		return true

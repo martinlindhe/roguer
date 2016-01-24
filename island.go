@@ -110,7 +110,7 @@ func (i *Island) Tick() {
 	for _, o := range island.Spawns {
 		check := o.Tick()
 		if check == false {
-			generalLog.Info("Removing spawn", o.Name)
+			generalLog.Info("Removing spawn ", o.Name)
 			i.removeSpawn(o)
 		}
 	}

@@ -10,7 +10,7 @@ import (
 func TestSpawnsByType(t *testing.T) {
 
 	prepareIsland()
-	assert.Equal(t, true, len(island.Spawns) == 0)
+	assert.Equal(t, 0, len(island.Spawns))
 
 	pos := island.RandomPointAboveWater()
 

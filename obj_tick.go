@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
 )
 
@@ -14,7 +13,7 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 
 	str := fmt.Sprintf(format, a...)
 
-	log.Debug(n.Name, " announces ", str)
+	generalLog.Debug(n.Name, " announces: ", str)
 
 	for _, pl := range island.Players {
 		if pl.Spawn.Position.isNearby(n.Position) {
@@ -32,19 +31,20 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 func (n *Obj) Tick() bool {
 	n.Age.Tick()
 
-	log.Debug("[tick] ", n.Name, n.Age)
+	//generalLog.Debug("[tick]", n.Name, n.Age)
+	//log.Info("[tick]", n.Name, n.Age)
 
 	if n.isAboveMaxAge() {
 		n.Announce("%s dies of old age", n.Name)
 		return false
 	}
 
-	if n.Hunger > 5 {
+	if n.Hunger > n.diesOfHungerCap() {
 		n.Announce("%s dies of hunger", n.Name)
 		return false
 	}
 
-	if n.Thirst > 5 {
+	if n.Thirst > n.diesOfThirstCap() {
 		n.Announce("%s dies of thirst", n.Name)
 		return false
 	}
@@ -83,7 +83,7 @@ func (n *Obj) treeTick() {
 			if err == nil {
 				island.addNpcFromName(drop.Name, spawnPos)
 			} else {
-				log.Errorf("XXX failed to find pos nearby %s", n)
+				generalLog.Error("Failed to find pos nearby", n)
 			}
 		}
 	}
@@ -150,7 +150,7 @@ func (n *Obj) npcTick() bool {
 			fireplaces := n.Position.spawnsByType("fireplace", 30)
 
 			if len(fireplaces) > 0 {
-				if n.distanceTo(fireplaces[0].Position) > 1 {
+				if n.distanceTo(&fireplaces[0].Position) > 1 {
 					n.Announce("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
 					n.planAction("walk", fireplaces[0].Position)
 				}
