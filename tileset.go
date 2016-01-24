@@ -45,7 +45,7 @@ func parseGroundTilesetDefinition(defFileName string) (tilesetSpec, error) {
 	return specs, nil
 }
 
-func (g *Game) precalcTilemap() []byte {
+func (g *Game) precalcTilemap() {
 
 	tiles, err := parseGroundTilesetDefinition("resources/assets/tilesets/oddball/ground.yml")
 	if err != nil {
@@ -86,9 +86,13 @@ func (g *Game) precalcTilemap() []byte {
 
 	tileMap.TileSets = append(tileMap.TileSets, tileset)
 
-	b, _ := json.Marshal(tileMap)
+	b, err := json.Marshal(tileMap)
+	if err != nil {
+		panic(err)
+	}
 
-	return b
+	//fmt.Printf("precalced island map: %d bytes\n", len(b))
+	g.islandMap = b
 }
 
 func getImageDimension(imagePath string) (int, int) {

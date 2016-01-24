@@ -10,7 +10,6 @@ import (
 	"gopkg.in/mgo.v2"
 
 	"github.com/martinlindhe/imgcat/lib"
-	"github.com/nsf/termbox-go"
 	"github.com/plimble/ace"
 )
 
@@ -33,14 +32,15 @@ type Game struct {
 
 // BootServer ...
 func BootServer() {
+	/*
+		err := termbox.Init()
+		if err != nil {
+			panic(err)
+		}
+		defer termbox.Close()
 
-	err := termbox.Init()
-	if err != nil {
-		panic(err)
-	}
-	defer termbox.Close()
-
-	//termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
+		//termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
+	*/
 
 	g, err := initServer()
 	if err != nil {
@@ -49,8 +49,8 @@ func BootServer() {
 	defer g.mongoSession.Close()
 
 	// Init input
-	g.input.start()
-	defer g.input.stop()
+	//g.input.start()
+	//defer g.input.stop()
 
 	g.serverLoop()
 }
@@ -87,7 +87,7 @@ func initServer() (*Game, error) {
 
 	registerAutosaver()
 
-	r := getHTTPRouter(g)
+	r := g.getHTTPRouter()
 	listenAt := fmt.Sprintf(":%d", appPort)
 
 	go r.Run(listenAt)
@@ -104,20 +104,18 @@ func (g *Game) serverLoop() {
 	c := time.Tick(mainloopInterval)
 	for range c {
 
-		generalLog.repaintMostRecent()
+		//generalLog.repaintMostRecent()
 		/*
-			if !handleEvents() {
-				break
+			select {
+			case ev := <-g.input.eventQ:
+				if ev.Key == g.input.endKey {
+					fmt.Println("breaking main loop")
+					return
+				}
 			}
-		*/
-		select {
-		case ev := <-g.input.eventQ:
-			if ev.Key == g.input.endKey {
-				fmt.Println("breaking main loop")
-				return
-			}
-		}
 
+			fmt.Print(".")
+		*/
 		cnt += mainloopInterval
 		if cnt >= gameTickIRL {
 			cnt = 0
@@ -192,7 +190,7 @@ func registerAutosaver() {
 	}()
 }
 
-func getHTTPRouter(g *Game) *ace.Ace {
+func (g *Game) getHTTPRouter() *ace.Ace {
 
 	// ace with Logger, Recovery
 	r := ace.Default()
@@ -230,6 +228,8 @@ func getFullIslandController(g *Game, c *ace.C) {
 
 	c.Writer.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	c.Writer.WriteHeader(http.StatusOK)
+
+	fmt.Printf("islandmap is %d len\n", len(g.islandMap))
 	c.Writer.Write(g.islandMap)
 }
 

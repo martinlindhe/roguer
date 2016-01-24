@@ -3,7 +3,7 @@ package rogue
 import (
 	"fmt"
 
-	"github.com/nsf/termbox-go"
+	"github.com/gobuild/log"
 )
 
 var (
@@ -17,29 +17,34 @@ type messageList struct {
 func (m *messageList) Error(a ...interface{}) {
 
 	// XXX mark msg type
-	m.Info(a...)
+	//m.Info(a...)
+	log.Error(a...)
 }
 
 func (m *messageList) Debug(a ...interface{}) {
 
 	// XXX mark msg type
-	m.Info(a...)
+	//m.Info(a...)
+	log.Debug(a...)
 }
 
 func (m *messageList) Info(a ...interface{}) {
 
 	s := fmt.Sprint(a...)
-	//log.Info(s) // XXX
-	m.messages = append(m.messages, s)
+	log.Info(s)
+	//m.messages = append(m.messages, s)
 }
 
 func (m *messageList) Infof(format string, a ...interface{}) {
 
-	//m.messages = append(m.messages, fmt.Sprintf(format, a...))
-	m.Info(fmt.Sprintf(format, a...))
+	log.Info(fmt.Sprintf(format, a...))
+	//m.Info(fmt.Sprintf(format, a...))
 }
 
+/*
 func (m *messageList) repaintMostRecent() {
+
+	termbox.Clear(termbox.ColorWhite, termbox.ColorDefault)
 
 	y := 10
 
@@ -65,26 +70,4 @@ func tbPrint(x, y int, fg, bg termbox.Attribute, msg string) {
 		x++
 	}
 }
-
-// returns false to signal shutdown
-func handleEvents() bool {
-
-	// XXX this is blocking ...
-	switch ev := termbox.PollEvent(); ev.Type {
-	case termbox.EventKey:
-		if ev.Key == termbox.KeyCtrlQ {
-			fmt.Println("ctrl-q pressed, exiting")
-			return false
-		}
-		if ev.Key == termbox.KeyCtrlX {
-			fmt.Println("ctrl-x pressed, exiting")
-			return false
-		}
-		if ev.Key == 'v' {
-			fmt.Println("xxx verbosity")
-			//log.SetLevel(log.DebugLevel)
-		}
-	}
-
-	return true
-}
+*/
