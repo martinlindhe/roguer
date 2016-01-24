@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,6 +17,8 @@ func BenchmarkGenerateIsland(b *testing.B) {
 }
 
 func testNewGame() *Game {
+
+	log.SetLevel(log.DebugLevel)
 
 	g := Game{
 		Island: NewIsland(),

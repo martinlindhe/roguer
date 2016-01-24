@@ -39,7 +39,7 @@ type playerSpawnResponse struct {
 func serveWebsocket(g *Game, w http.ResponseWriter, r *http.Request) {
 	socket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("upgrade:", err)
+		log.Error("upgrade:", err)
 		return
 	}
 
