@@ -41,7 +41,7 @@ func parseGroundTilesetDefinition(defFileName string) (tilesetSpec, error) {
 		return specs, err
 	}
 
-	generalLog.Info("Read", defFileName)
+	generalLog.Info("Read ", defFileName)
 	return specs, nil
 }
 

@@ -63,10 +63,14 @@ func initServer() (*mgo.Session, error) {
 
 func serverLoop() {
 
+	imgcat.CatFile("public/img/islands/current.png", os.Stdout)
+
 	// main loop
 	var cnt time.Duration
 	c := time.Tick(mainloopInterval)
 	for range c {
+
+		generalLog.repaintMostRecent()
 
 		if !handleEvents() {
 			break
@@ -78,14 +82,11 @@ func serverLoop() {
 			// progress game world
 			island.Tick()
 		}
-		generalLog.repaintMostRecent()
 	}
 }
 
 func newOrResumeIsland() {
 	NewIsland()
-
-	imgcat.CatFile("public/img/islands/current.png", os.Stdout)
 
 	// XXX loading island half-works, disabled for now //jan 2016
 	/*

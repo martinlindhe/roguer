@@ -40,6 +40,6 @@ func parseActionsDefinition(defFileName string) ([]actionSpec, error) {
 		return specs.All, err
 	}
 
-	generalLog.Infof("Read", len(specs.All), "entries from", defFileName)
+	generalLog.Info("Read ", len(specs.All), " entries from ", defFileName)
 	return specs.All, nil
 }

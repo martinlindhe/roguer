@@ -22,7 +22,7 @@ func prepareIsland() {
 	island.Spawns = nil
 
 	seed := int64(780)
-	log.Info("Creating island with seed", seed)
+	log.Info("Creating island with seed ", seed)
 	generateIsland(seed, 200, 100)
 	island.spawnGravel()
 	island.spawnTrees()
@@ -58,52 +58,56 @@ func TestFindFoodAndEat(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, true, len(island.Spawns) > 0)
-	dw := island.Spawns[0]
-	dw.addToInventory("small branch")
+	npc := island.Spawns[0]
+	npc.addToInventory("small branch")
 
-	assert.Equal(t, 1, len(dw.Inventory))
+	assert.Equal(t, 1, len(npc.Inventory))
 
 	// place food nearby
-	nextTo, err := dw.Position.randomNearby()
+	nextTo, err := npc.Position.randomNearby()
 	assert.Equal(t, nil, err)
 	island.addNpcFromName("carrot", nextTo)
 
 	// make npc hungry
-	dw.Hunger = dw.hungerCap() + 1
+	npc.Hunger = npc.hungerCap() + 1
 	island.Tick()
 
 	// make sure planned action: find food
-	assert.Equal(t, false, dw.CurrentAction == nil)
-	assert.Equal(t, "find food", dw.CurrentAction.Name)
-	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
+	if npc.CurrentAction == nil {
+		assert.Fail(t, "current action is nil")
+		return
+	}
+
+	assert.Equal(t, "find food", npc.CurrentAction.Name)
+	assert.Equal(t, false, npc.hasItemTypeInInventory("food"))
 
 	// progress until npc found food
-	duration := dw.CurrentAction.Duration
+	duration := npc.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	for {
 		island.Tick()
-		if len(dw.Inventory) == 2 {
+		if len(npc.Inventory) == 2 {
 			// food + small branch
 			break
 		}
 	}
 
 	// make sure that npc has aged
-	assert.Equal(t, true, dw.Age.Current() > 0)
+	assert.Equal(t, true, npc.Age.Current() > 0)
 	// make sure food was found
-	assert.Equal(t, true, dw.hasItemTypeInInventory("food"))
-	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
+	assert.Equal(t, true, npc.hasItemTypeInInventory("food"))
+	assert.Equal(t, false, npc.hasItemTypeInInventory("drink"))
 
-	oldHunger := dw.Hunger
+	oldHunger := npc.Hunger
 	island.Tick()
 
 	// make sure npc consumed food
-	assert.Equal(t, false, dw.hasItemTypeInInventory("food"))
+	assert.Equal(t, false, npc.hasItemTypeInInventory("food"))
 
 	// make sure hunger went down
-	assert.Equal(t, true, dw.Hunger < oldHunger)
-	assert.Equal(t, false, dw.isHungry())
+	assert.Equal(t, true, npc.Hunger < oldHunger)
+	assert.Equal(t, false, npc.isHungry())
 }
 
 func TestFindWaterAndDrink(t *testing.T) {
@@ -112,46 +116,51 @@ func TestFindWaterAndDrink(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
-	dw := island.Spawns[0]
-	dw.addToInventory("small branch")
-	assert.Equal(t, 1, len(dw.Inventory)) // firewood
+	npc := island.Spawns[0]
+	npc.addToInventory("small branch")
+	assert.Equal(t, 1, len(npc.Inventory)) // firewood
 
 	// place water nearby
-	nextTo, err := dw.Position.randomNearby()
+	nextTo, err := npc.Position.randomNearby()
 	assert.Equal(t, nil, err)
 	island.addNpcFromName("pouch of water", nextTo)
 
 	// make npc thirsty
-	dw.Thirst = dw.thirstCap() + 1
+	npc.Thirst = npc.thirstCap() + 1
 	island.Tick()
 
-	// make sure npc planned action: find water
-	assert.Equal(t, "find water", dw.CurrentAction.Name)
-	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
+	if npc.CurrentAction == nil {
+		assert.Fail(t, "current action is nil")
+		return
+	}
 
-	duration := dw.CurrentAction.Duration
+	// make sure npc planned action: find water
+	assert.Equal(t, "find water", npc.CurrentAction.Name)
+	assert.Equal(t, false, npc.hasItemTypeInInventory("drink"))
+
+	duration := npc.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	for {
 		island.Tick()
-		if len(dw.Inventory) == 2 {
+		if len(npc.Inventory) == 2 {
 			// water + small branch
 			break
 		}
 	}
 
-	assert.Equal(t, 2, len(dw.Inventory)) // water + firewood
-	assert.Equal(t, true, dw.hasItemTypeInInventory("drink"))
+	assert.Equal(t, 2, len(npc.Inventory)) // water + firewood
+	assert.Equal(t, true, npc.hasItemTypeInInventory("drink"))
 
-	oldThirst := dw.Thirst
+	oldThirst := npc.Thirst
 	island.Tick()
 
 	// make sure npc consumed water
-	assert.Equal(t, false, dw.hasItemTypeInInventory("drink"))
+	assert.Equal(t, false, npc.hasItemTypeInInventory("drink"))
 
 	// make sure thirst went down
-	assert.Equal(t, true, dw.Thirst < oldThirst)
-	assert.Equal(t, false, dw.isThirsty())
+	assert.Equal(t, true, npc.Thirst < oldThirst)
+	assert.Equal(t, false, npc.isThirsty())
 }
 
 func TestFindFirewood(t *testing.T) {
@@ -167,26 +176,26 @@ func TestFindFirewood(t *testing.T) {
 	island.addNpcFromName("farmland", island.Spawns[0].Position)
 
 	assert.Equal(t, 5, len(island.Spawns))
-	dw := island.Spawns[0]
+	npc := island.Spawns[0]
 
 	// make dwarf wanna find firewood
-	dw.Coldness = dw.coldnessCap() + 1
-	assert.Equal(t, true, dw.isCold())
+	npc.Coldness = npc.coldnessCap() + 1
+	assert.Equal(t, true, npc.isCold())
 
 	// place firewood nearby
-	nextTo, err := dw.Position.randomNearby()
+	nextTo, err := npc.Position.randomNearby()
 	assert.Equal(t, nil, err)
 	island.addNpcFromName("small branch", nextTo)
 
 	// tick so npc decides to pick firewood
 	island.Tick()
 
-	assert.Equal(t, true, dw.hasPlanned("find fire wood"))
+	assert.Equal(t, true, npc.hasPlanned("find fire wood"))
 	// tick so fire wood is picked up
 	island.Tick()
 
 	// make sure it was picked up
-	assert.Equal(t, true, dw.hasItemTypeInInventory("wood"))
+	assert.Equal(t, true, npc.hasItemTypeInInventory("wood"))
 }
 
 func TestSleep(t *testing.T) {
@@ -195,22 +204,27 @@ func TestSleep(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
-	dw := island.Spawns[0]
-	dw.addToInventory("small branch")
+	npc := island.Spawns[0]
+	npc.addToInventory("small branch")
 
 	// make npc tired
-	dw.Tiredness = dw.tirednessCap() + 1
+	npc.Tiredness = npc.tirednessCap() + 1
 	island.Tick()
 
 	// make sure npc planned action: sleep
-	assert.Equal(t, true, dw.hasPlanned("sleep"))
+	assert.Equal(t, true, npc.hasPlanned("sleep"))
 
-	oldTiredness := dw.Tiredness
+	oldTiredness := npc.Tiredness
 
 	island.Tick()
-	assert.Equal(t, true, dw.isSleeping())
+	// make sure npc is now sleeping
+	assert.Equal(t, true, npc.isSleeping())
+	if npc.CurrentAction == nil {
+		assert.Fail(t, "current action is nil")
+		return
+	}
 
-	duration := dw.CurrentAction.Duration
+	duration := npc.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	// progress until npc wakes up
@@ -219,9 +233,9 @@ func TestSleep(t *testing.T) {
 	}
 
 	// make sure tiredness went down
-	assert.Equal(t, true, dw.Tiredness < oldTiredness)
-	assert.Equal(t, false, dw.isTired())
-	assert.Equal(t, false, dw.isSleeping())
+	assert.Equal(t, true, npc.Tiredness < oldTiredness)
+	assert.Equal(t, false, npc.isTired())
+	assert.Equal(t, false, npc.isSleeping())
 }
 
 func TestSleepAtShelter(t *testing.T) {
@@ -230,7 +244,7 @@ func TestSleepAtShelter(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
-	dw := island.Spawns[0]
+	npc := island.Spawns[0]
 
 	// add nessecities nearby
 	nextTo, err := island.Spawns[0].Position.randomNearby()
@@ -238,10 +252,10 @@ func TestSleepAtShelter(t *testing.T) {
 	island.addNpcFromName("small shelter", nextTo)
 
 	// make npc tired
-	dw.Tiredness = dw.tirednessCap() + 1
+	npc.Tiredness = npc.tirednessCap() + 1
 	island.Tick()
 
-	assert.Equal(t, false, dw.isSleeping())
+	assert.Equal(t, false, npc.isSleeping())
 
 	// XXXXXxxx make sure npc moves to shelter and sleeps there
 
@@ -257,29 +271,35 @@ func TestRabbitDigHole(t *testing.T) {
 
 	fmt.Println(island.Spawns)
 
-	ra := island.Spawns[0]
+	npc := island.Spawns[0]
 
 	island.Tick()
-	assert.Equal(t, "dig small hole", ra.CurrentAction.Name)
 
-	duration := ra.CurrentAction.Duration
+	// make sure npc is now digging
+	if npc.CurrentAction == nil {
+		assert.Fail(t, "current action is nil")
+		return
+	}
+	assert.Equal(t, "dig small hole", npc.CurrentAction.Name)
+
+	duration := npc.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
-	assert.Equal(t, 1, len(ra.Position.spawnsByName("small hole", 0)))
-	assert.Equal(t, 1, len(ra.Position.spawnsByType("burrow", 0)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByName("small hole", 0)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByType("burrow", 0)))
 
 	// XXX make sure rabbit uses the burrow to sleep
 
 	// make npc tired
-	ra.Tiredness = ra.tirednessCap() + 1
+	npc.Tiredness = npc.tirednessCap() + 1
 	island.Tick()
 
-	assert.Equal(t, false, ra.isSleeping())
-	assert.Equal(t, true, ra.hasPlanned("sleep"))
+	assert.Equal(t, false, npc.isSleeping())
+	assert.Equal(t, true, npc.hasPlanned("sleep"))
 
 	// make npc sleep
 	island.Tick()
@@ -291,8 +311,8 @@ func TestBuildFireplace(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 
-	dw := island.Spawns[0]
-	dw.addToInventory("small branch")
+	npc := island.Spawns[0]
+	npc.addToInventory("small branch")
 
 	// add nessecities nearby, so they dont need to be built
 	nextTo, err := island.Spawns[0].Position.randomNearby()
@@ -305,24 +325,27 @@ func TestBuildFireplace(t *testing.T) {
 	island.addNpcFromName("farmland", nextTo)
 	island.addNpcFromName("apple tree", nextTo)
 
-	assert.Equal(t, 1, len(dw.Position.spawnsByType("shelter", 30)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByType("shelter", 30)))
 
 	assert.Equal(t, true, len(island.Spawns) == 4)
 
 	island.Tick()
 
-	assert.Equal(t, false, dw.CurrentAction == nil)
-	assert.Equal(t, "build small fireplace", dw.CurrentAction.Name)
+	if npc.CurrentAction == nil {
+		assert.Fail(t, "current action is nil")
+		return
+	}
+	assert.Equal(t, "build small fireplace", npc.CurrentAction.Name)
 
-	duration := dw.CurrentAction.Duration
+	duration := npc.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
-	assert.Equal(t, 1, len(dw.Position.spawnsByName("small fireplace", 0)))
-	assert.Equal(t, 1, len(dw.Position.spawnsByType("fireplace", 0)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByName("small fireplace", 0)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByType("fireplace", 0)))
 }
 
 func TestBuildShelter(t *testing.T) {
@@ -341,40 +364,44 @@ func TestBuildShelter(t *testing.T) {
 	island.addNpcFromName("apple tree", nextTo)
 	assert.Equal(t, 4, len(island.Spawns))
 
-	dw := island.Spawns[0]
-	dw.addToInventory("small branch")
+	npc := island.Spawns[0]
+	npc.addToInventory("small branch")
 
-	assert.Equal(t, 1, len(dw.Position.spawnsByType("fireplace", 2)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByType("fireplace", 2)))
 
 	island.Tick()
-	assert.Equal(t, true, dw.hasPlanned("build small shelter"))
+	assert.Equal(t, true, npc.hasPlanned("build small shelter"))
 
-	duration := dw.CurrentAction.Duration
+	if npc.CurrentAction == nil {
+		assert.Fail(t, "current action is nil")
+		return
+	}
+	duration := npc.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
-	shelters := dw.Position.spawnsByType("shelter", 0)
+	shelters := npc.Position.spawnsByType("shelter", 0)
 	assert.Equal(t, 1, len(shelters))
 
 	// make sure npc made this their home
-	assert.Equal(t, true, dw.Home == &shelters[0])
+	assert.Equal(t, true, npc.Home == &shelters[0])
 
 	// make npc tired
-	dw.Tiredness = dw.tirednessCap() + 1
-	prevTiredness := dw.Tiredness
+	npc.Tiredness = npc.tirednessCap() + 1
+	prevTiredness := npc.Tiredness
 	island.Tick()
 
 	// make sure npc planned action: sleep
-	assert.Equal(t, true, dw.hasPlanned("sleep"))
+	assert.Equal(t, true, npc.hasPlanned("sleep"))
 
 	// make npc fall asleep
 	island.Tick()
 
 	// make sure they get the shelter bonus
-	assert.Equal(t, 48, prevTiredness-dw.Tiredness) // 50 for the bonus, -2 for the ticks before starting to sleep
+	assert.Equal(t, 48, prevTiredness-npc.Tiredness) // 50 for the bonus, -2 for the ticks before starting to sleep
 }
 
 func TestBuildFarmland(t *testing.T) {
@@ -401,22 +428,26 @@ func TestBuildFarmland(t *testing.T) {
 	island.addNpcFromName("small hut", nextTo)
 	assert.Equal(t, 6, len(island.Spawns))
 
-	dw := island.Spawns[0]
-	dw.addToInventory("small branch")
+	npc := island.Spawns[0]
+	npc.addToInventory("small branch")
 
 	island.Tick()
-	assert.Equal(t, false, dw.CurrentAction == nil)
-	assert.Equal(t, "build farmland", dw.CurrentAction.Name)
 
-	duration := dw.CurrentAction.Duration
+	if npc.CurrentAction == nil {
+		assert.Fail(t, "current action is nil")
+		return
+	}
+	assert.Equal(t, "build farmland", npc.CurrentAction.Name)
+
+	duration := npc.CurrentAction.Duration
 	assert.Equal(t, true, duration > 0)
 
 	for i := 0; i <= duration; i++ {
 		island.Tick()
 	}
 
-	assert.Equal(t, 1, len(dw.Position.spawnsByName("farmland", 0)))
-	assert.Equal(t, 1, len(dw.Position.spawnsByType("food producer", 0)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByName("farmland", 0)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByType("food producer", 0)))
 }
 
 func TestTree(t *testing.T) {
@@ -444,8 +475,8 @@ func TestNpcDiesOfOldAge(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 
-	dw := island.Spawns[0]
-	dw.Age.Set(dw.ageCap() + 1)
+	npc := island.Spawns[0]
+	npc.Age.Set(npc.ageCap() + 1)
 
 	island.Tick()
 
@@ -469,13 +500,13 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 
-	dw := island.Spawns[0]
-	dw.addToInventory("small branch")
+	npc := island.Spawns[0]
+	npc.addToInventory("small branch")
 
 	nextTo, err := island.Spawns[0].Position.randomNearby()
 	assert.Equal(t, nil, err)
 
-	assert.Equal(t, false, dw.Position == nextTo)
+	assert.Equal(t, false, npc.Position == nextTo)
 
 	island.addNpcFromName("small fireplace", nextTo)
 
@@ -486,18 +517,18 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	assert.Equal(t, 5, len(island.Spawns))
 
 	// make dwarf wanna move to shelter
-	dw.Coldness = dw.coldnessCap() + 1
-	assert.Equal(t, true, dw.isCold())
+	npc.Coldness = npc.coldnessCap() + 1
+	assert.Equal(t, true, npc.isCold())
 
 	// let them travel to destination
 	for {
 		island.Tick()
-		if dw.Position.intMatches(&nextTo) {
+		if npc.Position.intMatches(&nextTo) {
 			break
 		}
 	}
 
-	assert.Equal(t, true, dw.Position.intMatches(&nextTo))
+	assert.Equal(t, true, npc.Position.intMatches(&nextTo))
 
 	// let npc start the fire
 	island.Tick()
@@ -506,7 +537,7 @@ func TestNpcMovesToFireplace(t *testing.T) {
 	island.Tick()
 
 	// let them get warm by the fire
-	assert.Equal(t, false, dw.isCold())
+	assert.Equal(t, false, npc.isCold())
 }
 
 func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
@@ -516,14 +547,14 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
 
-	dw := island.Spawns[0]
+	npc := island.Spawns[0]
 
 	// NOTE: similar to TestNpcMovesToFireplace, but now also make sure dwarf finds a firewood
 
-	nextTo, err := dw.Position.randomNearby()
+	nextTo, err := npc.Position.randomNearby()
 	assert.Equal(t, nil, err)
 
-	assert.Equal(t, false, dw.Position == nextTo)
+	assert.Equal(t, false, npc.Position == nextTo)
 
 	island.addNpcFromName("farmland", island.Spawns[0].Position)
 	island.addNpcFromName("small fireplace", nextTo)
@@ -533,7 +564,7 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	island.addNpcFromName("apple tree", nextTo)
 	assert.Equal(t, 7, len(island.Spawns))
 
-	nextTo2, err := dw.Position.randomNearby()
+	nextTo2, err := npc.Position.randomNearby()
 	assert.Equal(t, nil, err)
 	assert.Equal(t, false, nextTo.Equals(nextTo2))
 
@@ -541,37 +572,37 @@ func TestNpcFindFirewoodThenMovesToFireplace(t *testing.T) {
 	assert.Equal(t, 8, len(island.Spawns))
 
 	// make dwarf wanna move to shelter
-	dw.Coldness = dw.coldnessCap() + 1
-	assert.Equal(t, true, dw.isCold())
+	npc.Coldness = npc.coldnessCap() + 1
+	assert.Equal(t, true, npc.isCold())
 
-	assert.Equal(t, false, dw.hasItemTypeInInventory("wood"))
+	assert.Equal(t, false, npc.hasItemTypeInInventory("wood"))
 
 	// make dwarf plan to get firewood
 	island.Tick()
 
-	assert.Equal(t, false, dw.hasItemTypeInInventory("wood"))
-	assert.Equal(t, true, dw.hasPlanned("find fire wood"))
+	assert.Equal(t, false, npc.hasItemTypeInInventory("wood"))
+	assert.Equal(t, true, npc.hasPlanned("find fire wood"))
 
 	for {
 		island.Tick()
 
 		// have dwarf find branch
-		if dw.hasItemTypeInInventory("wood") {
+		if npc.hasItemTypeInInventory("wood") {
 			break
 		}
 	}
 
-	assert.Equal(t, true, dw.hasItemTypeInInventory("wood"))
+	assert.Equal(t, true, npc.hasItemTypeInInventory("wood"))
 
 	// make dwarf plan to get warm by fireplace
 	island.Tick()
-	assert.Equal(t, true, dw.hasPlannedType("wait"))
+	assert.Equal(t, true, npc.hasPlannedType("wait"))
 
 	// let dwarf get warm
 	island.Tick()
 
 	// let them get warm by the fire
-	assert.Equal(t, false, dw.isCold())
+	assert.Equal(t, false, npc.isCold())
 }
 
 func TestBuildCookingPit(t *testing.T) {
@@ -581,10 +612,10 @@ func TestBuildCookingPit(t *testing.T) {
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 
 	assert.Equal(t, 1, len(island.Spawns))
-	dw := island.Spawns[0]
+	npc := island.Spawns[0]
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo, err := dw.Position.randomNearby()
+	nextTo, err := npc.Position.randomNearby()
 	assert.Equal(t, nil, err)
 
 	island.addNpcFromName("small fireplace", nextTo)
@@ -595,18 +626,18 @@ func TestBuildCookingPit(t *testing.T) {
 
 	// make sure npc decides to build cooking pit
 	island.Tick()
-	assert.Equal(t, true, dw.hasPlanned("build cooking pit"))
+	assert.Equal(t, true, npc.hasPlanned("build cooking pit"))
 
 	// wait until done
 	for {
 		island.Tick()
 
-		if !dw.isPerforming("build cooking pit") {
+		if !npc.isPerforming("build cooking pit") {
 			break
 		}
 	}
 
-	assert.Equal(t, 1, len(dw.Position.spawnsByName("cooking pit", 0)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByName("cooking pit", 0)))
 }
 
 func TestBuildSmallHut(t *testing.T) {
@@ -615,15 +646,15 @@ func TestBuildSmallHut(t *testing.T) {
 
 	island.addNpcFromRace("dwarf", island.RandomPointAboveWater())
 	assert.Equal(t, 1, len(island.Spawns))
-	dw := island.Spawns[0]
+	npc := island.Spawns[0]
 
 	// add nessecities nearby, so they dont need to be built
-	nextTo, err := dw.Position.randomNearby()
+	nextTo, err := npc.Position.randomNearby()
 	assert.Equal(t, nil, err)
 	island.addNpcFromName("small fireplace", nextTo)
 
 	home := island.addNpcFromName("small shelter", nextTo)
-	dw.Home = &home
+	npc.Home = &home
 
 	island.addNpcFromName("apple tree", nextTo)
 	island.addNpcFromName("farmland", nextTo)
@@ -632,16 +663,16 @@ func TestBuildSmallHut(t *testing.T) {
 
 	// make sure npc decides to build cooking pit
 	island.Tick()
-	assert.Equal(t, true, dw.hasPlanned("build small hut"))
+	assert.Equal(t, true, npc.hasPlanned("build small hut"))
 
 	// wait until done
 	for {
 		island.Tick()
 
-		if !dw.isPerforming("build small hut") {
+		if !npc.isPerforming("build small hut") {
 			break
 		}
 	}
 
-	assert.Equal(t, 1, len(dw.Position.spawnsByName("small hut", 0)))
+	assert.Equal(t, 1, len(npc.Position.spawnsByName("small hut", 0)))
 }

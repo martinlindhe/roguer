@@ -17,7 +17,7 @@ func NewIsland() {
 
 	// XXX load existing world from disk
 	seed := int64(666666)
-	generalLog.Info("Generating island with seed", seed, "...")
+	generalLog.Info("Generating island with seed ", seed, " ...")
 	generateIsland(seed, 220, 140)
 
 	island.spawnGravel()

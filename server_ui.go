@@ -14,37 +14,40 @@ type messageList struct {
 	messages []string
 }
 
-func (m messageList) Error(a ...interface{}) {
+func (m *messageList) Error(a ...interface{}) {
 
 	// XXX mark msg type
-	m.Info(a)
+	m.Info(a...)
 }
 
-func (m messageList) Debug(a ...interface{}) {
+func (m *messageList) Debug(a ...interface{}) {
 
 	// XXX mark msg type
-	m.Info(a)
+	m.Info(a...)
 }
 
-func (m messageList) Info(a ...interface{}) {
+func (m *messageList) Info(a ...interface{}) {
 
-	m.messages = append(m.messages, fmt.Sprint(a))
+	m.messages = append(m.messages, fmt.Sprint(a...))
 }
 
-func (m messageList) Infof(format string, a ...interface{}) {
+func (m *messageList) Infof(format string, a ...interface{}) {
 
-	m.messages = append(m.messages, fmt.Sprintf(format, a))
+	m.messages = append(m.messages, fmt.Sprintf(format, a...))
 }
 
-func (m messageList) repaintMostRecent() {
+func (m *messageList) repaintMostRecent() {
 
-	y := 0
+	y := 10
 
-	// XXX draw last x lines, depending on console window height
-	for _, m := range m.messages {
+	maxMessages := 30 // XXX depending on console window height
+
+	// draw last x lines of log
+	msgs := m.messages[len(m.messages)-maxMessages : len(m.messages)]
+
+	for _, m := range msgs {
 		tbPrint(0, y, termbox.ColorWhite, termbox.ColorDefault, m)
-		fmt.Println(m)
-		y++ // XXX
+		y++
 	}
 
 	termbox.Flush()
