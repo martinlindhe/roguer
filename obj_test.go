@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"fmt"
 	"image/png"
 	"os"
 	"testing"
@@ -21,8 +20,6 @@ func testNewGame() *Game {
 	g := Game{
 		Island: NewIsland(),
 	}
-
-	g.precalcTilemap()
 
 	islandColImgFile, _ := os.Create("island_test.png")
 	png.Encode(islandColImgFile, g.Island.ColoredHeightMapAsImage())
@@ -419,8 +416,6 @@ func TestBuildFarmland(t *testing.T) {
 	// add nessecities nearby, so they dont need to be built
 	nextTo, err := g.Island.Spawns[0].randomNearby()
 	assert.Equal(t, nil, err)
-
-	fmt.Printf("xxxx nextTo = %s\n", nextTo)
 
 	// add nessecities, so they dont need to be built
 	g.Island.addNpcFromName("small fireplace", nextTo)

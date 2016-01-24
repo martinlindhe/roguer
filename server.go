@@ -15,7 +15,6 @@ import (
 )
 
 var (
-	game             *Game
 	appPort          = 3322
 	mainloopInterval = 100 * time.Millisecond
 	gameTickIRL      = 3 * time.Second // 1 game tick = 3 real world seconds
@@ -43,17 +42,17 @@ func BootServer() {
 
 	//termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
-	game, err = initServer()
+	g, err := initServer()
 	if err != nil {
 		panic(err)
 	}
-	defer game.mongoSession.Close()
+	defer g.mongoSession.Close()
 
 	// Init input
-	game.input.start()
-	defer game.input.stop()
+	g.input.start()
+	defer g.input.stop()
 
-	game.serverLoop()
+	g.serverLoop()
 }
 
 // newGame creates a new Game, along with a input handler.
@@ -81,19 +80,19 @@ func newGame() (*Game, error) {
 
 func initServer() (*Game, error) {
 
-	game, err := newGame()
+	g, err := newGame()
 	if err != nil {
-		return game, err
+		return g, err
 	}
 
 	registerAutosaver()
 
-	r := getHTTPRouter()
+	r := getHTTPRouter(g)
 	listenAt := fmt.Sprintf(":%d", appPort)
 
 	go r.Run(listenAt)
 
-	return game, nil
+	return g, nil
 }
 
 func (g *Game) serverLoop() {
@@ -193,7 +192,7 @@ func registerAutosaver() {
 	}()
 }
 
-func getHTTPRouter() *ace.Ace {
+func getHTTPRouter(g *Game) *ace.Ace {
 
 	// ace with Logger, Recovery
 	r := ace.Default()
@@ -203,14 +202,16 @@ func getHTTPRouter() *ace.Ace {
 		c.String(200, string(body))
 	})
 
-	r.GET("/island/full", getFullIslandController)
+	r.GET("/island/full", func(c *ace.C) {
+		getFullIslandController(g, c)
+	})
 
 	r.GET("/sprite/character", getTexturePackCharacterController)
 	r.GET("/sprite/item", getTexturePackItemController)
 	r.GET("/sprite/ground2", getTexturePackGround2Controller)
 
 	r.GET("/ws", func(c *ace.C) {
-		serveWebsocket(c.Writer, c.Request)
+		serveWebsocket(g, c.Writer, c.Request)
 	})
 
 	r.Static("/js", "./public/js")
@@ -225,11 +226,11 @@ func getHTTPRouter() *ace.Ace {
 }
 
 // returns a map in Tiled json format, recognized by phaser.io
-func getFullIslandController(c *ace.C) {
+func getFullIslandController(g *Game, c *ace.C) {
 
 	c.Writer.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	c.Writer.WriteHeader(http.StatusOK)
-	c.Writer.Write(game.islandMap)
+	c.Writer.Write(g.islandMap)
 }
 
 func getTexturePackCharacterController(c *ace.C) {

@@ -36,7 +36,7 @@ type playerSpawnResponse struct {
 	Token string
 }
 
-func serveWebsocket(w http.ResponseWriter, r *http.Request) {
+func serveWebsocket(g *Game, w http.ResponseWriter, r *http.Request) {
 	socket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("upgrade:", err)
@@ -45,6 +45,7 @@ func serveWebsocket(w http.ResponseWriter, r *http.Request) {
 
 	client := &client{
 		socket: socket,
+		game:   g,
 		send:   make(chan []byte, messageBufferSize),
 	}
 

@@ -13,6 +13,7 @@ import (
 type client struct {
 	// socket is the web socket for this client.
 	socket *websocket.Conn
+	game   *Game
 
 	// send is a channel on which messages are sent.
 	send chan []byte
@@ -28,14 +29,14 @@ func (c *client) read() {
 
 			switch parts[0] {
 			case "new_player":
-				pos, token := game.NewPlayer(parts[1], c.socket)
+				pos, token := c.game.NewPlayer(parts[1], c.socket)
 
 				var res playerSpawnResponse
 				res.Type = "xy"
 				res.X = pos.X
 				res.Y = pos.Y
 				res.Token = token
-				res.LocalSpawns = game.Island.DescribeLocalArea(pos)
+				res.LocalSpawns = c.game.Island.DescribeLocalArea(pos)
 
 				b, _ = json.Marshal(res)
 				generalLog.Infof("new player %s spawned at %s", parts[1], pos)
@@ -43,7 +44,7 @@ func (c *client) read() {
 				// XXX broadcast a "new player" event to all
 
 			case "continue":
-				pos, token, err := game.ContinuePlayer(parts[1], c.socket)
+				pos, token, err := c.game.ContinuePlayer(parts[1], c.socket)
 				if err != nil {
 					res := messageResponse{Type: "error", Message: fmt.Sprintf("%v", err)}
 					b, _ = json.Marshal(res)
@@ -55,7 +56,7 @@ func (c *client) read() {
 				res.X = pos.X
 				res.Y = pos.Y
 				res.Token = token
-				res.LocalSpawns = game.Island.DescribeLocalArea(*pos)
+				res.LocalSpawns = c.game.Island.DescribeLocalArea(*pos)
 
 				b, _ = json.Marshal(res)
 				generalLog.Infof("continuing player %s spawned at %s", parts[1], pos)
@@ -68,7 +69,7 @@ func (c *client) read() {
 
 				// find user by token
 				var player *Player
-				for _, u := range game.Island.Players {
+				for _, u := range c.game.Island.Players {
 					if u.Token == token {
 						player = u
 					}
@@ -90,7 +91,7 @@ func (c *client) read() {
 				res.Type = "move_res"
 				res.X = player.Spawn.Position.X
 				res.Y = player.Spawn.Position.X
-				res.LocalSpawns = game.Island.DescribeLocalArea(player.Spawn.Position)
+				res.LocalSpawns = c.game.Island.DescribeLocalArea(player.Spawn.Position)
 				b, _ = json.Marshal(res)
 
 			default:
