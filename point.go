@@ -16,6 +16,7 @@ func (p Point) String() string {
 	return fmt.Sprintf("%f,%f", p.X, p.Y)
 }
 
+// Equals returns true of p and p2 has the same coordinates
 func (p Point) Equals(p2 Point) bool {
 	if p.X == p2.X && p.Y == p2.Y {
 		return true
@@ -80,9 +81,9 @@ func (p *Point) isNearby(pos Point) bool {
 	return false
 }
 
-func (p *Point) spawnsByName(n string, radius float64) []Obj {
+func (p *Point) spawnsByName(n string, radius float64) []*Obj {
 
-	var res []Obj
+	var res []*Obj
 	for _, o := range island.Spawns {
 		if o.Name == n && o.distanceTo(*p) <= radius {
 			res = append(res, o)
@@ -91,9 +92,9 @@ func (p *Point) spawnsByName(n string, radius float64) []Obj {
 	return res
 }
 
-func (p *Point) spawnsByType(t string, radius float64) []Obj {
+func (p *Point) spawnsByType(t string, radius float64) []*Obj {
 
-	var res []Obj
+	var res []*Obj
 	for _, o := range island.Spawns {
 		if o.Type == t && o.distanceTo(*p) <= radius {
 			res = append(res, o)

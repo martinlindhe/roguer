@@ -387,7 +387,7 @@ func TestBuildShelter(t *testing.T) {
 	assert.Equal(t, 1, len(shelters))
 
 	// make sure npc made this their home
-	assert.Equal(t, true, npc.Home == &shelters[0])
+	assert.Equal(t, true, npc.Home == shelters[0])
 
 	// make npc tired
 	npc.Tiredness = npc.tirednessCap() + 1
@@ -654,7 +654,7 @@ func TestBuildSmallHut(t *testing.T) {
 	island.addNpcFromName("small fireplace", nextTo)
 
 	home := island.addNpcFromName("small shelter", nextTo)
-	npc.Home = &home
+	npc.Home = home
 
 	island.addNpcFromName("apple tree", nextTo)
 	island.addNpcFromName("farmland", nextTo)

@@ -6,16 +6,16 @@ import (
 	"strings"
 )
 
-func (n *Obj) generateName() string {
-	if n.Name != "" {
-		return n.Name
+func (o *Obj) generateName() string {
+	if o.Name != "" {
+		return o.Name
 	}
 
-	if n.Race == "dwarf" {
+	if o.Race == "dwarf" {
 		return randomDwarfName()
 	}
 
-	panic(fmt.Errorf("unknown npc race: %s", n.Race))
+	panic(fmt.Errorf("unknown npc race: %s", o.Race))
 }
 
 // generate a dwarfish name

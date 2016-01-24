@@ -70,7 +70,7 @@ func (c *client) read() {
 				var player *Player
 				for _, u := range island.Players {
 					if u.Token == token {
-						player = &u
+						player = u
 					}
 				}
 				if player == nil {

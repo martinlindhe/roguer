@@ -18,8 +18,8 @@ type Island struct {
 	Seed      int64 `bson:"_id"`
 	Age       GameTime
 	HeightMap [][]int
-	Spawns    []Obj
-	Players   []Player
+	Spawns    []*Obj
+	Players   []*Player
 
 	// lookup lists:
 	npcSpecs    []objSpec
@@ -51,9 +51,9 @@ func (i *Island) NewPlayer(name string, socket *websocket.Conn) (Point, string) 
 	var player Player
 	player.Name = name
 	player.Token = token
-	player.Spawn = &spawn
+	player.Spawn = spawn
 	player.Socket = socket
-	island.Players = append(island.Players, player)
+	island.Players = append(island.Players, &player)
 
 	return pos, token
 }
@@ -74,21 +74,21 @@ func (i *Island) ContinuePlayer(token string, socket *websocket.Conn) (*Point, s
 }
 
 // Add ...
-func (i *Island) addSpawn(o Obj) {
+func (i *Island) addSpawn(o *Obj) {
 
 	i.idSeq++
-	o.Id = i.idSeq
+	o.ID = i.idSeq
 
-	generalLog.Debug("spawned id ", o.Id, " ", o.Name)
+	generalLog.Debug("spawned id ", o.ID, " ", o.Name)
 	i.Spawns = append(i.Spawns, o)
 }
 
-func (i *Island) removeSpawn(o Obj) {
+func (i *Island) removeSpawn(o *Obj) {
 
 	removeIdx := -1
 
 	for idx, sp := range i.Spawns {
-		if sp.Id == o.Id {
+		if sp.ID == o.ID {
 			removeIdx = idx
 			break
 		}
@@ -143,7 +143,7 @@ func (i *Island) getNpcSpecFromRace(n string) objSpec {
 	panic(fmt.Errorf("npc spec by race not found: %s, checked %d specs", n, len(island.npcSpecs)))
 }
 
-func (i *Island) addNpcFromName(n string, pos Point) Obj {
+func (i *Island) addNpcFromName(n string, pos Point) *Obj {
 
 	return i.addNpcFromSpec(i.getNpcSpecFromName(n), pos)
 }
@@ -153,14 +153,14 @@ func (i *Island) addNpcFromRace(n string, pos Point) {
 	i.addNpcFromSpec(i.getNpcSpecFromRace(n), pos)
 }
 
-func (i *Island) getNpcFromRace(race string) Obj {
+func (i *Island) getNpcFromRace(race string) *Obj {
 	spec := i.getNpcSpecFromRace(race)
 	return i.getNpcFromSpec(spec)
 }
 
-func (i *Island) getNpcFromSpec(spec objSpec) Obj {
-	var o Obj
+func (i *Island) getNpcFromSpec(spec objSpec) *Obj {
 
+	var o Obj
 	o.Level = 1
 	o.Race = spec.Race
 	o.Type = spec.Type
@@ -176,10 +176,10 @@ func (i *Island) getNpcFromSpec(spec objSpec) Obj {
 		o.Name = spec.Name
 	}
 
-	return o
+	return &o
 }
 
-func (i *Island) addNpcFromSpec(spec objSpec, pos Point) Obj {
+func (i *Island) addNpcFromSpec(spec objSpec, pos Point) *Obj {
 
 	o := i.getNpcFromSpec(spec)
 	o.Position = pos

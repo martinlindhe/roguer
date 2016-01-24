@@ -9,7 +9,7 @@ import (
 
 // Obj is a in-game object, such as a npc or a item
 type Obj struct {
-	Id       int64
+	ID       int64
 	Level    int
 	Age      GameTime
 	Name     string
@@ -25,7 +25,7 @@ type Obj struct {
 	Home           *Obj
 	CurrentAction  *actionSpec
 	PlannedActions []actionSpec
-	Inventory      []Obj
+	Inventory      []*Obj
 
 	// the lower value, the less hungry npc is
 	Hunger    int
@@ -37,7 +37,7 @@ type Obj struct {
 	Activated bool
 }
 
-func (o Obj) String() string {
+func (o *Obj) String() string {
 	// XXX
 	return fmt.Sprintf("%s (%s)", o.Name, o.Position)
 }

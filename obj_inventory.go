@@ -18,7 +18,7 @@ func (n *Obj) tryFindItemTypeInInventory(t string) (int, error) {
 	return -1, fmt.Errorf("%s has no items of %s in inventory", n.Name, t)
 }
 
-func (n *Obj) addItemToInventory(item Obj) {
+func (n *Obj) addItemToInventory(item *Obj) {
 
 	n.Inventory = append(n.Inventory, item)
 }
@@ -31,15 +31,12 @@ func (n *Obj) addToInventory(itemName string) {
 	n.Inventory = append(n.Inventory, o)
 }
 
-func (n *Obj) removeFromInventory(index int) Obj {
+func (n *Obj) removeFromInventory(index int) *Obj {
 
-	val := n.Inventory[index]
+	o := n.Inventory[index]
+	n.Inventory = append(n.Inventory[:index], n.Inventory[index+1:]...)
 
-	copy(n.Inventory[index:], n.Inventory[index+1:])
-	n.Inventory[len(n.Inventory)-1] = Obj{}
-	n.Inventory = n.Inventory[:len(n.Inventory)-1]
-
-	return val
+	return o
 }
 
 func (n *Obj) hasItemTypeInInventory(t string) bool {

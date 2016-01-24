@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+
+	"github.com/gobuild/log"
 )
 
 // check if npc already has planned to do a
-func (n *Obj) hasPlanned(actionName string) bool {
+func (o *Obj) hasPlanned(actionName string) bool {
 
-	if n.isPerforming(actionName) {
+	if o.isPerforming(actionName) {
 		return true
 	}
 
-	for _, v := range n.PlannedActions {
+	for _, v := range o.PlannedActions {
 		if v.Name == actionName {
 			return true
 		}
@@ -21,21 +23,21 @@ func (n *Obj) hasPlanned(actionName string) bool {
 	return false
 }
 
-func (n *Obj) isPerforming(actionName string) bool {
-	if n.CurrentAction != nil && n.CurrentAction.Name == actionName {
+func (o *Obj) isPerforming(actionName string) bool {
+	if o.CurrentAction != nil && o.CurrentAction.Name == actionName {
 		return true
 	}
 	return false
 }
 
 // check if npc already has planned to do a
-func (n *Obj) hasPlannedType(actionType string) bool {
+func (o *Obj) hasPlannedType(actionType string) bool {
 
-	if n.CurrentAction != nil && n.CurrentAction.Type == actionType {
+	if o.CurrentAction != nil && o.CurrentAction.Type == actionType {
 		return true
 	}
 
-	for _, v := range n.PlannedActions {
+	for _, v := range o.PlannedActions {
 		if v.Type == actionType {
 			return true
 		}
@@ -43,7 +45,7 @@ func (n *Obj) hasPlannedType(actionType string) bool {
 	return false
 }
 
-func (n *Obj) planAction(params ...interface{}) {
+func (o *Obj) planAction(params ...interface{}) {
 
 	actionName := ""
 	var dst Point
@@ -51,8 +53,8 @@ func (n *Obj) planAction(params ...interface{}) {
 		switch t := it.(type) {
 		case string:
 			actionName = it.(string)
-			if n.hasPlanned(actionName) {
-				// fmt.Printf("XXX %s aborting, already has planned %s\n", n.Name, actionName)
+			if o.hasPlanned(actionName) {
+				// fmt.Printf("XXX %s aborting, already has planned %s\n", o.Name, actionName)
 				return
 			}
 		case Point:
@@ -65,45 +67,45 @@ func (n *Obj) planAction(params ...interface{}) {
 	a := island.findActionByName(actionName)
 
 	a.Destination = &dst
-	n.PlannedActions = append(n.PlannedActions, a)
+	o.PlannedActions = append(o.PlannedActions, a)
 
 	if a.Destination.empty() {
-		n.Announce("%s decided to %s", n, a.Name)
+		o.Announce("%s decided to %s", o, a.Name)
 	} else {
-		n.Announce("%s decided to %s (%s)", n, a.Name, a.Destination)
+		o.Announce("%s decided to %s (%s)", o, a.Name, a.Destination)
 	}
 
 }
 
-func (n *Obj) performCurrentAction() {
-	if n.CurrentAction == nil {
+func (o *Obj) performCurrentAction() {
+	if o.CurrentAction == nil {
 		return
 	}
 
 	status := false
-	switch n.CurrentAction.Type {
+	switch o.CurrentAction.Type {
 	case "sleep":
-		status = n.performSleep()
+		status = o.performSleep()
 
 	case "forage":
-		status = n.performForage()
+		status = o.performForage()
 
 	case "build":
-		status = n.performBuild()
+		status = o.performBuild()
 
 	case "travel":
-		status = n.performTravel(n.CurrentAction.Energy)
+		status = o.performTravel(o.CurrentAction.Energy)
 
 	case "wait":
-		status = n.performWait()
+		status = o.performWait()
 
 	default:
-		panic(fmt.Errorf("Unknown action type: %s", n.CurrentAction.Type))
+		panic(fmt.Errorf("Unknown action type: %s", o.CurrentAction.Type))
 	}
 
 	if status == true {
-		n.Announce("%s finished %s", n.Name, n.CurrentAction.Name)
-		n.CurrentAction = nil
+		o.Announce("%s finished %s", o.Name, o.CurrentAction.Name)
+		o.CurrentAction = nil
 	}
 }
 
@@ -118,129 +120,130 @@ func (i *Island) findActionByName(n string) actionSpec {
 	panic(fmt.Errorf("cant find action: %s", n))
 }
 
-func (n *Obj) performWait() bool {
+func (o *Obj) performWait() bool {
 
-	n.Announce("%s is waiting", n.Name)
-	n.CurrentAction.Duration--
+	o.Announce("%s is waiting", o.Name)
+	o.CurrentAction.Duration--
 
-	if n.CurrentAction.Duration < 0 {
-		n.Announce("%s finished waiting", n.Name)
+	if o.CurrentAction.Duration < 0 {
+		o.Announce("%s finished waiting", o.Name)
 		return true
 	}
 
 	return false
 }
 
-func (n *Obj) performTravel(energy int) bool {
+func (o *Obj) performTravel(energy int) bool {
 
 	if energy == 0 {
-		panic("travel: energy is 0")
+		log.Error("travel: energy is 0")
+		return true
 	}
 
 	// move closer to dst
-	deltaX := n.CurrentAction.Destination.X - n.Position.X
-	deltaY := n.CurrentAction.Destination.Y - n.Position.Y
+	deltaX := o.CurrentAction.Destination.X - o.Position.X
+	deltaY := o.CurrentAction.Destination.Y - o.Position.Y
 
 	angle := math.Atan2(deltaY, deltaX)
 	distance := float64(energy)
 
-	newX := n.Position.X + math.Cos(angle)*distance
-	newY := n.Position.Y + math.Sin(angle)*distance
+	newX := o.Position.X + math.Cos(angle)*distance
+	newY := o.Position.Y + math.Sin(angle)*distance
 
-	oldPos := n.Position
+	oldPos := o.Position
 
 	moved := false
-	if math.Floor(n.Position.X) != math.Floor(n.CurrentAction.Destination.X) {
-		n.Position.X = newX
+	if math.Floor(o.Position.X) != math.Floor(o.CurrentAction.Destination.X) {
+		o.Position.X = newX
 		moved = true
 	}
-	if math.Floor(n.Position.Y) != math.Floor(n.CurrentAction.Destination.Y) {
-		n.Position.Y = newY
+	if math.Floor(o.Position.Y) != math.Floor(o.CurrentAction.Destination.Y) {
+		o.Position.Y = newY
 		moved = true
 	}
 
 	if moved {
-		n.Announce("%s is performing %s from %v to %v  with step %f dst= %v", n.Name, n.CurrentAction.Name, oldPos, n.Position, distance, n.CurrentAction.Destination)
+		o.Announce("%s is performing %s from %v to %v  with step %f dst= %v", o.Name, o.CurrentAction.Name, oldPos, o.Position, distance, o.CurrentAction.Destination)
 	}
 
-	if n.Position.intMatches(n.CurrentAction.Destination) {
+	if o.Position.intMatches(o.CurrentAction.Destination) {
 		return true
 	}
 
 	return false
 }
 
-func (n *Obj) performSleep() bool {
+func (o *Obj) performSleep() bool {
 
-	shelterType := n.preferredShelterType()
+	shelterType := o.preferredShelterType()
 
 	mult := 1
 	energy := mult
 
 	if shelterType != "" {
-		shelters := n.Position.spawnsByType(shelterType, 0)
+		shelters := o.Position.spawnsByType(shelterType, 0)
 		if len(shelters) > 0 {
 			// give bonus from nearby shelter
 			mult = shelters[0].Energy
 
-			n.Announce("%s gets sleeping bonus %d from %s", n.Name, mult, shelters[0].Name)
+			o.Announce("%s gets sleeping bonus %d from %s", o.Name, mult, shelters[0].Name)
 		}
-		energy = mult * n.CurrentAction.Energy
+		energy = mult * o.CurrentAction.Energy
 	}
 
-	n.Announce("%s is sleeping (tiredness = %d, energy gain = %d)", n.Name, n.Tiredness, energy)
-	n.CurrentAction.Duration--
-	n.Tiredness -= energy
+	o.Announce("%s is sleeping (tiredness = %d, energy gain = %d)", o.Name, o.Tiredness, energy)
+	o.CurrentAction.Duration--
+	o.Tiredness -= energy
 
-	if n.Tiredness <= 0 {
-		n.Tiredness = 0
-		n.Announce("%s woke up, no longer tired", n.Name)
+	if o.Tiredness <= 0 {
+		o.Tiredness = 0
+		o.Announce("%s woke up, no longer tired", o.Name)
 		return true
 	}
 
-	if n.CurrentAction.Duration < 0 {
+	if o.CurrentAction.Duration < 0 {
 		// XXX some rested-bonus buff?
-		n.Announce("%s woke up, slept through full duration", n.Name)
+		o.Announce("%s woke up, slept through full duration", o.Name)
 		return true
 	}
 
 	return false
 }
 
-func (n *Obj) performForage() bool {
+func (o *Obj) performForage() bool {
 
-	n.Announce("%s is performing %s", n.Name, n.CurrentAction.Name)
+	o.Announce("%s is performing %s", o.Name, o.CurrentAction.Name)
 
 	p := Point{0, 0}
 
-	if *n.CurrentAction.Destination == p {
+	if *o.CurrentAction.Destination == p {
 		// XXX
 
-		list := n.Position.spawnsByType(n.CurrentAction.Result, 30)
+		list := o.Position.spawnsByType(o.CurrentAction.Result, 30)
 		if len(list) > 0 {
 
 			rnd := list[rand.Intn(len(list))]
 
-			n.CurrentAction.Destination = &rnd.Position
-			n.Announce("%s decided to go pick up %s", n, rnd)
+			o.CurrentAction.Destination = &rnd.Position
+			o.Announce("%s decided to go pick up %s", o, rnd)
 		}
 	} else {
 		// progress towards target
-		check := n.performTravel(1) // XXX 1=walking speed
+		check := o.performTravel(1) // XXX 1=walking speed
 
 		// look for food at current spot
-		list := n.Position.spawnsByType(n.CurrentAction.Result, 0.9)
+		list := o.Position.spawnsByType(o.CurrentAction.Result, 0.9)
 
 		for _, it := range list {
-			n.Announce("%s picked up %s", n.Name, it.Name)
-			n.addItemToInventory(it)
+			o.Announce("%s picked up %s", o.Name, it.Name)
+			o.addItemToInventory(it)
 
 			// remove spawn from world
 			island.removeSpawn(it)
 		}
 
 		// if nothing left on dst point, consider it a success!
-		dstList := n.CurrentAction.Destination.spawnsByType(n.CurrentAction.Result, 0.9)
+		dstList := o.CurrentAction.Destination.spawnsByType(o.CurrentAction.Result, 0.9)
 		if len(dstList) == 0 {
 			return true
 		}
@@ -253,37 +256,37 @@ func (n *Obj) performForage() bool {
 
 	// TODO dont re-visit previously foraged places
 
-	n.CurrentAction.Duration--
-	if n.CurrentAction.Duration < 0 {
-		generalLog.Error(n.Name, "gave up foraging before dst reached!")
+	o.CurrentAction.Duration--
+	if o.CurrentAction.Duration < 0 {
+		generalLog.Error(o.Name, "gave up foraging before dst reached!")
 		return true
 	}
 
 	return false
 }
 
-func (n *Obj) performBuild() bool {
+func (o *Obj) performBuild() bool {
 
 	// if not at destination, move there
 	// XXX 1=walking speed
-	if !n.performTravel(1) {
+	if !o.performTravel(1) {
 		return false
 	}
 
-	n.Announce("%s is performing %s, duration left %d", n.Name, n.CurrentAction.Name, n.CurrentAction.Duration)
+	o.Announce("%s is performing %s, duration left %d", o.Name, o.CurrentAction.Name, o.CurrentAction.Duration)
 
-	n.CurrentAction.Duration--
-	if n.CurrentAction.Duration < 0 {
-		spec := island.getNpcSpecFromName(n.CurrentAction.Result)
+	o.CurrentAction.Duration--
+	if o.CurrentAction.Duration < 0 {
+		spec := island.getNpcSpecFromName(o.CurrentAction.Result)
 
-		o := island.getNpcFromSpec(spec)
-		o.Position = *n.CurrentAction.Destination
-		island.addSpawn(o)
+		home := island.getNpcFromSpec(spec)
+		home.Position = *o.CurrentAction.Destination
+		island.addSpawn(home)
 
 		// if object is a shelter, make it my home
 		if spec.Type == "shelter" || spec.Type == "burrow" {
-			n.Announce("%s has declared %s their home", n, o)
-			n.Home = &o
+			o.Announce("%s has declared %s their home", o, home)
+			o.Home = home
 		}
 
 		return true

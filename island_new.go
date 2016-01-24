@@ -97,7 +97,7 @@ func (i *Island) spawnTrees() {
 			}
 		}
 	}
-	generalLog.Info("spawned", cnt, "trees")
+	generalLog.Info("spawned ", cnt, " trees")
 }
 
 // generate critters based on data file

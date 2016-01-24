@@ -3,6 +3,7 @@ package rogue
 import (
 	"fmt"
 
+	"github.com/gobuild/log"
 	"github.com/nsf/termbox-go"
 )
 
@@ -28,12 +29,15 @@ func (m *messageList) Debug(a ...interface{}) {
 
 func (m *messageList) Info(a ...interface{}) {
 
-	m.messages = append(m.messages, fmt.Sprint(a...))
+	s := fmt.Sprint(a...)
+	log.Info(s) // XXX
+	m.messages = append(m.messages, s)
 }
 
 func (m *messageList) Infof(format string, a ...interface{}) {
 
-	m.messages = append(m.messages, fmt.Sprintf(format, a...))
+	//m.messages = append(m.messages, fmt.Sprintf(format, a...))
+	m.Info(fmt.Sprintf(format, a...))
 }
 
 func (m *messageList) repaintMostRecent() {
