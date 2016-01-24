@@ -15,15 +15,22 @@ import (
 )
 
 var (
-	islandMap        []byte
+	game             *Game
 	appPort          = 3322
 	mainloopInterval = 100 * time.Millisecond
 	gameTickIRL      = 3 * time.Second // 1 game tick = 3 real world seconds
 	snapshotInterval = 10*gameTickIRL + 1
-	mongoSession     *mgo.Session
 	dbName           = "roguer"
 	enableAutosave   = false
 )
+
+// Game ...
+type Game struct {
+	mongoSession *mgo.Session
+	input        *input
+	Island       *Island
+	islandMap    []byte
+}
 
 // BootServer ...
 func BootServer() {
@@ -36,32 +43,60 @@ func BootServer() {
 
 	//termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
-	mongoSession, err := initServer()
+	game, err = initServer()
 	if err != nil {
 		panic(err)
 	}
-	defer mongoSession.Close()
+	defer game.mongoSession.Close()
 
-	serverLoop()
+	// Init input
+	game.input.start()
+	defer game.input.stop()
+
+	game.serverLoop()
 }
 
-func initServer() (*mgo.Session, error) {
+// newGame creates a new Game, along with a input handler.
+// Returns a pointer to the new Game.
+func newGame() (*Game, error) {
 	mongoSession, err := initMongo()
+	g := Game{
+		input:        newInput(),
+		mongoSession: mongoSession,
+		Island:       NewIsland(),
+	}
+
+	g.Island.spawnGravel()
+	g.Island.spawnTrees()
+	g.Island.fillWithCritters()
+
+	g.precalcTilemap()
+
+	if err != nil {
+		return &g, err
+	}
+
+	return &g, nil
+}
+
+func initServer() (*Game, error) {
+
+	game, err := newGame()
+	if err != nil {
+		return game, err
+	}
 
 	registerAutosaver()
 
-	newOrResumeIsland()
-
 	r := getHTTPRouter()
-	islandMap = PrecalcTilemap()
 	listenAt := fmt.Sprintf(":%d", appPort)
 
 	go r.Run(listenAt)
 
-	return mongoSession, err
+	return game, nil
 }
 
-func serverLoop() {
+func (g *Game) serverLoop() {
 
 	imgcat.CatFile("public/img/islands/current.png", os.Stdout)
 
@@ -71,38 +106,44 @@ func serverLoop() {
 	for range c {
 
 		generalLog.repaintMostRecent()
-
-		if !handleEvents() {
-			break
+		/*
+			if !handleEvents() {
+				break
+			}
+		*/
+		select {
+		case ev := <-g.input.eventQ:
+			if ev.Key == g.input.endKey {
+				fmt.Println("breaking main loop")
+				return
+			}
 		}
 
 		cnt += mainloopInterval
 		if cnt >= gameTickIRL {
 			cnt = 0
 			// progress game world
-			island.Tick()
+			g.Island.Tick()
 		}
 	}
 }
 
-func newOrResumeIsland() {
-	NewIsland()
-
+/*
+func resumeIsland() {
 	// XXX loading island half-works, disabled for now //jan 2016
-	/*
-		island.Seed = 666666 // XXX dont hard code
-		fmt.Printf("Resuming island with seed %d\n", island.Seed)
-		err = db.Find(bson.M{"_id": island.Seed}).One(&island)
-		if err != nil {
-			//panic(err)
-			fmt.Printf("ERROR resuming, creating new world")
-			NewIsland()
-		} else {
-			island.LoadSpecs()
-		}
-	*/
-}
 
+	island.Seed = 666666 // XXX dont hard code
+	fmt.Printf("Resuming island with seed %d\n", island.Seed)
+	err = db.Find(bson.M{"_id": island.Seed}).One(&island)
+	if err != nil {
+		//panic(err)
+		fmt.Printf("ERROR resuming, creating new world")
+		NewIsland()
+	} else {
+		island.LoadSpecs()
+	}
+}
+*/
 func initMongo() (*mgo.Session, error) {
 	session, err := mgo.Dial("localhost")
 	if err != nil {
@@ -124,26 +165,26 @@ func registerAutosaver() {
 				if !enableAutosave {
 					break
 				}
+				/*
+					generalLog.Info("---SAVE at", time.Now())
 
-				generalLog.Info("---SAVE at", time.Now())
+					game.mongoSession.Refresh()
 
-				mongoSession.Refresh()
+					coll := game.mongoSession.DB(dbName).C("world")
 
-				coll := mongoSession.DB(dbName).C("world")
-
-				_, err := coll.UpsertId(island.Seed, island)
-				if err != nil {
-					generalLog.Info("ERROR saving db:", err)
-					mongoSession.Refresh()
-
-					_, err = coll.UpsertId(island.Seed, &island)
+					_, err := coll.UpsertId(island.Seed, island)
 					if err != nil {
-						generalLog.Info("FATAL ERROR, failed twice saving db")
+						generalLog.Info("ERROR saving db:", err)
+						game.mongoSession.Refresh()
+
+						_, err = coll.UpsertId(island.Seed, &island)
+						if err != nil {
+							generalLog.Info("FATAL ERROR, failed twice saving db")
+						}
 					}
-				}
 
-				generalLog.Info("---DONE at", time.Now())
-
+					generalLog.Info("---DONE at", time.Now())
+				*/
 			case <-quit:
 				ticker.Stop()
 				return
@@ -178,7 +219,7 @@ func getHTTPRouter() *ace.Ace {
 	r.Static("/img", "./public/img")
 	r.Static("/audio", "./public/audio")
 
-	generalLog.Info("http server started, listening on port", appPort)
+	generalLog.Info("http server started, listening on port ", appPort)
 
 	return r
 }
@@ -188,7 +229,7 @@ func getFullIslandController(c *ace.C) {
 
 	c.Writer.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	c.Writer.WriteHeader(http.StatusOK)
-	c.Writer.Write(islandMap)
+	c.Writer.Write(game.islandMap)
 }
 
 func getTexturePackCharacterController(c *ace.C) {

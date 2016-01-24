@@ -10,20 +10,15 @@ import (
 	"github.com/ojrac/opensimplex-go"
 )
 
-var island Island // singelton
-
 // NewIsland inits the singelton
-func NewIsland() {
+func NewIsland() *Island {
 
 	// XXX load existing world from disk
 	seed := int64(666666)
 	generalLog.Info("Generating island with seed ", seed, " ...")
-	generateIsland(seed, 220, 140)
 
-	island.spawnGravel()
-	island.spawnTrees()
+	island := generateIsland(seed, 220, 140)
 
-	island.fillWithCritters()
 	generalLog.Info("Done generating island")
 
 	// store island to disk as png
@@ -35,11 +30,8 @@ func NewIsland() {
 		panic(err)
 	}
 	png.Encode(islandColImgFile, islandColImage)
-	/*
-		islandImage := island.HeightMapAsImage()
-		islandImgFile, _ := os.Create("island.png")
-		png.Encode(islandImgFile, islandImage)
-	*/
+
+	return island
 }
 
 // create some small rocks spread out over surface
@@ -62,7 +54,7 @@ func (i *Island) spawnGravel() {
 					default:
 						panic("")
 					}
-					island.addNpcFromName(name, pos)
+					i.addNpcFromName(name, pos)
 				}
 			}
 		}
@@ -91,7 +83,7 @@ func (i *Island) spawnTrees() {
 					default:
 						panic("")
 					}
-					island.addNpcFromName(name, pos)
+					i.addNpcFromName(name, pos)
 					cnt++
 				}
 			}
@@ -114,7 +106,7 @@ func (i *Island) fillWithCritters() {
 	}
 }
 
-func generateIsland(seed int64, width int, height int) {
+func generateIsland(seed int64, width int, height int) *Island {
 
 	particleLength := 8
 	innerBlur := 0.85
@@ -161,16 +153,19 @@ func generateIsland(seed int64, width int, height int) {
 		}
 	}
 
-	island.Width = width
-	island.Height = height
-	island.Seed = seed
-	island.HeightMap = m
+	i := Island{
+		Width:     width,
+		Height:    height,
+		Seed:      seed,
+		HeightMap: m}
 
-	island.LoadSpecs()
+	i.LoadSpecs()
+
+	return &i
 }
 
 // LoadSpecs loads all possible world items, NPC:s and actions
 func (i *Island) LoadSpecs() {
-	island.npcSpecs, _ = parseObjectsDefinition("data/objs.yml")
-	island.actionSpecs, _ = parseActionsDefinition("data/actions.yml")
+	i.npcSpecs, _ = parseObjectsDefinition("data/objs.yml")
+	i.actionSpecs, _ = parseActionsDefinition("data/actions.yml")
 }

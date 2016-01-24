@@ -22,6 +22,7 @@ type Obj struct {
 	Weight   int
 
 	XP             int
+	Island         *Island
 	Home           *Obj
 	CurrentAction  *actionSpec
 	PlannedActions []actionSpec

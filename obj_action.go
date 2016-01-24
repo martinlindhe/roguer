@@ -64,7 +64,7 @@ func (o *Obj) planAction(params ...interface{}) {
 		}
 	}
 
-	a := island.findActionByName(actionName)
+	a := o.Island.findActionByName(actionName)
 
 	a.Destination = &dst
 	o.PlannedActions = append(o.PlannedActions, a)
@@ -74,7 +74,6 @@ func (o *Obj) planAction(params ...interface{}) {
 	} else {
 		o.Announce("%s decided to %s (%s)", o, a.Name, a.Destination)
 	}
-
 }
 
 func (o *Obj) performCurrentAction() {
@@ -181,7 +180,7 @@ func (o *Obj) performSleep() bool {
 	energy := mult
 
 	if shelterType != "" {
-		shelters := o.Position.spawnsByType(shelterType, 0)
+		shelters := o.spawnsByType(shelterType, 0)
 		if len(shelters) > 0 {
 			// give bonus from nearby shelter
 			mult = shelters[0].Energy
@@ -219,7 +218,7 @@ func (o *Obj) performForage() bool {
 	if *o.CurrentAction.Destination == p {
 		// XXX
 
-		list := o.Position.spawnsByType(o.CurrentAction.Result, 30)
+		list := o.spawnsByType(o.CurrentAction.Result, 30)
 		if len(list) > 0 {
 
 			rnd := list[rand.Intn(len(list))]
@@ -232,18 +231,18 @@ func (o *Obj) performForage() bool {
 		check := o.performTravel(1) // XXX 1=walking speed
 
 		// look for food at current spot
-		list := o.Position.spawnsByType(o.CurrentAction.Result, 0.9)
+		list := o.spawnsByType(o.CurrentAction.Result, 0.9)
 
 		for _, it := range list {
 			o.Announce("%s picked up %s", o.Name, it.Name)
 			o.addItemToInventory(it)
 
 			// remove spawn from world
-			island.removeSpawn(it)
+			o.Island.removeSpawn(it)
 		}
 
 		// if nothing left on dst point, consider it a success!
-		dstList := o.CurrentAction.Destination.spawnsByType(o.CurrentAction.Result, 0.9)
+		dstList := o.spawnsByType(o.CurrentAction.Result, 0.9)
 		if len(dstList) == 0 {
 			return true
 		}
@@ -277,11 +276,11 @@ func (o *Obj) performBuild() bool {
 
 	o.CurrentAction.Duration--
 	if o.CurrentAction.Duration < 0 {
-		spec := island.getNpcSpecFromName(o.CurrentAction.Result)
+		spec := o.Island.getNpcSpecFromName(o.CurrentAction.Result)
 
-		home := island.getNpcFromSpec(spec)
+		home := o.Island.getNpcFromSpec(spec)
 		home.Position = *o.CurrentAction.Destination
-		island.addSpawn(home)
+		o.Island.addSpawn(home)
 
 		// if object is a shelter, make it my home
 		if spec.Type == "shelter" || spec.Type == "burrow" {

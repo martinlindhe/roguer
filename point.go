@@ -18,16 +18,17 @@ func (p Point) String() string {
 
 // Equals returns true of p and p2 has the same coordinates
 func (p Point) Equals(p2 Point) bool {
+
 	if p.X == p2.X && p.Y == p2.Y {
 		return true
 	}
 	return false
 }
 
-func (n *Obj) distanceTo(pos *Point) float64 {
+func (o *Obj) distanceTo(pos *Point) float64 {
 
-	xd := n.Position.X - pos.X
-	yd := n.Position.Y - pos.Y
+	xd := o.Position.X - pos.X
+	yd := o.Position.Y - pos.Y
 	return math.Hypot(xd, yd)
 }
 
@@ -47,15 +48,17 @@ func (p *Point) intMatches(t *Point) bool {
 }
 
 // select 3x3 square of positions around n.pos, pick one at random (never p)
-func (p *Point) randomNearby() (Point, error) {
+func (o *Obj) randomNearby() (Point, error) {
 
 	var m []Point
 
+	p := o.Position
+
 	for y := p.Y - 1; y <= p.Y+1; y++ {
 		for x := p.X - 1; x <= p.X+1; x++ {
-			if y >= 0 && y < float64(island.Height) && x >= 0 && x < float64(island.Width) {
+			if y >= 0 && y < float64(o.Island.Height) && x >= 0 && x < float64(o.Island.Width) {
 				pp := Point{x, y}
-				if !pp.Equals(*p) && island.isAboveWater(pp) {
+				if !pp.Equals(p) && o.Island.isAboveWater(pp) {
 					m = append(m, pp)
 				}
 			}
@@ -81,23 +84,23 @@ func (p *Point) isNearby(pos Point) bool {
 	return false
 }
 
-func (p *Point) spawnsByName(n string, radius float64) []*Obj {
+func (o *Obj) spawnsByName(n string, radius float64) []*Obj {
 
 	var res []*Obj
-	for _, o := range island.Spawns {
-		if o.Name == n && o.distanceTo(p) <= radius {
-			res = append(res, o)
+	for _, sp := range o.Island.Spawns {
+		if sp.Name == n && sp.distanceTo(&o.Position) <= radius {
+			res = append(res, sp)
 		}
 	}
 	return res
 }
 
-func (p *Point) spawnsByType(t string, radius float64) []*Obj {
+func (o *Obj) spawnsByType(t string, radius float64) []*Obj {
 
 	var res []*Obj
-	for _, o := range island.Spawns {
-		if o.Type == t && o.distanceTo(p) <= radius {
-			res = append(res, o)
+	for _, sp := range o.Island.Spawns {
+		if sp.Type == t && sp.distanceTo(&o.Position) <= radius {
+			res = append(res, sp)
 		}
 	}
 	//log.Debugf("spawnsByType radius %f from %s match %s: found %d\n", radius, p, t, len(res))

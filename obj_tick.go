@@ -9,17 +9,17 @@ import (
 )
 
 // Announce to nearby players that something happened
-func (n *Obj) Announce(format string, a ...interface{}) {
+func (o *Obj) Announce(format string, a ...interface{}) {
 
 	str := fmt.Sprintf(format, a...)
 
-	generalLog.Debug(n.Name, " announces: ", str)
+	generalLog.Debug(o.Name, " announces: ", str)
 
-	for _, pl := range island.Players {
-		if pl.Spawn.Position.isNearby(n.Position) {
+	for _, pl := range o.Island.Players {
+		if pl.Spawn.Position.isNearby(o.Position) {
 			//log.Printf("tell %s: %s", pl.Name, str)
 
-			res := messageResponse{Type: "msg", Message: str, Time: island.Age.Current()}
+			res := messageResponse{Type: "msg", Message: str, Time: o.Island.Age.Current()}
 
 			b, _ := json.Marshal(res)
 			pl.Socket.WriteMessage(websocket.TextMessage, b)
@@ -28,48 +28,49 @@ func (n *Obj) Announce(format string, a ...interface{}) {
 }
 
 // Tick until it returns false
-func (n *Obj) Tick() bool {
-	n.Age.Tick()
+func (o *Obj) Tick() bool {
+	o.Age.Tick()
 
 	//generalLog.Debug("[tick]", n.Name, n.Age)
 	//log.Info("[tick]", n.Name, n.Age)
 
-	if n.isAboveMaxAge() {
-		n.Announce("%s dies of old age", n.Name)
+	if o.isAboveMaxAge() {
+		o.Announce("%s dies of old age", o.Name)
 		return false
 	}
 
-	if n.Hunger > n.diesOfHungerCap() {
-		n.Announce("%s dies of hunger", n.Name)
+	if o.Hunger > o.diesOfHungerCap() {
+		o.Announce("%s dies of hunger", o.Name)
 		return false
 	}
 
-	if n.Thirst > n.diesOfThirstCap() {
-		n.Announce("%s dies of thirst", n.Name)
+	if o.Thirst > o.diesOfThirstCap() {
+		o.Announce("%s dies of thirst", o.Name)
 		return false
 	}
 
-	n.treeTick()
+	o.treeTick()
 
-	if n.Type == "fireplace" && n.Activated {
-		n.Announce("%s is burning (%d energy left)", n.Name, n.Energy)
-		n.Energy--
-		if n.Energy <= 0 {
-			n.Energy = 0
-			n.Activated = false
-			n.Announce("%s burned out", n.Name)
+	if o.Type == "fireplace" && o.Activated {
+		o.Announce("%s is burning (%d energy left)", o.Name, o.Energy)
+		o.Energy--
+		if o.Energy <= 0 {
+			o.Energy = 0
+			o.Activated = false
+			o.Announce("%s burned out", o.Name)
 		}
 	}
 
-	return n.npcTick()
+	return o.npcTick()
 }
 
-func (n *Obj) treeTick() {
-	if n.Type != "tree" {
+func (o *Obj) treeTick() {
+
+	if o.Type != "tree" {
 		return
 	}
 
-	treeSpec := island.getNpcSpecFromName(n.Name)
+	treeSpec := o.Island.getNpcSpecFromName(o.Name)
 
 	for _, drop := range treeSpec.Drops {
 
@@ -77,166 +78,166 @@ func (n *Obj) treeTick() {
 		//log.Debugf("Rolled %f for check if %s is spawned, %f chance", roll, drop.Name, drop.Chance)
 
 		if roll <= drop.Chance {
-			n.Announce("%s falls from %s", drop.Name, n.Name)
+			o.Announce("%s falls from %s", drop.Name, o.Name)
 
-			spawnPos, err := n.Position.randomNearby()
+			spawnPos, err := o.randomNearby()
 			if err == nil {
-				island.addNpcFromName(drop.Name, spawnPos)
+				o.Island.addNpcFromName(drop.Name, spawnPos)
 			} else {
-				generalLog.Error("Failed to find pos nearby", n)
+				generalLog.Error("Failed to find pos nearby", o)
 			}
 		}
 	}
 }
 
-func (n *Obj) npcTick() bool {
+func (o *Obj) npcTick() bool {
 
-	if n.Class != "npc" {
+	if o.Class != "npc" {
 		return true
 	}
 
-	if n.isSleeping() {
-		if n.CurrentAction.Name != "sleep" {
-			panic(fmt.Errorf("sleeping and doing something that requires being awake: %s", n.CurrentAction.Name))
+	if o.isSleeping() {
+		if o.CurrentAction.Name != "sleep" {
+			panic(fmt.Errorf("sleeping and doing something that requires being awake: %s", o.CurrentAction.Name))
 		}
-		n.performCurrentAction()
+		o.performCurrentAction()
 		return true
 	}
 
-	n.Tiredness++
+	o.Tiredness++
 
-	if n.isCold() && !n.hasPlannedType("travel") && n.Type == "humanoid" {
+	if o.isCold() && !o.hasPlannedType("travel") && o.Type == "humanoid" {
 
-		if !n.hasItemTypeInInventory("wood") && !n.hasPlannedType("wait") {
-			n.planAction("find fire wood")
+		if !o.hasItemTypeInInventory("wood") && !o.hasPlannedType("wait") {
+			o.planAction("find fire wood")
 		}
 
-		nearbyFireplaces := n.Position.spawnsByType("fireplace", 1)
+		nearbyFireplaces := o.spawnsByType("fireplace", 1)
 		if len(nearbyFireplaces) > 0 {
 
 			fireplace := nearbyFireplaces[0]
 			if fireplace.isActivated() {
-				prevColdness := n.Coldness
-				n.Coldness -= 100
-				if n.Coldness < 0 {
-					n.Coldness = 0
+				prevColdness := o.Coldness
+				o.Coldness -= 100
+				if o.Coldness < 0 {
+					o.Coldness = 0
 				}
-				n.Announce("%s is getting warmed up by the %s (coldness -%d)", n, fireplace, prevColdness-n.Coldness)
+				o.Announce("%s is getting warmed up by the %s (coldness -%d)", o.Name, fireplace, prevColdness-o.Coldness)
 			} else {
 
 				// NOTE: some max capacity for the fireplace is required
 				if fireplace.Energy < 1000 {
-					itemIdx, err := n.tryFindItemTypeInInventory("wood")
+					itemIdx, err := o.tryFindItemTypeInInventory("wood")
 					if err == nil {
-						item := n.removeFromInventory(itemIdx)
+						item := o.removeFromInventory(itemIdx)
 
-						n.Announce("%s is putting %s in the %s", n, item.Name, fireplace)
+						o.Announce("%s is putting %s in the %s", o.Name, item.Name, fireplace)
 						// NOTE: to simplify, we just get the energy from the wood directly
 						fireplace.Energy += item.Energy
 					}
 				}
 
 				if fireplace.Energy > 0 {
-					n.Announce("%s lights the %s", n, fireplace)
+					o.Announce("%s lights the %s", o.Name, fireplace)
 					fireplace.Activate()
 
 					// stay here for a bit
-					n.planAction("wait")
+					o.planAction("wait")
 				}
 			}
 		}
 
-		if !n.hasPlannedType("travel") && n.hasItemTypeInInventory("wood") {
-			fireplaces := n.Position.spawnsByType("fireplace", 30)
+		if !o.hasPlannedType("travel") && o.hasItemTypeInInventory("wood") {
+			fireplaces := o.spawnsByType("fireplace", 30)
 
 			if len(fireplaces) > 0 {
-				if n.distanceTo(&fireplaces[0].Position) > 1 {
-					n.Announce("%s is freezing, moving to nearest fireplace at %v", n.Name, fireplaces[0].Position)
-					n.planAction("walk", fireplaces[0].Position)
+				if o.distanceTo(&fireplaces[0].Position) > 1 {
+					o.Announce("%s is freezing, moving to nearest fireplace at %v", o.Name, fireplaces[0].Position)
+					o.planAction("walk", fireplaces[0].Position)
 				}
 			}
 		}
 	}
 
-	if n.hungerThirstTick() {
+	if o.hungerThirstTick() {
 		return true
 	}
 
-	if n.tiredTick() {
+	if o.tiredTick() {
 		return true
 	}
 
-	n.survivalPlanningTick()
+	o.survivalPlanningTick()
 
 	// select one action to be doing next
-	if n.CurrentAction == nil && len(n.PlannedActions) > 0 {
+	if o.CurrentAction == nil && len(o.PlannedActions) > 0 {
 		// shuffle actions
-		if len(n.PlannedActions) > 1 {
-			shuffleActionSlice(n.PlannedActions)
+		if len(o.PlannedActions) > 1 {
+			shuffleActionSlice(o.PlannedActions)
 		}
 
 		// pick first
-		n.CurrentAction = &n.PlannedActions[0]
-		n.PlannedActions = n.PlannedActions[1:]
+		o.CurrentAction = &o.PlannedActions[0]
+		o.PlannedActions = o.PlannedActions[1:]
 
-		n.Announce("%s started to %s", n.Name, n.CurrentAction.Name)
+		o.Announce("%s started to %s", o.Name, o.CurrentAction.Name)
 	}
 
-	n.performCurrentAction()
+	o.performCurrentAction()
 	return true
 }
 
-func (n *Obj) survivalPlanningTick() {
+func (o *Obj) survivalPlanningTick() {
 
-	if !n.isTired() && !n.isHungry() && !n.isThirsty() && !n.isCold() && !n.hasPlannedType("travel") {
+	if !o.isTired() && !o.isHungry() && !o.isThirsty() && !o.isCold() && !o.hasPlannedType("travel") {
 		// when basic needs is resolved, randomly decide to do
 		// something that would help improve situation for the npc
-		if n.Race == "rabbit" {
-			if len(n.Position.spawnsByType("small hole", 30)) == 0 {
-				n.planAction("dig small hole", n.Position)
+		if o.Race == "rabbit" {
+			if len(o.spawnsByType("small hole", 30)) == 0 {
+				o.planAction("dig small hole", o.Position)
 				return
 			}
 		}
 
-		if n.Type == "humanoid" {
+		if o.Type == "humanoid" {
 
-			if island.canBuildAt(n.Position) && !n.hasPlannedType("build") {
-				if len(n.Position.spawnsByType("fireplace", 30)) == 0 {
+			if o.Island.canBuildAt(o.Position) && !o.hasPlannedType("build") {
+				if len(o.spawnsByType("fireplace", 30)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a larger fireplace
-					n.planAction("build small fireplace", n.Position)
+					o.planAction("build small fireplace", o.Position)
 					return
 				}
-				if n.Home == nil && len(n.Position.spawnsByType("shelter", 30)) == 0 {
+				if o.Home == nil && len(o.spawnsByType("shelter", 30)) == 0 {
 					// XXX if more than 1 humanoid nearby, instead build a small hut
-					n.planAction("build small shelter", n.Position)
+					o.planAction("build small shelter", o.Position)
 					return
 				}
 
-				if len(n.Position.spawnsByType("fireplace", 30)) > 0 &&
-					len(n.Position.spawnsByType("shelter", 30)) > 0 {
+				if len(o.spawnsByType("fireplace", 30)) > 0 &&
+					len(o.spawnsByType("shelter", 30)) > 0 {
 
 					// basic survival is satisifed, lets build a cooking pit
-					if len(n.Position.spawnsByType("cooking", 30)) == 0 {
-						n.planAction("build cooking pit", n.Position)
+					if len(o.spawnsByType("cooking", 30)) == 0 {
+						o.planAction("build cooking pit", o.Position)
 						return
 					}
 
 					// build a hut if we already have a small shelter
-					if n.Home != nil && n.Home.Name == "small shelter" && len(n.Position.spawnsByName("small hut", 30)) == 0 {
-						n.planAction("build small hut", n.Position)
+					if o.Home != nil && o.Home.Name == "small shelter" && len(o.spawnsByName("small hut", 30)) == 0 {
+						o.planAction("build small hut", o.Position)
 						return
 					}
 				}
 
-				if len(n.Position.spawnsByName("farmland", 1)) == 0 {
-					n.planAction("build farmland", n.Position)
+				if len(o.spawnsByName("farmland", 1)) == 0 {
+					o.planAction("build farmland", o.Position)
 					return
 				}
 
-				if len(n.Position.spawnsByName("apple tree", 30)) == 0 {
+				if len(o.spawnsByName("apple tree", 30)) == 0 {
 					// XXX require having a apple seed
 					// XXX require having a garden, plant there
-					n.planAction("plant apple tree", n.Position)
+					o.planAction("plant apple tree", o.Position)
 					return
 				}
 			}
@@ -244,103 +245,104 @@ func (n *Obj) survivalPlanningTick() {
 	}
 }
 
-func (n *Obj) preferredShelterType() string {
+func (o *Obj) preferredShelterType() string {
+
 	shelterType := ""
-	if n.Type == "humanoid" {
+	if o.Type == "humanoid" {
 		shelterType = "shelter"
-	} else if n.Type == "rodent" {
+	} else if o.Type == "rodent" {
 		shelterType = "burrow"
 	}
 	return shelterType
 }
 
-func (n *Obj) tiredTick() bool {
+func (o *Obj) tiredTick() bool {
 
-	shelterType := n.preferredShelterType()
+	shelterType := o.preferredShelterType()
 
 	// if next to shelter, sleep. if shelter nearby, go there and then sleep
-	if n.isTired() && !n.hasPlannedType("sleep") && !n.hasPlannedType("travel") {
+	if o.isTired() && !o.hasPlannedType("sleep") && !o.hasPlannedType("travel") {
 
 		if shelterType == "" {
-			n.Announce("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
-			n.planAction("sleep")
+			o.Announce("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", o.Name, o.Tiredness, o.tirednessCap())
+			o.planAction("sleep")
 			return true
 		}
 
-		nearbyShelters := n.Position.spawnsByType(shelterType, 0)
+		nearbyShelters := o.spawnsByType(shelterType, 0)
 		if len(nearbyShelters) > 0 {
-			n.Announce("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", n.Name, nearbyShelters[0].Name, n.Tiredness, n.tirednessCap())
-			n.planAction("sleep")
+			o.Announce("%s is feeling tired, decided to sleep at %s (%d tiredness, cap = %d)", o.Name, nearbyShelters[0].Name, o.Tiredness, o.tirednessCap())
+			o.planAction("sleep")
 			return true
 		}
 
-		shelters := n.Position.spawnsByType(shelterType, 30)
+		shelters := o.spawnsByType(shelterType, 30)
 		if len(shelters) == 0 {
-			n.Announce("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", n.Name, n.Tiredness, n.tirednessCap())
-			n.planAction("sleep")
+			o.Announce("%s is feeling tired, decided to sleep (%d tiredness, cap = %d)", o.Name, o.Tiredness, o.tirednessCap())
+			o.planAction("sleep")
 			return true
 		}
 
-		n.Announce("%s is feeling tired, decided to go to %s for sleeping", n.Name, shelters[0].Name)
-		n.planAction("walk", shelters[0].Position)
+		o.Announce("%s is feeling tired, decided to go to %s for sleeping", o.Name, shelters[0].Name)
+		o.planAction("walk", shelters[0].Position)
 	}
 
 	return false
 }
 
-func (n *Obj) hungerThirstTick() bool {
+func (o *Obj) hungerThirstTick() bool {
 
-	n.Hunger++
-	n.Thirst++
+	o.Hunger++
+	o.Thirst++
 
-	if n.isHungry() {
+	if o.isHungry() {
 
 		// auto eat some food in inventory instead of looking for food, if possible
-		itemIdx, err := n.tryFindItemTypeInInventory("food")
+		itemIdx, err := o.tryFindItemTypeInInventory("food")
 		if err == nil {
-			item := n.removeFromInventory(itemIdx)
+			item := o.removeFromInventory(itemIdx)
 
-			prevHunger := n.Hunger
+			prevHunger := o.Hunger
 
 			// eat item: reduce hunger by some amount from the food eaten
-			n.Hunger -= item.Energy
-			if n.Hunger < 0 {
-				n.Hunger = 0
+			o.Hunger -= item.Energy
+			if o.Hunger < 0 {
+				o.Hunger = 0
 			}
 
-			energyDiff := prevHunger - n.Hunger
-			n.Announce("%s ate %s (-%d hunger)", n.Name, item.Name, energyDiff)
+			energyDiff := prevHunger - o.Hunger
+			o.Announce("%s ate %s (-%d hunger)", o.Name, item.Name, energyDiff)
 			return true
 		}
 
-		if n.isHungry() && !n.hasPlanned("find food") {
-			n.Announce("%s is feeling hungry (%d hunger)", n.Name, n.Hunger)
-			n.planAction("find food")
+		if o.isHungry() && !o.hasPlanned("find food") {
+			o.Announce("%s is feeling hungry (%d hunger)", o.Name, o.Hunger)
+			o.planAction("find food")
 		}
 	}
 
-	if n.isThirsty() {
+	if o.isThirsty() {
 
 		// auto eat some food in inventory instead of looking for food, if possible
-		itemIdx, err := n.tryFindItemTypeInInventory("drink")
+		itemIdx, err := o.tryFindItemTypeInInventory("drink")
 		if err == nil {
-			item := n.removeFromInventory(itemIdx)
+			item := o.removeFromInventory(itemIdx)
 
-			prevThirst := n.Thirst
+			prevThirst := o.Thirst
 
 			// eat item: reduce hunger by some amount from the food eaten
-			n.Thirst -= item.Energy
-			if n.Thirst < 0 {
-				n.Thirst = 0
+			o.Thirst -= item.Energy
+			if o.Thirst < 0 {
+				o.Thirst = 0
 			}
 
-			energyDiff := prevThirst - n.Thirst
-			n.Announce("%s drank %s (-%d thirst)", n.Name, item.Name, energyDiff)
+			energyDiff := prevThirst - o.Thirst
+			o.Announce("%s drank %s (-%d thirst)", o.Name, item.Name, energyDiff)
 			return true
 		}
-		if n.isThirsty() && !n.hasPlanned("find water") {
-			n.Announce("%s is feeling thirsty (%d thirst)", n.Name, n.Thirst)
-			n.planAction("find water")
+		if o.isThirsty() && !o.hasPlanned("find water") {
+			o.Announce("%s is feeling thirsty (%d thirst)", o.Name, o.Thirst)
+			o.planAction("find water")
 		}
 	}
 	return false

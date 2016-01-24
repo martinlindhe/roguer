@@ -45,8 +45,7 @@ func parseGroundTilesetDefinition(defFileName string) (tilesetSpec, error) {
 	return specs, nil
 }
 
-// PrecalcTilemap ...
-func PrecalcTilemap() []byte {
+func (g *Game) precalcTilemap() []byte {
 
 	tiles, err := parseGroundTilesetDefinition("resources/assets/tilesets/oddball/ground.yml")
 	if err != nil {
@@ -57,16 +56,16 @@ func PrecalcTilemap() []byte {
 
 	tileMap := TiledMapJSON{
 		Version:     1,
-		Width:       island.Width,
-		Height:      island.Height,
+		Width:       g.Island.Width,
+		Height:      g.Island.Height,
 		TileWidth:   tiles.Props.Width,
 		TileHeight:  tiles.Props.Height,
 		Orientation: "orthogonal"}
 
 	layer := TiledMapLayer{
-		Data:    island.HeightsAsFlatTilemap(),
-		Width:   island.Width,
-		Height:  island.Height,
+		Data:    g.Island.HeightsAsFlatTilemap(),
+		Width:   g.Island.Width,
+		Height:  g.Island.Height,
 		Visible: true,
 		Opacity: 1,
 		Type:    "tilelayer",

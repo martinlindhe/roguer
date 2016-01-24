@@ -3,58 +3,58 @@ package rogue
 import "fmt"
 
 // returns index in inventory of something edible
-func (n *Obj) tryFindItemTypeInInventory(t string) (int, error) {
+func (o *Obj) tryFindItemTypeInInventory(t string) (int, error) {
 
-	if len(n.Inventory) == 0 {
+	if len(o.Inventory) == 0 {
 		return -1, fmt.Errorf("Inventory is empty")
 	}
 
-	for idx, it := range n.Inventory {
+	for idx, it := range o.Inventory {
 		if it.Type == t {
 			return idx, nil
 		}
 	}
 
-	return -1, fmt.Errorf("%s has no items of %s in inventory", n.Name, t)
+	return -1, fmt.Errorf("%s has no items of %s in inventory", o.Name, t)
 }
 
-func (n *Obj) addItemToInventory(item *Obj) {
+func (o *Obj) addItemToInventory(item *Obj) {
 
-	n.Inventory = append(n.Inventory, item)
+	o.Inventory = append(o.Inventory, item)
 }
 
-func (n *Obj) addToInventory(itemName string) {
+func (o *Obj) addToInventory(itemName string) {
 
-	spec := island.getNpcSpecFromName(itemName)
-	o := island.getNpcFromSpec(spec)
+	spec := o.Island.getNpcSpecFromName(itemName)
+	i := o.Island.getNpcFromSpec(spec)
 
-	n.Inventory = append(n.Inventory, o)
+	o.Inventory = append(o.Inventory, i)
 }
 
-func (n *Obj) removeFromInventory(index int) *Obj {
+func (o *Obj) removeFromInventory(index int) *Obj {
 
-	o := n.Inventory[index]
-	n.Inventory = append(n.Inventory[:index], n.Inventory[index+1:]...)
+	i := o.Inventory[index]
+	o.Inventory = append(o.Inventory[:index], o.Inventory[index+1:]...)
 
-	return o
+	return i
 }
 
-func (n *Obj) hasItemTypeInInventory(t string) bool {
+func (o *Obj) hasItemTypeInInventory(t string) bool {
 
-	_, err := n.tryFindItemTypeInInventory(t)
+	_, err := o.tryFindItemTypeInInventory(t)
 	if err != nil {
 		return false
 	}
 	return true
 }
 
-func (n *Obj) hasItemInInventory(itemName string) bool {
+func (o *Obj) hasItemInInventory(itemName string) bool {
 
-	if len(n.Inventory) == 0 {
+	if len(o.Inventory) == 0 {
 		return false
 	}
 
-	for _, it := range n.Inventory {
+	for _, it := range o.Inventory {
 		if it.Name == itemName {
 			return true
 		}

@@ -68,6 +68,8 @@ func tbPrint(x, y int, fg, bg termbox.Attribute, msg string) {
 
 // returns false to signal shutdown
 func handleEvents() bool {
+
+	// XXX this is blocking ...
 	switch ev := termbox.PollEvent(); ev.Type {
 	case termbox.EventKey:
 		if ev.Key == termbox.KeyCtrlQ {

@@ -37,36 +37,36 @@ const (
 )
 
 // NewPlayer creates a new player
-func (i *Island) NewPlayer(name string, socket *websocket.Conn) (Point, string) {
+func (g *Game) NewPlayer(name string, socket *websocket.Conn) (Point, string) {
 
-	pos := island.RandomPointAboveWater()
+	pos := g.Island.RandomPointAboveWater()
 	token := newJwt()
 
-	spawn := i.getNpcFromRace("dwarf")
+	spawn := g.Island.getNpcFromRace("dwarf")
 	spawn.Class = "player"
 	spawn.Name = name
 	spawn.Position = pos
-	island.Spawns = append(island.Spawns, spawn)
+	g.Island.Spawns = append(g.Island.Spawns, spawn)
 
 	var player Player
 	player.Name = name
 	player.Token = token
 	player.Spawn = spawn
 	player.Socket = socket
-	island.Players = append(island.Players, &player)
+	g.Island.Players = append(g.Island.Players, &player)
 
 	return pos, token
 }
 
 // ContinuePlayer resumes a game, given a valid token
-func (i *Island) ContinuePlayer(token string, socket *websocket.Conn) (*Point, string, error) {
+func (g *Game) ContinuePlayer(token string, socket *websocket.Conn) (*Point, string, error) {
 
-	for i, pl := range island.Players {
+	for i, pl := range g.Island.Players {
 		if pl.Token == token {
 			// give the client a fresh token
-			island.Players[i].Token = newJwt()
-			island.Players[i].Socket = socket
-			return &pl.Spawn.Position, island.Players[i].Token, nil
+			g.Island.Players[i].Token = newJwt()
+			g.Island.Players[i].Socket = socket
+			return &pl.Spawn.Position, g.Island.Players[i].Token, nil
 		}
 	}
 
@@ -105,9 +105,9 @@ func (i *Island) removeSpawn(o *Obj) {
 func (i *Island) Tick() {
 
 	i.Age.Tick()
-	generalLog.Infof("World tick %d at %s. %d spawns and %d players", i.Age.Current(), time.Now(), len(island.Spawns), len(island.Players))
+	generalLog.Infof("World tick %d at %s. %d spawns and %d players", i.Age.Current(), time.Now(), len(i.Spawns), len(i.Players))
 
-	for _, o := range island.Spawns {
+	for _, o := range i.Spawns {
 		check := o.Tick()
 		if check == false {
 			generalLog.Info("Removing spawn ", o.Name)
@@ -117,30 +117,30 @@ func (i *Island) Tick() {
 
 	tickMsg, _ := json.Marshal(tickMessage{Type: "tick", Time: i.Age.Current(), FormattedTime: i.Age.DateString()})
 
-	for _, p := range island.Players {
+	for _, p := range i.Players {
 		p.Socket.WriteMessage(websocket.TextMessage, tickMsg)
 	}
 }
 
 func (i *Island) getNpcSpecFromName(n string) objSpec {
-	for _, spec := range island.npcSpecs {
+
+	for _, spec := range i.npcSpecs {
 		if spec.Name == n {
 			return spec
 		}
 	}
-
 	panic(fmt.Errorf("npc spec by name not found: %s", n))
 }
 
 func (i *Island) getNpcSpecFromRace(n string) objSpec {
-	for _, spec := range island.npcSpecs {
+
+	for _, spec := range i.npcSpecs {
 		if spec.Race == n {
 			// fmt.Printf("found race %v from %s\n", spec, n)
 			return spec
 		}
 	}
-
-	panic(fmt.Errorf("npc spec by race not found: %s, checked %d specs", n, len(island.npcSpecs)))
+	panic(fmt.Errorf("npc spec by race not found: %s, checked %d specs", n, len(i.npcSpecs)))
 }
 
 func (i *Island) addNpcFromName(n string, pos Point) *Obj {
@@ -161,6 +161,7 @@ func (i *Island) getNpcFromRace(race string) *Obj {
 func (i *Island) getNpcFromSpec(spec objSpec) *Obj {
 
 	var o Obj
+	o.Island = i
 	o.Level = 1
 	o.Race = spec.Race
 	o.Type = spec.Type
@@ -245,13 +246,13 @@ func (i *Island) HeightsAsFlatTilemap() []int {
 		panic(err)
 	}
 
-	res := make([]int, island.Width*island.Height)
+	res := make([]int, i.Width*i.Height)
 
-	for y := 0; y < island.Height; y++ {
-		for x := 0; x < island.Width; x++ {
+	for y := 0; y < i.Height; y++ {
+		for x := 0; x < i.Width; x++ {
 			num := 0
 
-			b := island.HeightMap[y][x]
+			b := i.HeightMap[y][x]
 
 			switch {
 			case b < deepWater:
@@ -267,7 +268,7 @@ func (i *Island) HeightsAsFlatTilemap() []int {
 				num = fromSliceByScale(b, beach, grass, tiles.Grass)
 			}
 
-			res[y*island.Width+x] = num
+			res[y*i.Width+x] = num
 		}
 	}
 
@@ -302,7 +303,7 @@ type LocalSpawn struct {
 func (i *Island) DescribeLocalArea(pos Point) []LocalSpawn {
 	var res []LocalSpawn
 
-	for _, sp := range island.Spawns {
+	for _, sp := range i.Spawns {
 		if sp.Position.isNearby(pos) {
 			var o LocalSpawn
 			o.Name = sp.Name
