@@ -3,7 +3,7 @@ package rogue
 import (
 	"fmt"
 
-	"github.com/gobuild/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 var (

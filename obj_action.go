@@ -5,7 +5,7 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/gobuild/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 // check if npc already has planned to do a

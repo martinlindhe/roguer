@@ -32,12 +32,12 @@ func parseActionsDefinition(defFileName string) ([]actionSpec, error) {
 
 	data, err := ioutil.ReadFile(defFileName)
 	if err != nil {
-		return specs.All, err
+		return nil, err
 	}
 
 	err = yaml.Unmarshal(data, &specs)
 	if err != nil {
-		return specs.All, err
+		return nil, err
 	}
 
 	generalLog.Info("Read ", len(specs.All), " entries from ", defFileName)
