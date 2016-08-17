@@ -6,6 +6,7 @@ rogue-like with go and phaser.io, using websockets
 # Install
 
 ```
+go get -u github.com/martinlindhe/tile-tools/...
 go get -u github.com/martinlindhe/roguer
 ```
 
