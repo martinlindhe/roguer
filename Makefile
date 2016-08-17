@@ -7,7 +7,7 @@ run:
 	go run cli/server/*
 
 shrink-png:
-	find ./public/img -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
+	find ./public/img -name '*.png' -print0 | xargs -0 -n1 shrink-png
 
 # generate sliced up tilesets from source images
 tiles:
@@ -20,7 +20,7 @@ tiles:
 	php move_tiles.php
 	# cut the first set of tiles into 8x4:
 	tilecutter resources/assets/tilesets/oddball/ground/8x4
-	find resources/assets/tilesets/oddball -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
+	find resources/assets/tilesets/oddball -name '*.png' -print0 | xargs -0 -n1 shrink-png
 
 # produce our tilesets
 jointiles:
@@ -33,7 +33,7 @@ jointiles:
 	tilejoiner resources/assets/tilesets/oddball/bosses      --out resources/assets/tilesets/oddball/bosses.png     --tiles-per-row 8;  imgcat resources/assets/tilesets/oddball/bosses.png
 	cp resources/assets/tilesets/oddball/*.png public/img/tileset/oddball/
 	tilejoiner resources/assets/tilesets/ui/buttons          --out public/img/tileset/ui/buttons.png                --tiles-per-row 1;  imgcat public/img/tileset/ui/buttons.png
-	find public/img/tileset -name '*.png' -print0 | xargs -0 -n1 ./shrink-png.sh
+	find public/img/tileset -name '*.png' -print0 | xargs -0 -n1 shrink-png
 
 validate-yaml:
 	find . -name '*.yml' -not -path "./node_modules/*" -print0 | xargs -0 -n1 validyaml
