@@ -4,7 +4,7 @@ bench:
 	go test -bench=.
 
 run:
-	go run cli/server/*
+	go run ./cmd/server/main.go
 
 shrink-png:
 	find ./public/img -name '*.png' -print0 | xargs -0 -n1 shrink-png

@@ -58,11 +58,15 @@ func BootServer() {
 // newGame creates a new Game, along with a input handler.
 // Returns a pointer to the new Game.
 func newGame() (*Game, error) {
-	mongoSession, err := initMongo()
+	// mongoSession, err := initMongo()
+	//if err != nil {
+	//	return nil, err
+	//}
+
 	g := Game{
-		input:        newInput(),
-		mongoSession: mongoSession,
-		Island:       NewIsland(),
+		input: newInput(),
+		// mongoSession: mongoSession,
+		Island: NewIsland(),
 	}
 
 	g.Island.spawnGravel()
@@ -70,10 +74,6 @@ func newGame() (*Game, error) {
 	g.Island.fillWithCritters()
 
 	g.precalcTilemap()
-
-	if err != nil {
-		return &g, err
-	}
 
 	return &g, nil
 }
