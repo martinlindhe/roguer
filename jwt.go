@@ -3,17 +3,20 @@ package rogue
 import (
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "gopkg.in/dgrijalva/jwt-go.v3"
 )
 
 func newJwt() string {
 
-	token := jwt.New(jwt.SigningMethodHS256)
-
 	signingKey := []byte("top secret")
 
-	//token.Claims["foo"] = "bar"
-	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	// Create the Claims
+	claims := &jwt.StandardClaims{
+		ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+		Issuer:    "test",
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, err := token.SignedString(signingKey)
 	if err != nil {
